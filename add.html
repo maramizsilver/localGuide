@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page formulaire</title>
+</head>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Open Sans", sans-serif;
+  }
+   body {
+            font-family: 'Outfit', sans-serif;
+            min-height: 100vh;
+            line-height: 1.6;
+            background-color: #603469;
+        }
+
+
+   .container {
+            width:100%;
+            padding: 5px 5px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            
+        }
+ .title{
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+ }
+ .form-part {
+  padding: 20px;
+ }
+ .form-group  {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+
+ }  
+.required {
+  color: rgb(241, 5, 5);
+
+ }
+
+
+  .header1 {
+    margin:15px 15px 25px 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+   
+  }
+  h1{
+    color: #f5f3f3;
+    font-size: 20px;
+    
+  }
+  p{
+    color: #bcb0b0;
+    font-size: 15px;
+  }
+  
+  .form1 {
+  background-color: #e4dcdc;
+  display: flex;
+  flex-direction: column;
+  border-radius: 30px;
+  margin: 0 auto;
+  box-shadow: 2px 2px 4px 4px #d9cdc4;
+  height: 60%;
+  border: 1px solid #d9cdc4;
+  border-radius: 20px;
+  width: 65%; /* AJOUTEZ CETTE LIGNE */
+  max-width: 700px; /* AJOUTEZ CETTE LIGNE - limite maximum */
+}
+  
+
+      .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+         
+        }
+        .upload-section{
+         
+            border-radius: 8px;
+            padding: 18px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #676767 ;
+            border: dashed 2px #363536;
+           
+        }
+        /*.form-row{
+          display:flex;
+          flex-direction: column;
+        }*/
+  input,textarea, select{
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius:15px;
+    font-size: 16px;
+    
+    
+  }
+  .row3{
+    display: flex;
+    gap: 20px;
+    flex-direction: column;
+
+  }
+       /*display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }*/
+
+        .button-group {
+           padding: 14px 28px;
+            border-radius: 8px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+             margin: 20px  0px ;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            color: #2f0937;
+            gap:40px ;
+            
+
+        }
+
+        .btn-primary {
+            background: #d8d4d0;
+            width: 400px;
+            border-color:#656363;        }
+      input:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.4);
+        }
+        select:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.4);
+        }
+        .btn-primary:hover{
+          background-color: rgb(50, 140, 50);
+        }
+        
+         textarea:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.4);
+        }
+         .upload-section:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.4);
+        }
+          .btn-secondary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.4);
+            
+        }
+        .btn-secondary:hover{
+          background-color: rgb(150, 38, 38);
+
+        }
+
+        .btn-secondary {
+            background: #d8d4d0;
+            width: 100px;
+            border-color: #656363; 
+        }
+
+        
+  </style>
+<body>
+  <div class="container">
+    <div class="nav">
+      <p  style="text-align: center;"> en attendant souha</p>
+    </div>
+    <div class="header1">
+      <!--<div class="logo"></div>-->
+      <h1> Add Your Business </h1>
+      <p> 👋</p>
+      <p class="title"> ✨ So excited to see your business featured with us! ✨</p>
+    </div>
+    <form class="form1"action="#" method="post">
+      <section class="form-part">
+        <h2 class="section-title"> 
+          General information</h2>
+        <div class="form-group">
+          <label for="name"> Businessname <span class="required">*</span> </label>
+          <input type="text" id="name" name="name" 
+          placeholder="exemple:greencoffe" required>
+        </div>
+        <div class="form-group">
+          <label for="categorie">
+            Category <span class="required">*</span>
+          </label>
+          <select id="categorie" name="categorie" required>
+             <option value="">Select a category</option>
+                        <option value="restaurant">Restaurant</option>
+                        <option value="boulangerie">Bakery</option>
+                        <option value="epicerie">Grocery store</option>
+                        <option value="boutique">Boutique</option>
+                        <option value="pharmacie">Pharmacy</option>
+                        <option value="coiffeur">Hair dresser</option>
+                        <option value="other...">Autre</option>
+          </select>
+          </div>
+        <div class="form-group">
+          <label for="description">Description</label>
+          <textarea id="description" name="description" placeholder="Example: describe your commerce in some words..." required></textarea>
+        </div>
+      </section>
+
+
+      <section class="form-part">
+        <h2 class="section-title">Contact details</h2>
+        <div class="form-group">
+          <label for="adresse">Address <span class="required">*</span> </label>
+          <input type="text"id="adresse"name="adresse" placeholder="exemple: Monastir,R6" required>
+
+        </div>
+
+
+      <div class="form-row">
+        <div  class="form-group">
+          <label for="ville">city <span class="required">*</span> </label>
+          <input type ="text" id="ville"name="ville" placeholder="ville" required>
+        </div>
+      
+      <div class="form-group">
+      <label for="codepostal">Postal code <span class="required">*</span> </label>
+      <input type="text" id="codepostal"name="codepostal" placeholder="exemple: 5000" required>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+      <label for="phone">Phone number <span class="required">*</span> </label>
+      <input type="tel" id="phone"name="phone" placeholder="exemple: +216 12-345-678" required>
+    </div>
+      <div class="form-group">
+        <label for="email">Email <span class="required">*</span> </label>
+        <input type="email" id="email"name="email" placeholder="exemple:contact@business.com" required>
+
+    </div>
+    </div>
+    </section>
+
+    <section class="form-part ">
+      <h2 class="section-title">Operating hours</h2>
+      <div class="form-row  row3 ">
+        <div class="form-group">
+          <label for="open">Opening hours <span class="required">*</span> </label>
+          <input type="text" id="open"name="open" placeholder="e.g. Mon-Fri 8am-7pm, Sat 9am-1pm" required>
+        </div>
+        <div class="form-group">
+          <label>Business picture</label>
+          <div class="upload-section">
+            <input type="file" id="picture"name="picture" accept="image/*" hidden>
+            <div class="upload-icon" > 📷</div>
+            <p class="upload-text">Drag an image here or click to select</p>
+            <p class="upload-note">Max file size: 5MB. Supported formats: JPG, PNG.</p>
+        </div>
+        
+      </div>    
+    </section>
+    <div class="button-group">
+                <button type="button" class="button-group btn-secondary">Cancel</button>
+                <button type="submit" class="button-group btn-primary">Confirm the submission</button>
+            </div>
+    </form>
+    <footer>
+      <p style="text-align: center;">© 2025 localGuid — All rights reserved</p>
+    </footer>
+    
+   
+  </div>
+  
+</body>
+</html>
