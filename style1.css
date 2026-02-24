@@ -9,7 +9,7 @@
   }
   
   body {
-    background: #EBE8D7;
+    background: #faf6f0;
     color: #2a2a2a;
     line-height: 1.6;
   }
@@ -20,67 +20,81 @@
   }
   
   /* NAVBAR */
-  .nav{
-    position: sticky;
-    top: 0;
-    z-index: 50;
-    background: rgba(174, 103, 177, 0.92);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(255,255,255,.10);
-    height: 70px;
-  }
+ 
 header{
   height: 70px;
 }
-  .nav-inner{
-    padding: 18px 0;
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    align-items: center;
-    gap: 14px;
-    height: 70px;
-  }
+.nav {
+  position: fixed; /* Rendre la navigation fixe */
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #c1121f; /* MODIFICATION: Couleur avec opacité réduite (0.85 = 85% opaque, 15% transparent) */
+  z-index: 1000; /* S'assurer que la navbar reste au-dessus du contenu */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); /* Ombre légère pour démarquer la navbar du contenu */
+  padding: 0 20px; /* Ajout d'un padding latéral */
+  backdrop-filter: blur(
+    5px
+  ); /* AJOUT: Effet de flou pour renforcer la transparence */
+}
 
-  .nav-left, .nav-right{
-    display:flex;
-    gap: 22px;
-    font-size: 14px;
-    font-weight: 500;
-    color: rgba(255,255,255,.86);
-  }
-  .nav-left{ justify-content: flex-start; }
-  .nav-right{ justify-content: flex-end; }
+.nav-inner {
+  padding: 18px 0;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 14px;
+  max-width: 1400px; /* Limiter la largeur pour les grands écrans */
+  margin: 0 auto; /* Centrer le contenu */
+}
 
-  .nav-left a, .nav-right a{
-    padding: 8px 10px;
-    border-radius: 12px;
-    transition: .2s ease;
-  }
-  .nav-left a:hover, .nav-right a:hover{
-    background: rgba(255,255,255,.10);
-  }
+.nav-left,
+.nav-right {
+  display: flex;
+  gap: 22px;
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.86);
+}
+.nav-left {
+  justify-content: flex-start;
+}
+.nav-right {
+  justify-content: flex-end;
+}
 
-  /* LOGO CENTER */
-  .nav-logo{
-    display:flex;
-    justify-content:center;
-    align-items:center;
-  }
-  
-  
-  .nav-logo img {
-    height: 46px;              /* gardez la hauteur existante */
-    width: auto;               /* maintient le ratio */
-    border-radius: 50%;        /* rend l'image circulaire (si carrée) */
-    filter: brightness(1.2) contrast(1.1); /* éclaircit et renforce légèrement le contraste */
-    object-fit: cover;         /* pour bien remplir le cercle si l'image n'est pas carrée */
-  }
-  .nav-logo img{
-    height: 46px;
-    object-fit: contain;
-    cursor: pointer;
-    filter: drop-shadow(0 12px 30px rgba(0,0,0,.25));
-  }
+.nav-left a,
+.nav-right a {
+  padding: 8px 10px;
+  border-radius: 12px;
+  transition: 0.2s ease;
+  text-decoration: none; /* Ajout pour enlever le soulignement */
+  color: rgba(255, 255, 255, 0.86); /* Ajout pour la couleur du texte */
+}
+.nav-left a:hover,
+.nav-right a:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* LOGO CENTER */
+/* LOGO CENTER */
+.nav-logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.nav-logo img {
+  height: 46px; /* gardez la hauteur existante */
+  width: auto; /* maintient le ratio */
+  border-radius: 50%; /* rend l'image circulaire (si carrée) */
+  filter: brightness(1.2) contrast(1.1); /* éclaircit et renforce légèrement le contraste */
+  object-fit: cover; /* pour bien remplir le cercle si l'image n'est pas carrée */
+}
+.nav-logo img:hover {
+  transform: scale(1.05);
+}
+
   .hero {
     height: calc(100vh - 111px); min-height: 580px;
     position: relative; display: flex; align-items: flex-end;
@@ -205,7 +219,7 @@ header{
 
 .hs-lbl {
   font-size: 12px;
-  color: #603469;
+  color: #c1121f;
   display: block;
   margin-top: 6px;
 }
@@ -221,7 +235,7 @@ header{
 }
 
 .hs-btn {
-  background: #603469;
+  background: #c1121f;
   color: #EBE8D7;
   border: none;
   padding: 0 28px;
@@ -243,7 +257,7 @@ header{
      TICKER
   ===================== */
   .ticker {
-    background: #603469;
+    background: #c1121f;
     color: #EBE8D7;
     overflow: hidden;
     white-space: nowrap;
@@ -280,7 +294,7 @@ header{
     text-transform: uppercase;
     font-size: 0.75rem;
     letter-spacing: 3px;
-    color: #603469;
+    color: #c1121f;
     margin-bottom: 8px;
   }
 
@@ -296,14 +310,14 @@ header{
   }
 
   .sec-link {
-    color: #603469;
+    color: #c1121f;
     font-weight: 500;
     border-bottom: 1px solid transparent;
     transition: 0.2s;
   }
 
   .sec-link:hover {
-    border-bottom-color: #603469;
+    border-bottom-color: #c1121f;
   }
 
   .grid3 {
@@ -356,7 +370,7 @@ header{
     position: absolute;
     top: 10px;
     left: 10px;
-    background: #603469;
+    background: #c1121f;
     color: #ebe8d7;
     font-size: 0.7rem;
     padding: 4px 12px;
@@ -417,7 +431,7 @@ header{
 
   .card-meta {
     font-size: 0.85rem;
-    color: #603469;
+    color: #a3b18a;
     margin-bottom: 10px;
   }
 
@@ -437,12 +451,12 @@ header{
     padding: 4px 12px;
     border-radius: 30px;
     font-size: 0.7rem;
-    color: #4f2957;
+    color: #a3b18a;
   }
   /* =====================FOOTER===================== */
      /* Footer */
      footer {
-        background:#4f2957; 
+        background:#c1121f; 
         padding:60px 0 24px;
      }
      .fi { 
