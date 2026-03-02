@@ -1,0 +1,940 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nos Guides — LocalGuide Monastir</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      :root {
+        --red: #c1121f;
+        --red-dark: #8a3137;
+        --cream: #faf6f0;
+        --text: #1a1a1a;
+        --muted: #718096;
+      }
+      body {
+        font-family: "DM Sans", sans-serif;
+        background: linear-gradient(135deg, var(--cream) 0%, #e8d5d7 100%);
+        min-height: 100vh;
+        padding-top: 82px;
+        color: var(--text);
+      }
+
+      /* NAVBAR */
+      .nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 1000;
+        background: var(--red);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        transition: background-color 0.3s;
+      }
+      .nav.scrolled {
+        background: rgba(193, 18, 31, 0.92);
+      }
+      .nav-inner {
+        padding: 18px 30px;
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        gap: 14px;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+      .nav-left,
+      .nav-right {
+        display: flex;
+        gap: 22px;
+        font-size: 14px;
+        font-weight: 500;
+      }
+      .nav-left {
+        justify-content: flex-start;
+      }
+      .nav-right {
+        justify-content: flex-end;
+      }
+      .nav-left a,
+      .nav-right a {
+        color: white;
+        text-decoration: none;
+        padding: 8px 10px;
+        border-radius: 12px;
+        transition: all 0.2s;
+      }
+      .nav-left a:hover,
+      .nav-right a:hover {
+        background: rgba(255, 255, 255, 0.15);
+        transform: translateY(-2px);
+      }
+      .nav-left a.active,
+      .nav-right a.active {
+        background: rgba(255, 255, 255, 0.2);
+        font-weight: 600;
+      }
+      .nav-logo {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .nav-logo img {
+        height: 46px;
+        width: auto;
+        border-radius: 50%;
+        filter: brightness(1.2) contrast(1.1);
+        object-fit: cover;
+        transition: transform 0.2s;
+      }
+      .nav-logo img:hover {
+        transform: scale(1.05);
+      }
+
+      /* HERO */
+      .hero {
+        text-align: center;
+        padding: 60px 20px 40px;
+        animation: fadeInDown 0.8s ease;
+      }
+      @keyframes fadeInDown {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .hero-eyebrow {
+        display: inline-block;
+        background: var(--red);
+        color: white;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        padding: 6px 18px;
+        border-radius: 50px;
+        margin-bottom: 20px;
+      }
+      .hero h1 {
+        font-family: "Playfair Display", serif;
+        font-size: clamp(2.4rem, 5vw, 4rem);
+        font-weight: 900;
+        background: linear-gradient(135deg, #181818 0%, #6e6c6c 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 14px;
+        line-height: 1.15;
+      }
+      .hero p {
+        color: var(--muted);
+        font-size: 1.15rem;
+        max-width: 500px;
+        margin: 0 auto 16px;
+      }
+      .hero-location {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        background: white;
+        border: 2px solid rgba(193, 18, 31, 0.18);
+        border-radius: 50px;
+        padding: 7px 18px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--red-dark);
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.07);
+      }
+
+      /* FILTER BAR */
+      .filter-bar {
+        max-width: 860px;
+        margin: 0 auto 50px;
+        padding: 0 20px;
+        display: flex;
+        gap: 14px;
+        flex-wrap: wrap;
+        justify-content: center;
+        animation: slideUp 0.6s ease 0.2s both;
+      }
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .search-wrap {
+        flex: 1;
+        min-width: 220px;
+        position: relative;
+      }
+      .search-wrap input {
+        width: 100%;
+        padding: 13px 20px 13px 48px;
+        border: 2px solid rgba(193, 18, 31, 0.15);
+        border-radius: 50px;
+        background: white;
+        font-family: "DM Sans", sans-serif;
+        font-size: 0.95rem;
+        color: var(--text);
+        transition: all 0.3s;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+      }
+      .search-wrap input:focus {
+        outline: none;
+        border-color: var(--red);
+        box-shadow: 0 0 0 4px rgba(193, 18, 31, 0.1);
+      }
+      .search-icon {
+        position: absolute;
+        left: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 18px;
+        pointer-events: none;
+      }
+      .filter-chips {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .chip {
+        padding: 10px 20px;
+        border-radius: 50px;
+        border: 2px solid rgba(193, 18, 31, 0.2);
+        background: white;
+        font-family: "DM Sans", sans-serif;
+        font-size: 0.88rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.25s;
+        color: var(--muted);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      }
+      .chip:hover {
+        border-color: var(--red);
+        color: var(--red);
+        transform: translateY(-2px);
+      }
+      .chip.active {
+        background: var(--red);
+        border-color: var(--red);
+        color: white;
+        box-shadow: 0 6px 18px rgba(193, 18, 31, 0.3);
+      }
+
+      /* STATS BAR */
+      .stats-bar {
+        max-width: 1200px;
+        margin: 0 auto 32px;
+        padding: 0 30px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+      .stats-count {
+        font-size: 0.9rem;
+        color: var(--muted);
+      }
+      .stats-count strong {
+        color: var(--text);
+      }
+      .sort-select {
+        padding: 9px 18px;
+        border: 2px solid rgba(193, 18, 31, 0.15);
+        border-radius: 12px;
+        background: white;
+        font-family: "DM Sans", sans-serif;
+        font-size: 0.88rem;
+        color: var(--text);
+        cursor: pointer;
+      }
+      .sort-select:focus {
+        outline: none;
+        border-color: var(--red);
+      }
+
+      /* GRID */
+      .grid {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 30px 80px;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 28px;
+      }
+
+      /* CARD */
+      .card {
+        background: white;
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+        transition:
+          transform 0.3s,
+          box-shadow 0.3s;
+        animation: cardIn 0.5s ease both;
+        cursor: pointer;
+        position: relative;
+      }
+      .card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 50px rgba(193, 18, 31, 0.15);
+      }
+      @keyframes cardIn {
+        from {
+          opacity: 0;
+          transform: translateY(24px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .card:nth-child(1) {
+        animation-delay: 0.05s;
+      }
+      .card:nth-child(2) {
+        animation-delay: 0.1s;
+      }
+      .card:nth-child(3) {
+        animation-delay: 0.15s;
+      }
+      .card:nth-child(4) {
+        animation-delay: 0.2s;
+      }
+      .card:nth-child(5) {
+        animation-delay: 0.25s;
+      }
+      .card:nth-child(6) {
+        animation-delay: 0.3s;
+      }
+      .card:nth-child(7) {
+        animation-delay: 0.35s;
+      }
+      .card-image {
+        position: relative;
+        height: 200px;
+        overflow: hidden;
+      }
+      .card-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s;
+      }
+      .card:hover .card-image img {
+        transform: scale(1.08);
+      }
+      .card-badge {
+        position: absolute;
+        top: 14px;
+        left: 14px;
+        background: var(--red);
+        color: white;
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 5px 12px;
+        border-radius: 50px;
+      }
+      .card-availability {
+        position: absolute;
+        top: 14px;
+        right: 14px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid white;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+      }
+      .card-availability.available {
+        background: #48bb78;
+      }
+      .card-availability.busy {
+        background: #f6ad55;
+      }
+      .card-availability.unavailable {
+        background: #a0aec0;
+      }
+      .card-body {
+        padding: 22px;
+      }
+      .card-header {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        margin-bottom: 14px;
+      }
+      .guide-avatar {
+        width: 54px;
+        height: 54px;
+        border-radius: 16px;
+        object-fit: cover;
+        border: 3px solid var(--cream);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        flex-shrink: 0;
+      }
+      .card-meta {
+        flex: 1;
+      }
+      .card-name {
+        font-family: "Playfair Display", serif;
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+      .card-specialty {
+        font-size: 0.82rem;
+        color: var(--red);
+        font-weight: 600;
+      }
+      .card-desc {
+        font-size: 0.9rem;
+        color: var(--muted);
+        line-height: 1.6;
+        margin-bottom: 16px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      .card-tags {
+        display: flex;
+        gap: 7px;
+        flex-wrap: wrap;
+        margin-bottom: 18px;
+      }
+      .tag {
+        font-size: 0.75rem;
+        padding: 4px 10px;
+        background: var(--cream);
+        border-radius: 50px;
+        color: #4a5568;
+        font-weight: 500;
+      }
+      .card-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-top: 16px;
+        border-top: 1px solid rgba(0, 0, 0, 0.06);
+      }
+      .stars {
+        color: #f6ad55;
+        font-size: 0.9rem;
+        letter-spacing: -1px;
+      }
+      .rating-num {
+        font-weight: 600;
+        font-size: 0.9rem;
+      }
+      .review-count {
+        font-size: 0.8rem;
+        color: var(--muted);
+      }
+      .card-rating {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .card-price {
+        font-weight: 700;
+        color: var(--red-dark);
+        font-size: 0.95rem;
+      }
+      .card-price span {
+        font-size: 0.75rem;
+        font-weight: 400;
+        color: var(--muted);
+      }
+      .card-cta {
+        display: flex;
+        gap: 10px;
+        margin-top: 16px;
+      }
+      .btn-book {
+        flex: 1;
+        padding: 11px 0;
+        background: linear-gradient(135deg, var(--red-dark), var(--red));
+        color: white;
+        border: none;
+        border-radius: 50px;
+        font-family: "DM Sans", sans-serif;
+        font-size: 0.88rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        box-shadow: 0 6px 16px rgba(193, 18, 31, 0.25);
+      }
+      .btn-book:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 24px rgba(193, 18, 31, 0.35);
+      }
+      .btn-profile {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid rgba(193, 18, 31, 0.2);
+        border-radius: 50%;
+        background: white;
+        cursor: pointer;
+        font-size: 16px;
+        transition: all 0.25s;
+      }
+      .btn-profile:hover {
+        border-color: var(--red);
+        background: rgba(193, 18, 31, 0.06);
+      }
+
+      /* FEATURED */
+      .card.featured {
+        grid-column: span 2;
+        display: flex;
+      }
+      .card.featured .card-image {
+        width: 42%;
+        height: auto;
+        min-height: 260px;
+        flex-shrink: 0;
+      }
+      .card.featured .card-body {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 28px;
+      }
+      .featured-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: var(--red);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 8px;
+      }
+      .featured-label::before {
+        content: "★";
+        font-size: 12px;
+      }
+
+      /* EMPTY */
+      .empty-state {
+        grid-column: 1/-1;
+        text-align: center;
+        padding: 80px 20px;
+      }
+      .empty-state .empty-icon {
+        font-size: 64px;
+        margin-bottom: 20px;
+      }
+      .empty-state h3 {
+        font-family: "Playfair Display", serif;
+        font-size: 1.6rem;
+        margin-bottom: 10px;
+      }
+      .empty-state p {
+        color: var(--muted);
+      }
+
+      footer {
+        text-align: center;
+        color: rgba(100, 80, 80, 0.7);
+        padding: 20px;
+        font-size: 0.9rem;
+      }
+
+      @media (max-width: 900px) {
+        .card.featured {
+          flex-direction: column;
+          grid-column: span 1;
+        }
+        .card.featured .card-image {
+          width: 100%;
+          height: 200px;
+        }
+      }
+      @media (max-width: 768px) {
+        .nav-inner {
+          grid-template-columns: 1fr;
+          gap: 10px;
+          padding: 15px;
+        }
+        .nav-left,
+        .nav-right {
+          justify-content: center;
+          flex-wrap: wrap;
+          gap: 10px;
+        }
+        .grid {
+          padding: 0 16px 60px;
+          grid-template-columns: 1fr;
+        }
+        .stats-bar {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 10px;
+          padding: 0 16px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="nav" id="mainNav">
+      <div class="nav-inner">
+        <nav class="nav-left">
+          <a href="aceuil.html">Accueil</a>
+          <a href="add.html">Ajouter commerce</a>
+          <a href="fichecomm.html">Commerces</a>
+        </nav>
+        <a href="aceuil.html" class="nav-logo">
+          <img src="images/logo.png" alt="LocalGuide Logo" />
+        </a>
+        <nav class="nav-right">
+          <a href="nouveautes.html">Nouveautés</a>
+          <a href="guides.html" class="active">Nos guides</a>
+          <a href="admin.html">Admin</a>
+        </nav>
+      </div>
+    </header>
+
+    <section class="hero">
+      <span class="hero-eyebrow">Experts Locaux</span>
+      <h1>Les Guides de Monastir</h1>
+      <p>
+        Des passionnés du territoire monastirien prêts à vous faire vivre une
+        expérience authentique et inoubliable.
+      </p>
+      <div class="hero-location"> Monastir, Tunisie</div>
+    </section>
+
+    <div class="filter-bar">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Rechercher un guide, une spécialité…"
+          oninput="renderGrid()"
+        />
+      </div>
+      <div class="filter-chips">
+        <button class="chip active" onclick="setFilter('Tous', this)">
+          Tous
+        </button>
+        <button class="chip" onclick="setFilter('Gastronomie', this)">
+           Gastronomie
+        </button>
+        <button class="chip" onclick="setFilter('Histoire', this)">
+          Histoire
+        </button>
+        <button class="chip" onclick="setFilter('Mer & Port', this)">
+          Mer & Port
+        </button>
+        <button class="chip" onclick="setFilter('Artisanat', this)">
+           Artisanat
+        </button>
+        <button class="chip" onclick="setFilter('Nocturne', this)">
+          Nocturne
+        </button>
+      </div>
+    </div>
+
+    <div class="stats-bar">
+      <p class="stats-count">
+        <strong id="guideCount">7</strong> guides disponibles à Monastir
+      </p>
+      <select
+        class="sort-select"
+        onchange="
+          currentSort = this.value;
+          renderGrid();
+        "
+      >
+        <option value="rating">Trier par : Note</option>
+        <option value="name">Trier par : Nom</option>
+        <option value="price">Trier par : Prix</option>
+        <option value="reviews">Trier par : Avis</option>
+      </select>
+    </div>
+
+    <main class="grid" id="guidesGrid"></main>
+
+    <footer>
+      <p>
+        © 2025 LocalGuide Monastir — Tous droits réservés — Votre guide local de
+        confiance
+      </p>
+    </footer>
+
+    <script>
+      const guides = [
+        {
+          id: 1,
+          name: "Salma Benali",
+          specialty: "Gastronomie Monastirienne",
+          category: "Gastronomie",
+          description:
+            "Spécialiste des saveurs authentiques de Monastir, Salma vous emmène explorer les marchés, les snacks cachés de la médina et les tables de pêcheurs du port.",
+          tags: ["Médina", "Port", "Tajines"],
+          rating: 4.9,
+          reviews: 128,
+          price: 45,
+          available: "available",
+          cover:
+            "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&q=80",
+          avatar: "https://randomuser.me/api/portraits/women/44.jpg",
+          featured: true,
+        },
+        {
+          id: 2,
+          name: "Karim Sfaxi",
+          specialty: "Histoire & Ribat",
+          category: "Histoire",
+          description:
+            "Archéologue de formation, Karim donne vie au Ribat, au Mausolée de Bourguiba et aux ruelles de la médina avec une maîtrise historique rare.",
+          tags: ["Ribat", "Médina", "Byzantin"],
+          rating: 4.8,
+          reviews: 95,
+          price: 55,
+          available: "available",
+          cover:
+            "https://images.unsplash.com/photo-1564507592333-c60657eea523?w=600&q=80",
+          avatar: "https://randomuser.me/api/portraits/men/32.jpg",
+          featured: false,
+        },
+        {
+          id: 3,
+          name: "Nadia Hamrouni",
+          specialty: "Pâtisseries & Douceurs",
+          category: "Gastronomie",
+          description:
+            "Pâtissière chevronnée, Nadia propose des ateliers makroud et des dégustations dans les meilleures boutiques sucrées de Monastir.",
+          tags: ["Makroud", "Pâtisserie", "Thé"],
+          rating: 4.9,
+          reviews: 112,
+          price: 42,
+          available: "available",
+          cover:
+            "https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=600&q=80",
+          avatar: "https://randomuser.me/api/portraits/women/29.jpg",
+          featured: false,
+        },
+        {
+          id: 4,
+          name: "Anis Belhaj",
+          specialty: "Pêche & Vie du Port",
+          category: "Mer & Port",
+          description:
+            "Fils de pêcheur, Anis vous emmène au lever du soleil sur le port de Monastir, entre filets, criée et secrets de la mer qu'il connaît depuis l'enfance.",
+          tags: ["Port", "Pêche", "Lever du soleil"],
+          rating: 4.7,
+          reviews: 68,
+          price: 38,
+          available: "available",
+          cover:
+            "https://images.unsplash.com/photo-1559847844-5315695dadae?w=600&q=80",
+          avatar: "https://randomuser.me/api/portraits/men/47.jpg",
+          featured: false,
+        },
+        {
+          id: 5,
+          name: "Leila Mansouri",
+          specialty: "Patrimoine Moderne & Bourguiba",
+          category: "Histoire",
+          description:
+            "Historienne et conteuse, Leila tisse l'histoire du mouvement national tunisien et du mausolée de Bourguiba avec une passion communicative.",
+          tags: ["Bourguiba", "Indépendance", "Mausolée"],
+          rating: 4.7,
+          reviews: 83,
+          price: 48,
+          available: "unavailable",
+          cover:
+            "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=600&q=80",
+          avatar: "https://randomuser.me/api/portraits/women/51.jpg",
+          featured: false,
+        },
+        {
+          id: 6,
+          name: "Youssef Dridi",
+          specialty: "Artisanat & Médina",
+          category: "Artisanat",
+          description:
+            "Guide artisan, Youssef ouvre les portes des ateliers de broderie, de bijouterie et de tissage traditionnels nichés dans la médina de Monastir.",
+          tags: ["Broderie", "Bijoux", "Souk"],
+          rating: 4.6,
+          reviews: 61,
+          price: 38,
+          available: "busy",
+          cover:
+            "https://images.unsplash.com/photo-1515377905703-c4788e51af15?w=600&q=80",
+          avatar: "https://randomuser.me/api/portraits/men/58.jpg",
+          featured: false,
+        },
+        {
+          id: 7,
+          name: "Mehdi Trabelsi",
+          specialty: "Balades Nocturnes",
+          category: "Nocturne",
+          description:
+            "Expert des lumières de Monastir après le coucher du soleil, Mehdi révèle les cafés secrets, la corniche illuminée et le Ribat sous les étoiles.",
+          tags: ["Nuit", "Corniche", "Ribat"],
+          rating: 4.5,
+          reviews: 48,
+          price: 50,
+          available: "available",
+          cover:
+            "https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=600&q=80",
+          avatar: "https://randomuser.me/api/portraits/men/76.jpg",
+          featured: false,
+        },
+      ];
+
+      let activeFilter = "Tous";
+      let currentSort = "rating";
+
+      function renderStars(r) {
+        const f = Math.floor(r),
+          h = r % 1 >= 0.5 ? 1 : 0;
+        return "★".repeat(f) + (h ? "½" : "") + "☆".repeat(5 - f - h);
+      }
+      function availLabel(s) {
+        return s === "available"
+          ? "Disponible"
+          : s === "busy"
+            ? "Occupé"
+            : "Indisponible";
+      }
+
+      function renderGrid() {
+        const search = document
+          .getElementById("searchInput")
+          .value.toLowerCase();
+        let list = [...guides];
+        if (activeFilter !== "Tous")
+          list = list.filter((g) => g.category === activeFilter);
+        if (search)
+          list = list.filter(
+            (g) =>
+              g.name.toLowerCase().includes(search) ||
+              g.specialty.toLowerCase().includes(search) ||
+              g.description.toLowerCase().includes(search) ||
+              g.tags.some((t) => t.toLowerCase().includes(search)),
+          );
+        if (currentSort === "name")
+          list.sort((a, b) => a.name.localeCompare(b.name));
+        else if (currentSort === "price")
+          list.sort((a, b) => a.price - b.price);
+        else if (currentSort === "reviews")
+          list.sort((a, b) => b.reviews - a.reviews);
+        else list.sort((a, b) => b.rating - a.rating);
+
+        document.getElementById("guideCount").textContent = list.length;
+        const grid = document.getElementById("guidesGrid");
+
+        if (!list.length) {
+          grid.innerHTML = `<div class="empty-state"><div class="empty-icon">🔍</div><h3>Aucun guide trouvé</h3><p>Essayez un autre filtre ou mot-clé.</p></div>`;
+          return;
+        }
+
+        grid.innerHTML = list
+          .map((g) => {
+            const tags = g.tags
+              .map((t) => `<span class="tag">${t}</span>`)
+              .join("");
+            const disabled =
+              g.available === "unavailable"
+                ? 'disabled style="opacity:0.5;cursor:not-allowed"'
+                : "";
+            return `
+        <article class="card ${g.featured ? "featured" : ""}" data-id="${g.id}">
+          <div class="card-image">
+            <img src="${g.cover}" alt="${g.name}" loading="lazy">
+            <span class="card-badge">${g.specialty}</span>
+            <span class="card-availability ${g.available}" title="${availLabel(g.available)}"></span>
+          </div>
+          <div class="card-body">
+            ${g.featured ? '<span class="featured-label">Guide en vedette</span>' : ""}
+            <div class="card-header">
+              <img src="${g.avatar}" alt="${g.name}" class="guide-avatar">
+              <div class="card-meta">
+                <div class="card-name">${g.name}</div>
+                <div class="card-specialty">${g.category}</div>
+              </div>
+            </div>
+            <p class="card-desc">${g.description}</p>
+            <div class="card-tags">${tags}</div>
+            <div class="card-footer">
+              <div class="card-rating">
+                <span class="stars">${renderStars(g.rating)}</span>
+                <span class="rating-num">${g.rating}</span>
+                <span class="review-count">(${g.reviews} avis)</span>
+              </div>
+              <div class="card-price">${g.price} TND <span>/ pers.</span></div>
+            </div>
+            <div class="card-cta">
+              <button class="btn-book" ${disabled} onclick="bookGuide(${g.id})">
+                ${g.available === "unavailable" ? "Non disponible" : "📅 Réserver"}
+              </button>
+              <button class="btn-profile" title="Voir le profil" onclick="viewProfile(${g.id})">👤</button>
+            </div>
+          </div>
+        </article>`;
+          })
+          .join("");
+      }
+
+      function setFilter(cat, el) {
+        activeFilter = cat;
+        document
+          .querySelectorAll(".chip")
+          .forEach((c) => c.classList.remove("active"));
+        el.classList.add("active");
+        renderGrid();
+      }
+
+      function bookGuide(id) {
+        const g = guides.find((x) => x.id === id);
+        alert(
+          ` Demande de réservation envoyée à ${g.name} !\nNous vous contacterons très bientôt.`,
+        );
+      }
+      function viewProfile(id) {
+        const g = guides.find((x) => x.id === id);
+        alert(
+          ` Profil de ${g.name}\n\nSpécialité : ${g.specialty}\nNote : ${g.rating}/5 (${g.reviews} avis)\nTarif : ${g.price} TND / pers.\nStatut : ${availLabel(g.available)}\n\n${g.description}`,
+        );
+      }
+
+      window.addEventListener("scroll", () =>
+        document
+          .getElementById("mainNav")
+          .classList.toggle("scrolled", window.scrollY > 50),
+      );
+      renderGrid();
+    </script>
+  </body>
+</html>
