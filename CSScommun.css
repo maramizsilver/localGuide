@@ -5,14 +5,14 @@
       left: 0;
       width: 100%;
       z-index: 1000;
-      background: #C1121F;
+      background: #62042D ;
       backdrop-filter: blur(10px);
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       transition: background-color 0.3s ease;
     }
 
     .nav.scrolled {
-      background: #C1121F(96, 52, 105, 0.7);
+      background:#62042D ;
       backdrop-filter: blur(15px);
     }
 
@@ -42,7 +42,8 @@
     }
 
     .nav-left a:hover, .nav-right a:hover {
-      background: rgba(255, 255, 255, 0.15);
+      background: #8D9191 ;
+
       transform: translateY(-2px);
     }
 
@@ -69,7 +70,7 @@
   /* Footer */
     footer {
       text-align: center;
-      color: rgba(255,255,255,0.8);
+      color: #ffffff;
       padding: 20px;
       font-size: 0.9rem;
     }
