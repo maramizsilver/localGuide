@@ -66,12 +66,10 @@
     .nav-logo img:hover {
       transform: scale(1.05);
     }
- /* Footer */
+  /* Footer */
     footer {
       text-align: center;
       color: rgba(255,255,255,0.8);
       padding: 20px;
       font-size: 0.9rem;
     }
-
-    
