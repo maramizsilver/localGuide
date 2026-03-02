@@ -5,14 +5,14 @@
       left: 0;
       width: 100%;
       z-index: 1000;
-      background: #62042D ;
+      background: #C1121F ;
       backdrop-filter: blur(10px);
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       transition: background-color 0.3s ease;
     }
 
     .nav.scrolled {
-      background:#62042D ;
+      background:#C1121F;
       backdrop-filter: blur(15px);
     }
 
