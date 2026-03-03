@@ -1,0 +1,221 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{listings}
+\lstset{basicstyle=\ttfamily\small, breaklines=true}
+
+\title{\textbf{Cahier des charges technique} \\
+       \Large Plateforme LocalGuide – Annuaire de commerces de proximité}
+\author{Équipe projet LocalGuide}
+\date{Version 1.0 – Mars 2026}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+\section{Introduction}
+LocalGuide est une plateforme web destinée à référencer, rechercher et localiser les commerces de proximité (cafés, restaurants, pharmacies, boutiques, services, etc.) sur le territoire de Monastir (Tunisie).  
+L’objectif est double :
+\begin{itemize}
+    \item \textbf{Pour les citoyens / visiteurs} : découvrir facilement les commerces locaux, obtenir des informations pratiques (horaires, avis, photos) et planifier des parcours thématiques.
+    \item \textbf{Pour les commerçants} : bénéficier d’une visibilité accrue et communiquer sur leurs actualités (promotions, événements).
+\end{itemize}
+Le site se veut moderne, intuitif et adapté à tous les supports (ordinateur, tablette, mobile).
+
+\section{Public cible}
+\begin{itemize}
+    \item \textbf{Visiteurs} : habitants, touristes, personnes de passage souhaitant explorer les commerces de Monastir.
+    \item \textbf{Commerçants} : propriétaires ou gérants de commerces locaux désireux d’ajouter et de gérer leur fiche.
+    \item \textbf{Administrateurs} : modérateurs en charge de valider les contenus, de gérer les utilisateurs et de garantir la qualité des informations.
+\end{itemize}
+
+\section{Fonctionnalités principales}
+D’après le document initial et les pages développées, les fonctionnalités suivantes sont implémentées :
+
+\subsection{Annuaire des commerces}
+Chaque commerce dispose d’une fiche détaillée contenant :
+\begin{itemize}
+    \item Nom, description, catégorie (restaurant, santé, service…).
+    \item Adresse, horaires d’ouverture, téléphone, email.
+    \item Photos, galerie d’images.
+    \item Avis et notes des utilisateurs.
+\end{itemize}
+
+\subsection{Carte interactive (page d’accueil)}
+La page principale affiche une carte de Monastir avec des marqueurs pour chaque commerce.  
+Fonctionnalités :
+\begin{itemize}
+    \item Géolocalisation de l’utilisateur.
+    \item Filtres par catégorie, distance, note.
+    \item Clic sur un marqueur → ouverture de la fiche du commerce.
+\end{itemize}
+
+\subsection{Fiche commerce (page détail)}
+Page dédiée à un commerce, avec :
+\begin{itemize}
+    \item Toutes les informations générales.
+    \item Carte intégrée avec position exacte.
+    \item Avis des visiteurs.
+    \item Galerie photos.
+    \item Boutons d’action (appeler, itinéraire, ajouter un avis).
+    \item Commerces similaires suggérés.
+\end{itemize}
+
+\subsection{Ajout d’un commerce (formulaire)}
+Formulaire permettant aux commerçants ou utilisateurs de proposer un nouveau commerce.  
+Champs obligatoires : nom, catégorie, adresse, ville, code postal, téléphone, email, horaires.  
+Optionnels : description, photo.  
+Le commerce n’est pas publié immédiatement : il passe en \textbf{attente de validation} par un administrateur.
+
+\subsection{Circuits / itinéraires (page guides)}
+Création de circuits thématiques (gastronomique, shopping, touristique) pour faciliter la découverte de la ville.  
+Chaque guide (personne référente) propose un parcours avec plusieurs commerces, affiché sur la carte dans un ordre logique.
+
+\subsection{Actualités locales (page News)}
+Espace dédié aux actualités des commerces et de la ville :
+\begin{itemize}
+    \item Promotions, événements, nouvelles ouvertures.
+    \item Articles rédigés par l’équipe ou les commerçants.
+    \item Possibilité de filtrer par type (actualité, événement, nouveau commerce, promo).
+    \item Bandeau à la une pour l’événement principal.
+    \item Inscription à une newsletter (simulation).
+\end{itemize}
+
+\subsection{Modération et administration}
+Tableau de bord administrateur avec :
+\begin{itemize}
+    \item Liste des commerces en attente, approuvés, refusés.
+    \item Filtres par statut.
+    \item Actions : valider, refuser, voir le détail.
+    \item Alertes (signalements, attente prolongée, etc.).
+    \item Gestion des avis (suppression des abus).
+    \item Gestion des utilisateurs.
+\end{itemize}
+
+\section{Description détaillée des pages réalisées}
+\subsection{Accueil (aceuil.html)}
+\begin{itemize}
+    \item Barre de navigation commune à toutes les pages.
+    \item Diaporama d’images en arrière‑plan.
+    \item Formulaire de recherche textuelle.
+    \item Mots‑clés (tags) cliquables.
+    \item Bandeau défilant (ticker) avec des informations dynamiques.
+    \item Sélection de commerces en vedette (cartes avec note, catégorie, tags).
+    \item Pied de page avec liens utiles.
+\end{itemize}
+
+\subsection{Ajout d’un commerce (add.html)}
+\begin{itemize}
+    \item Formulaire structuré en sections (informations générales, coordonnées, horaires et médias).
+    \item Barre de progression visuelle.
+    \item Validation des champs obligatoires avec messages d’erreur.
+    \item Compteur de caractères pour la description.
+    \item Zone de dépôt de photo (drag \& drop, sélection fichier).
+    \item Boutons Annuler (confirmation) et Envoyer.
+    \item Simulation d’envoi avec spinner et message de succès.
+\end{itemize}
+
+\subsection{Fiche commerce (fichecomm.html)}
+\begin{itemize}
+    \item Fil d’Ariane.
+    \item En‑tête avec nom, catégorie, note moyenne, statut d’ouverture, adresse, horaires condensés.
+    \item Boutons d’action (appeler, itinéraire, ajouter avis).
+    \item Image de couverture.
+    \item Grille à deux colonnes :
+          \begin{itemize}
+              \item Gauche : description, galerie photos, avis récents.
+              \item Droite : informations de contact (téléphone, adresse, site, WhatsApp), carte statique (placeholder), horaires détaillés.
+          \end{itemize}
+    \item Deux exemples de commerces (Café Marina, Restaurant El Medina) pour illustrer la variété.
+\end{itemize}
+
+\subsection{Page Guides (guide.html)}
+\begin{itemize}
+    \item Présentation des guides locaux (personnes).
+    \item Filtres par spécialité (Gastronomie, Histoire, Mer \& Port, Artisanat, Nocturne).
+    \item Barre de recherche.
+    \item Tri par note, nom, prix, nombre d’avis.
+    \item Cartes guide avec photo de couverture, avatar, spécialité, description courte, tags, note, prix, disponibilité.
+    \item Boutons de réservation (simulation) et de consultation de profil.
+\end{itemize}
+
+\subsection{Page Nouveautés (news.html)}
+\begin{itemize}
+    \item Onglets pour filtrer : Tout, Actualités, Événements, Nouveaux Commerces, Promos.
+    \item Bannière « À la une » pour un événement majeur.
+    \item Grille d’articles (actualités) avec image, catégorie, date, titre, extrait, auteur.
+    \item Liste d’événements sous forme de carte (date, titre, lieu, heure, tarif, tag).
+    \item Section d’inscription à la newsletter.
+\end{itemize}
+
+\subsection{Page Admin (admin.html)}
+\begin{itemize}
+    \item En‑tête avec badge Super Admin.
+    \item Alertes de modération (signalements, attente prolongée).
+    \item Filtres par statut (Tous, En attente, Approuvés, Refusés) avec compteurs dynamiques.
+    \item Liste des commerces avec nom, adresse, horaires, statut et actions (Voir, Valider, Refuser).
+    \item Pagination.
+    \item Simulation des actions de validation / refus.
+\end{itemize}
+
+\section{Types d’utilisateurs et droits}
+\begin{itemize}
+    \item \textbf{Visiteur (non connecté)} : consultation de toutes les pages, recherche, lecture des avis, utilisation de la carte.
+    \item \textbf{Commerçant} : peut soumettre un formulaire d’ajout ; après validation, pourra (dans une version future) gérer sa fiche et répondre aux avis.
+    \item \textbf{Administrateur} : accès au tableau de bord de modération, validation des commerces, gestion des avis et utilisateurs.
+\end{itemize}
+
+\section{Contraintes techniques et recommandations}
+\begin{itemize}
+    \item \textbf{Développement} : HTML5, CSS3, JavaScript (vanilla). Les fichiers CSS sont séparés (style1.css, style\_nav\_barre.css, etc.).
+    \item \textbf{Responsive design} : les pages doivent s’adapter aux mobiles et tablettes (utilisation de flexbox, grid, media queries).
+    \item \textbf{Carte interactive} : à implémenter avec une bibliothèque comme Leaflet ou Mapbox (actuellement placeholders).
+    \item \textbf{Accessibilité} : contrastes, labels de formulaire, alternative textuelle pour les images.
+    \item \textbf{Sécurité} : validation des données côté client (JavaScript) et à prévoir côté serveur ; modération obligatoire avant publication.
+    \item \textbf{Performances} : optimiser les images, minifier CSS/JS.
+\end{itemize}
+
+\section{Évolutions possibles}
+\begin{itemize}
+    \item Compte utilisateur avec authentification.
+    \item Gestion complète des avis (ajout, modification, signalement).
+    \item Système de réservation en ligne pour les circuits.
+    \item Backend avec base de données (MySQL/PostgreSQL) et API REST.
+    \item Internationalisation (arabe, anglais).
+\end{itemize}
+
+\section{Annexes – Structure des fichiers}
+\begin{lstlisting}
+Projet_web_LocalGuide/
+│
+├── aceuil.html
+├── add.html
+├── admin.html
+├── fichecomm.html
+├── guide.html
+├── news.html
+├── style1.css
+├── style_add.css
+├── style_admin.css
+├── style_fiche_comm.css
+├── style_guide.css
+├── style_news.css
+├── style_nav_barre.css
+└── images/ (logo, photos de demonstration)
+\end{lstlisting}
+
+\vfill
+\hrule
+\centering
+\textit{Document rédigé à partir du projet initial et des pages web développées.}
+\end{document}
