@@ -1,72 +1,281 @@
+/* ===== GOOGLE FONTS ===== */
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap");
 
-  .nav {
-    position: fixed; /* Rendre la navigation fixe */
-    top: 0;
-    left: 0;
-    width: 100%;
-    background-color: #c1121f; /* MODIFICATION: Couleur avec opacité réduite (0.85 = 85% opaque, 15% transparent) */
-    z-index: 1000; /* S'assurer que la navbar reste au-dessus du contenu */
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); /* Ombre légère pour démarquer la navbar du contenu */
-    padding: 0 20px; /* Ajout d'un padding latéral */
-    backdrop-filter: blur(
-      5px
-    ); /* AJOUT: Effet de flou pour renforcer la transparence */
-  }
-  
-  .nav-inner {
-    padding: 18px 0;
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    align-items: center;
-    gap: 14px;
-    max-width: 1400px; /* Limiter la largeur pour les grands écrans */
-    margin: 0 auto; /* Centrer le contenu */
-  }
-  
-  .nav-left,
-  .nav-right {
-    display: flex;
-    gap: 22px;
-    font-size: 14px;
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.86);
-  }
-  .nav-left {
-    justify-content: flex-start;
-  }
-  .nav-right {
-    justify-content: flex-end;
-  }
-  
-  .nav-left a,
-  .nav-right a {
-    padding: 8px 10px;
-    border-radius: 12px;
-    transition: 0.2s ease;
-    text-decoration: none; /* Ajout pour enlever le soulignement */
-    color: rgba(255, 255, 255, 0.86); /* Ajout pour la couleur du texte */
-  }
-  .nav-left a:hover,
-  .nav-right a:hover {
-    background: rgba(255, 255, 255, 0.1);
-  }
-  
-  /* LOGO CENTER */
-  /* LOGO CENTER */
-  .nav-logo {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .nav-logo img {
-    height: 46px; /* gardez la hauteur existante */
-    width: auto; /* maintient le ratio */
-    border-radius: 50%; /* rend l'image circulaire (si carrée) */
-    filter: brightness(1.2) contrast(1.1); /* éclaircit et renforce légèrement le contraste */
-    object-fit: cover; /* pour bien remplir le cercle si l'image n'est pas carrée */
-  }
-  .nav-logo img:hover {
-    transform: scale(1.05);
-  }
-  
+/* ===== VARIABLES GLOBALES ===== */
+:root {
+  /* Polices */
+  --font-primary:
+    "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-heading: "Playfair Display", Georgia, "Times New Roman", serif;
+
+  /* Couleurs */
+  --red: #c1121f;
+  --red-transparent: rgba(193, 18, 31, 0.95);
+  --white: #ffffff;
+  --gray-light: #f5f5f5;
+  --gray-dark: #333333;
+}
+
+/* ===== STYLES DE BASE ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-primary);
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--gray-dark);
+  background-color: var(--white);
+}
+
+/* ===== TYPOGRAPHIE GLOBALE ===== */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 1rem;
+}
+
+h1 {
+  font-weight: 900;
+  font-size: 2.5rem;
+}
+
+h2 {
+  font-size: 2rem;
+}
+
+h3 {
+  font-size: 1.75rem;
+}
+
+p {
+  font-family: var(--font-primary);
+  font-weight: 400;
+  margin-bottom: 1rem;
+}
+
+/* ===== NAVIGATION (commune à toutes les pages) ===== */
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  background: rgba(193, 18, 31, 0.95); /* État initial - moins transparent */
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  font-family: "Outfit", system-ui, sans-serif;
+  transition:
+    background-color 0.3s,
+    background 0.3s;
+}
+
+/* Navbar plus transparente quand on descend */
+.nav.transparent {
+  background: rgba(193, 18, 31, 0.75); /* Plus transparent */
+  backdrop-filter: blur(20px); /* Légèrement plus flou aussi */
+}
+.nav-inner {
+  padding: 14px 28px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 12px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.nav-left,
+.nav-right {
+  display: flex;
+  gap: 4px;
+  font-size: 13.5px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.nav-left {
+  justify-content: flex-start;
+}
+.nav-right {
+  justify-content: flex-end;
+}
+
+.nav-left a,
+.nav-right a {
+  color: rgba(255, 255, 255, 0.82);
+  text-decoration: none;
+  padding: 7px 14px;
+  border-radius: 100px;
+  transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+  white-space: nowrap;
+  font-family: var(--font-primary);
+  font-weight: 500;
+}
+
+.nav-left a:hover,
+.nav-right a:hover {
+  color: #fff;
+  background: #bcb9b924;
+  transform: translateY(-1px);
+}
+
+.nav-left a.active,
+.nav-right a.active {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.2);
+  font-weight: 600;
+}
+
+.nav-logo img {
+  height: 44px;
+  width: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  transition: transform 0.3s;
+}
+
+.nav-logo img:hover {
+  transform: scale(1.07);
+}
+
+/* ===== BOUTONS GLOBAUX ===== */
+button,
+.btn,
+.btn-primary,
+.btn-secondary {
+  font-family: var(--font-primary);
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-primary {
+  background-color: var(--red);
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #a00f1a;
+}
+
+.btn-secondary {
+  background-color: transparent;
+  border: 1px solid var(--red);
+  color: var(--red);
+}
+
+.btn-secondary:hover {
+  background-color: rgba(193, 18, 31, 0.1);
+}
+
+/* ===== FORMULAIRES GLOBAUX ===== */
+input,
+select,
+textarea,
+label {
+  font-family: var(--font-primary);
+}
+
+label {
+  font-weight: 500;
+  font-size: 0.95rem;
+  margin-bottom: 0.25rem;
+  display: block;
+}
+
+input,
+select,
+textarea {
+  font-weight: 400;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  width: 100%;
+  font-size: 1rem;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--red);
+  box-shadow: 0 0 0 3px rgba(193, 18, 31, 0.1);
+}
+
+/* ===== FOOTER GLOBAL ===== */
+footer {
+  font-family: var(--font-primary);
+  font-weight: 400;
+  text-align: center;
+  color: var(--white);
+  padding: 20px;
+  font-size: 0.9rem;
+  background-color: var(--red-transparent);
+  margin-top: 40px;
+}
+
+/* ===== UTILITAIRES ===== */
+.text-center {
+  text-align: center;
+}
+.text-left {
+  text-align: left;
+}
+.text-right {
+  text-align: right;
+}
+
+.mt-1 {
+  margin-top: 0.5rem;
+}
+.mt-2 {
+  margin-top: 1rem;
+}
+.mt-3 {
+  margin-top: 1.5rem;
+}
+.mt-4 {
+  margin-top: 2rem;
+}
+
+.mb-1 {
+  margin-bottom: 0.5rem;
+}
+.mb-2 {
+  margin-bottom: 1rem;
+}
+.mb-3 {
+  margin-bottom: 1.5rem;
+}
+.mb-4 {
+  margin-bottom: 2rem;
+}
+/* Footer */
+footer {
+  width: 100%;
+  background:none;  /* fond sombre élégant */
+  color: #604a4a;
+  text-align: center;
+  padding: 20px 20px;  /* plus grand : 60px en haut/bas */
+  margin-top: 60px;
+  font-size: 1rem;
+  position: relative;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
