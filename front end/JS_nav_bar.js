@@ -5,5 +5,5 @@ window.addEventListener('scroll', () => {
     nav.classList.add('transparent');
   } else {
     nav.classList.remove('transparent');
-  }
+  }/*f*/
 });
