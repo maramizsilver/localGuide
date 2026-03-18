@@ -114,6 +114,7 @@ h1 {
 .btn-primary:hover {
   opacity: 0.92;
   box-shadow: 0 8px 24px rgba(212, 43, 43, 0.35);
+  background-color:  var(--gray);
 }
 
 .cover {
