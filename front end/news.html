@@ -4,11 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Nouveautés — LocalGuide Monastir</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap"
-      rel="stylesheet"
-    />
+
     <link rel="stylesheet" href="style_news.css" />
+    <link rel="stylesheet" href="style_nav_barre.css">
     <style></style>
   </head>
   <body>
@@ -31,7 +29,7 @@
     </header>
 
     <section class="hero">
-      <span class="hero-eyebrow">🗞️ Actualités & Événements</span>
+      <span class="hero-eyebrow"> Actualités & Événements</span>
       <h1>Les Nouveautés LocalGuide</h1>
       <p>
         Tout ce qui se passe à Monastir — découvertes, événements et offres
@@ -87,27 +85,27 @@
       <div class="banner-inner">
         <div class="banner-img">
           <img
-            src="https://images.unsplash.com/photo-1564507592333-c60657eea523?w=800&q=80"
+            src="images/Festival_Monastir.jpg"
             alt="Ribat de Monastir"
           />
         </div>
         <div class="banner-content">
           <span class="banner-tag">✦ À la Une — Monastir</span>
-          <h2>Festival des Saveurs du Ribat 2025</h2>
+          <h2>Le Festival international de Monastir </h2>
           <p>
-            Trois jours de gastronomie, d'artisanat et de musique traditionnelle
-            au pied du Ribat millénaire de Monastir. 40+ exposants locaux et
-            ateliers culinaires ouverts à tous.
+            3 jours de fête et de musique au pied du Ribat de Monastir !
+Vos chanteurs préférés sont sur scène pour vous faire vibrer.
+Bienvenue à tous !!! 🎤
           </p>
           <div class="banner-meta">
             <div class="banner-meta-item">
-              📅 <strong>15 – 17 Mars 2025</strong>
+              📅 <strong>15 – 17 aout 2026</strong>
             </div>
             <div class="banner-meta-item">
               📍 <strong>Place du Ribat, Monastir</strong>
             </div>
             <div class="banner-meta-item">
-              🎟️ <strong>Entrée gratuite</strong>
+              🎟️ <strong>Entrée : 25 DT par personne</strong>
             </div>
           </div>
           <button
@@ -205,7 +203,7 @@
             "Construit au VIIIe siècle, le Ribat de Monastir est bien plus qu'une forteresse. Notre guide Karim dévoile les détails architecturaux et symboliques que même les habitants ignorent, ainsi que les dernières découvertes des fouilles.",
           date: "10 Fév 2025",
           readTime: "6 min",
-          img: "https://images.unsplash.com/photo-1564507592333-c60657eea523?w=600&q=80",
+          img: "images/Ribat_news.jpg",
           author: {
             name: "Karim S.",
             avatar: "https://randomuser.me/api/portraits/men/32.jpg",
@@ -217,12 +215,13 @@
           category: "Nouveau Commerce",
           type: "commerces",
           title:
-            "Café Médina : un riad transformé en salon de thé contemporain",
+            "Miss cake :C’est officiel, l’univers gourmand de Miss Cake a posé ses valises au cœur de Stah Jaber ",
+ 
           excerpt:
-            "Rue de l'Indépendance à Monastir, un ancien riad vient d'ouvrir ses portes sous l'enseigne Café Médina. Décor authentique, café de spécialité d'origine tunisienne et pâtisseries maison.",
+            "Miss Cake vous accueille au cœur de Stah Jaber, à Monastir. Située prés de ISIMM , notre boutique est facilement accessible et constitue la nouvelle halte gourmande du quartier.",
           date: "6 Fév 2025",
           readTime: "3 min",
-          img: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=600&q=80",
+          img: "images/misscake.png",
           author: {
             name: "Équipe LG",
             avatar: "https://randomuser.me/api/portraits/lego/1.jpg",
@@ -238,7 +237,7 @@
             "Pour fêter le lancement de notre nouvelle fonctionnalité de réservation en ligne, profitez d'une réduction exceptionnelle sur toutes les visites guidées du Ribat de Monastir samedi et dimanche.",
           date: "3 Fév 2025",
           readTime: "2 min",
-          img: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=600&q=80",
+          img: "images/reduction tour ribat.avif",
           author: {
             name: "Équipe LG",
             avatar: "https://randomuser.me/api/portraits/lego/2.jpg",
@@ -272,7 +271,7 @@
             "Symbole de la Tunisie indépendante, le mausolée de Habib Bourguiba domine la médina de Monastir. Leila Mansouri retrace son histoire, son architecture et les anecdotes que les guides locaux transmettent.",
           date: "20 Jan 2025",
           readTime: "5 min",
-          img: "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=600&q=80",
+          img: "images/bourguiba mosquee.jpg",
           author: {
             name: "Leila M.",
             avatar: "https://randomuser.me/api/portraits/women/51.jpg",
@@ -407,10 +406,10 @@
           </div>
           <span class="event-tag ${e.tag}">${
               e.tag === "nouveau"
-                ? "✨ Nouveau"
+                ? "Nouveau"
                 : e.tag === "promo"
-                ? "🎁 Promo"
-                : "🔔 Bientôt"
+                ? " Promo"
+                : " Bientôt"
             }</span>
           <button class="event-register" onclick="registerEvent(${
             e.id
@@ -454,7 +453,7 @@
       function registerEvent(id) {
         const e = events.find((x) => x.id === id);
         alert(
-          `✅ Inscription confirmée !\n"${e.title}"\n📅 ${e.day} ${e.month} · ${e.time}\n📍 ${e.location}`
+          `✅ Inscription confirmée !\n"${e.title}"\n ${e.day} ${e.month} · ${e.time}\n📍 ${e.location}`
         );
       }
       function subscribeNewsletter() {
@@ -477,5 +476,6 @@
       renderArticles();
       renderEvents();
     </script>
+    <script src="JS_nav_bar.js"></script>
   </body>
 </html>
