@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Écrire un Avis — LocalGuide</title>
+
+    <link rel="stylesheet" href="avis.css" />
+    <link rel="stylesheet" href="style_nav_barre.css" />
+  </head>
+  <body>
+    <div class="container">
+      <!-- NAVBAR -->
+      <header class="nav">
+        <div class="nav-inner">
+          <nav class="nav-left">
+            <a href="aceuil.html">Accueil</a>
+            <a href="add.html">Ajouter commerce</a>
+            <a href="fichecomm.html">Commerces</a>
+          </nav>
+          <a href="aceuil.html" class="nav-logo">
+            <img src="images/logo.png" alt="LocalGuide Logo" />
+          </a>
+          <nav class="nav-right">
+            <a href="news.html">Nouveautés</a>
+            <a href="guide.html">Nos guides</a>
+            <a href="admin.html">Admin</a>
+          </nav>
+        </div>
+      </header>
+
+      <!-- HERO -->
+      <div class="header1">
+        <h1>Écrire un Avis</h1>
+        <p class="title">Votre expérience compte pour toute la communauté !</p>
+      </div>
+
+      <!-- Stats bar -->
+      <div class="stats-bar">
+        <div class="stat-item">
+          <span class="stat-num">4 200+</span>
+          <span class="stat-label">Avis publiés</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-num">98%</span>
+          <span class="stat-label">Avis vérifiés</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-num">850+</span>
+          <span class="stat-label">Commerces notés</span>
+        </div>
+      </div>
+
+      <!-- Barre de progression -->
+      <div class="progress-bar" id="progressBar">
+        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+      </div>
+
+      <!-- Formulaire -->
+      <form class="form1" id="avisForm" action="#" method="post" novalidate>
+
+        <!-- SECTION 1 : Commerce -->
+        <section class="form-part">
+          <h2 class="section-title">Le commerce</h2>
+
+          <div class="form-group">
+            <label for="commerce">Nom du commerce <span class="required">*</span></label>
+            <input type="text" id="commerce" name="commerce" placeholder="Ex: Green Coffee, Monastir" required />
+            <div class="error-message" id="commerceError">Le nom du commerce est requis</div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="categorie">Catégorie <span class="required">*</span></label>
+              <select id="categorie" name="categorie" required>
+                <option value="">Sélectionnez une catégorie</option>
+                <option value="restaurant">🍽️ Restaurant</option>
+                <option value="boulangerie">🥖 Boulangerie</option>
+                <option value="epicerie">🛒 Épicerie</option>
+                <option value="boutique">👗 Boutique</option>
+                <option value="pharmacie">💊 Pharmacie</option>
+                <option value="coiffeur">✂️ Coiffeur</option>
+                <option value="cafe">☕ Café</option>
+                <option value="other">✨ Autre</option>
+              </select>
+              <div class="error-message" id="categorieError">Veuillez sélectionner une catégorie</div>
+            </div>
+
+            <div class="form-group">
+              <label for="ville">Ville <span class="required">*</span></label>
+              <input type="text" id="ville" name="ville" placeholder="Ex: Monastir, Sousse..." required />
+              <div class="error-message" id="villeError">La ville est requise</div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="dateVisite">Date de visite <span class="required">*</span></label>
+              <input type="date" id="dateVisite" name="dateVisite" required />
+              <div class="error-message" id="dateVisiteError">La date de visite est requise</div>
+            </div>
+
+            <div class="form-group">
+              <label for="typeVisite">Type de visite</label>
+              <select id="typeVisite" name="typeVisite">
+                <option value="">Choisissez...</option>
+                <option value="solo">🧍 Solo</option>
+                <option value="couple">💑 En couple</option>
+                <option value="famille">👨‍👩‍👧 En famille</option>
+                <option value="amis">👫 Entre amis</option>
+                <option value="travail">💼 Professionnel</option>
+              </select>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 2 : Notation -->
+        <section class="form-part">
+          <h2 class="section-title">Votre notation</h2>
+
+          <!-- Note globale -->
+          <div class="form-group">
+            <label>Note globale <span class="required">*</span></label>
+            <div class="stars-global" id="starsGlobal">
+              <button type="button" class="star" data-val="1">★</button>
+              <button type="button" class="star" data-val="2">★</button>
+              <button type="button" class="star" data-val="3">★</button>
+              <button type="button" class="star" data-val="4">★</button>
+              <button type="button" class="star" data-val="5">★</button>
+            </div>
+            <span class="note-label" id="noteLabel">Cliquez pour noter</span>
+            <input type="hidden" id="noteGlobale" name="noteGlobale" />
+            <div class="error-message" id="noteGlobaleError">Veuillez attribuer une note globale</div>
+          </div>
+
+          <!-- Critères détaillés -->
+          <div class="criteres-grid">
+            <div class="critere-item">
+              <span class="critere-label">Qualité</span>
+              <div class="stars-mini" id="starsQualite" data-name="qualite">
+                <button type="button" class="star-mini" data-val="1">★</button>
+                <button type="button" class="star-mini" data-val="2">★</button>
+                <button type="button" class="star-mini" data-val="3">★</button>
+                <button type="button" class="star-mini" data-val="4">★</button>
+                <button type="button" class="star-mini" data-val="5">★</button>
+              </div>
+              <input type="hidden" id="noteQualite" name="noteQualite" />
+            </div>
+
+            <div class="critere-item">
+              <span class="critere-label">Service</span>
+              <div class="stars-mini" id="starsService" data-name="service">
+                <button type="button" class="star-mini" data-val="1">★</button>
+                <button type="button" class="star-mini" data-val="2">★</button>
+                <button type="button" class="star-mini" data-val="3">★</button>
+                <button type="button" class="star-mini" data-val="4">★</button>
+                <button type="button" class="star-mini" data-val="5">★</button>
+              </div>
+              <input type="hidden" id="noteService" name="noteService" />
+            </div>
+
+            <div class="critere-item">
+              <span class="critere-label">Prix</span>
+              <div class="stars-mini" id="starsPrix" data-name="prix">
+                <button type="button" class="star-mini" data-val="1">★</button>
+                <button type="button" class="star-mini" data-val="2">★</button>
+                <button type="button" class="star-mini" data-val="3">★</button>
+                <button type="button" class="star-mini" data-val="4">★</button>
+                <button type="button" class="star-mini" data-val="5">★</button>
+              </div>
+              <input type="hidden" id="notePrix" name="notePrix" />
+            </div>
+
+            <div class="critere-item">
+              <span class="critere-label">Ambiance</span>
+              <div class="stars-mini" id="starsAmbiance" data-name="ambiance">
+                <button type="button" class="star-mini" data-val="1">★</button>
+                <button type="button" class="star-mini" data-val="2">★</button>
+                <button type="button" class="star-mini" data-val="3">★</button>
+                <button type="button" class="star-mini" data-val="4">★</button>
+                <button type="button" class="star-mini" data-val="5">★</button>
+              </div>
+              <input type="hidden" id="noteAmbiance" name="noteAmbiance" />
+            </div>
+          </div>
+
+          <!-- Recommande -->
+          <div class="form-group" style="margin-top:24px">
+            <label>Recommandez-vous ce commerce ?</label>
+            <div class="recommend-group">
+              <label class="recommend-card" id="recOui">
+                <input type="radio" name="recommande" value="oui" />
+                <span class="rec-icon">👍</span>
+                <span class="rec-text">Oui, je recommande</span>
+              </label>
+              <label class="recommend-card" id="recNon">
+                <input type="radio" name="recommande" value="non" />
+                <span class="rec-icon">👎</span>
+                <span class="rec-text">Non, pas vraiment</span>
+              </label>
+              <label class="recommend-card" id="recMitige">
+                <input type="radio" name="recommande" value="mitige" />
+                <span class="rec-icon">🤔</span>
+                <span class="rec-text">Mitigé</span>
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 3 : Votre avis -->
+        <section class="form-part">
+          <h2 class="section-title">Votre avis</h2>
+
+          <div class="form-group">
+            <label for="titre">Titre de l'avis <span class="required">*</span></label>
+            <input type="text" id="titre" name="titre" placeholder="Ex: Une expérience inoubliable !" required />
+            <div class="error-message" id="titreError">Le titre est requis</div>
+          </div>
+
+          <div class="form-group">
+            <label for="avisTexte">Votre avis détaillé <span class="required">*</span></label>
+            <textarea
+              id="avisTexte"
+              name="avisTexte"
+              placeholder="Partagez votre expérience : ce que vous avez aimé, ce qui pourrait être amélioré, vos conseils aux futurs visiteurs..."
+              maxlength="1000"
+              required
+            ></textarea>
+            <div class="char-counter" id="charCounter">0/1000 caractères</div>
+            <div class="error-message" id="avisTexteError">L'avis est requis (min 50 caractères)</div>
+          </div>
+
+          <!-- Points forts / Points faibles -->
+          <div class="form-row">
+            <div class="form-group">
+              <label>Points forts</label>
+              <div class="tags-input-wrapper" id="fortsWrapper">
+                <div class="tags-list forts" id="fortsList"></div>
+                <input type="text" id="fortsInput" placeholder="Ex: Accueil, Qualité... (Entrée)" autocomplete="off" />
+              </div>
+              <input type="hidden" id="fortsHidden" name="pointsForts" />
+              <p class="upload-note" style="margin-top:5px">Entrée pour ajouter (max 5)</p>
+            </div>
+
+            <div class="form-group">
+              <label>Points faibles</label>
+              <div class="tags-input-wrapper" id="faiblesWrapper">
+                <div class="tags-list faibles" id="faiblesList"></div>
+                <input type="text" id="faiblesInput" placeholder="Ex: Attente, Prix... (Entrée)" autocomplete="off" />
+              </div>
+              <input type="hidden" id="faiblesHidden" name="pointsFaibles" />
+              <p class="upload-note" style="margin-top:5px">Entrée pour ajouter (max 5)</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 4 : Identité & Photos -->
+        <section class="form-part">
+          <h2 class="section-title">Vos informations & photos</h2>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="prenom">Prénom <span class="required">*</span></label>
+              <input type="text" id="prenom" name="prenom" placeholder="Ex: Salma" required />
+              <div class="error-message" id="prenomError">Le prénom est requis</div>
+            </div>
+            <div class="form-group">
+              <label for="email">Email <span class="required">*</span></label>
+              <input type="email" id="email" name="email" placeholder="Ex: salma@email.com" required />
+              <div class="error-message" id="emailError">Email invalide</div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Photos (facultatif)</label>
+            <div class="upload-section" id="uploadSection">
+              <input type="file" id="pictures" name="pictures" accept="image/*" multiple hidden />
+              <div class="upload-icon">📷</div>
+              <p class="upload-text" id="uploadText">Déposez vos photos ici</p>
+              <p class="upload-note">ou cliquez pour sélectionner (max 3 photos, 5MB chacune)</p>
+            </div>
+            <div class="upload-previews" id="uploadPreviews"></div>
+            <div class="error-message" id="pictureError"></div>
+          </div>
+
+          <div class="form-group">
+            <label class="checkbox-label conditions-label">
+              <input type="checkbox" id="conditions" name="conditions" required />
+              Je certifie que cet avis est basé sur ma propre expérience et respecte les <a href="#" class="link">conditions d'utilisation</a>
+              <span class="required">*</span>
+            </label>
+            <div class="error-message" id="conditionsError">Vous devez certifier votre avis</div>
+          </div>
+        </section>
+
+        <div class="button-group">
+          <button type="button" class="btn-secondary" id="cancelBtn">Annuler</button>
+          <button type="button" class="btn-outline" id="previewBtn">👁️ Aperçu</button>
+          <button type="submit" class="btn-primary" id="submitBtn">
+            <span id="submitText">Publier mon avis</span>
+            <span id="submitSpinner" class="spinner" style="display:none"></span>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Aperçu modal -->
+    <div class="success-overlay" id="previewOverlay"></div>
+    <div class="preview-modal" id="previewModal">
+      <div class="preview-content">
+        <div class="preview-header">
+          <div class="preview-stars" id="previewStars"></div>
+          <div class="preview-badge-cat" id="previewCat">Catégorie</div>
+        </div>
+        <h3 id="previewTitre">Titre de l'avis</h3>
+        <p class="preview-meta" id="previewCommerce">Commerce — Ville</p>
+        <p class="preview-meta" id="previewAuteur">Par Prénom · 📅 Date</p>
+        <p id="previewDesc" class="preview-desc">Description...</p>
+        <div class="preview-tags-row" id="previewForts"></div>
+        <button class="btn-secondary" style="margin-top:20px;width:100%" onclick="closePreview()">Fermer l'aperçu</button>
+      </div>
+    </div>
+
+    <!-- Succès -->
+    <div class="success-overlay" id="successOverlay"></div>
+    <div class="success-message" id="successMessage">
+      <div class="success-content">
+        <div class="success-icon">⭐</div>
+        <h3>Avis publié !</h3>
+        <p>Merci pour votre contribution à la communauté LocalGuide</p>
+        <button class="btn-primary" style="margin-top:20px;padding:10px 30px" onclick="closeSuccessMessage()">
+          Fermer
+        </button>
+      </div>
+    </div>
+
+    <footer>
+      <p>© 2025 LocalGuide — Tous droits réservés — Votre guide local de confiance</p>
+    </footer>
+
+    <script src="avis.js"></script>
+    <script src="JS_nav_bar.js"></script>
+  </body>
+</html>
