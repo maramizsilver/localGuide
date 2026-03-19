@@ -5,16 +5,16 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Accueil - LocalGuide</title>
-   
+
     <link rel="stylesheet" href="style_aceuill.css" />
     <link rel="stylesheet" href="style_nav_barre.css" />
+
     <style>
       footer {
-        background:linear-gradient(135deg,#8B1A1A 0%,#3A0A0A 100%);
-        padding:60px 0 24px;
-        border-top:2px solid rgba(232,201,168,0.22);
-        
-     }
+        background: linear-gradient(135deg, #8b1a1a 0%, #3a0a0a 100%);
+        padding: 60px 0 24px;
+        border-top: 2px solid rgba(232, 201, 168, 0.22);
+      }
     </style>
   </head>
   <body>
@@ -341,33 +341,17 @@
           </div>
         </div>
         <div class="fb">
-          <p>© 2025 LocalGuide — Tous droits réservés — Votre guide local de confiance</p>
+          <p>
+            © 2025 LocalGuide — Tous droits réservés — Votre guide local de
+            confiance
+          </p>
           <div class="fbl">
             <a href="#">Français</a><a href="#">العربية</a><a href="#">Aide</a>
           </div>
         </div>
       </div>
     </footer>
-    <script>
-      (function () {
-        // Sélectionne tous les éléments avec la classe "hero-bg"
-        const bgElements = document.querySelectorAll(".hero-bg");
-
-        if (bgElements.length > 0) {
-          let current = 0;
-
-          // Active la première image
-          bgElements[current].classList.add("active");
-
-          // Change d'image toutes les 3000 ms (3 secondes)
-          setInterval(() => {
-            bgElements[current].classList.remove("active");
-            current = (current + 1) % bgElements.length;
-            bgElements[current].classList.add("active");
-          }, 4000);
-        }
-      })();
-    </script>
-    <script src="JS_nav_bar.js"></script>
   </body>
+  <script src="aceuil.js"></script>
+  <script src="JS_nav_bar.js"></script>
 </html>
