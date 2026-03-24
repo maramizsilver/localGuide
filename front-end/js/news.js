@@ -293,3 +293,40 @@ window.addEventListener("scroll", () =>
 );
 renderArticles();
 renderEvents();
+// Toggle affichage "Voir tout" pour les actualités
+function toggleAllNews(event) {
+  event.preventDefault();
+  const container = document.getElementById('allNews');
+  const isVisible = container.style.display !== 'none';
+  
+  if (!isVisible) {
+    container.classList.add('active');
+    container.style.display = 'block';
+    document.getElementById('allNewsGrid').innerHTML = document.getElementById('newsGrid').innerHTML;
+    window.scrollTo({ top: container.offsetTop - 100, behavior: 'smooth' });
+  }
+}
+
+function closeAllNews() {
+  document.getElementById('allNews').style.display = 'none';
+  document.getElementById('allNews').classList.remove('active');
+}
+
+// Toggle affichage "Voir tous les événements"
+function toggleAllEvents(event) {
+  event.preventDefault();
+  const container = document.getElementById('allEvents');
+  const isVisible = container.style.display !== 'none';
+  
+  if (!isVisible) {
+    container.classList.add('active');
+    container.style.display = 'block';
+    document.getElementById('allEventsList').innerHTML = document.getElementById('eventsList').innerHTML;
+    window.scrollTo({ top: container.offsetTop - 100, behavior: 'smooth' });
+  }
+}
+
+function closeAllEvents() {
+  document.getElementById('allEvents').style.display = 'none';
+  document.getElementById('allEvents').classList.remove('active');
+}

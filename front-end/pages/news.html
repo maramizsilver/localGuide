@@ -115,6 +115,7 @@
       </div>
     </div>
 
+    <!-- SECTION DERNIÈRES ACTUALITÉS -->
     <div class="tabs-wrap" id="newsSection">
       <div class="section-header">
         <div class="section-title-block">
@@ -124,11 +125,19 @@
             <p>Ce qui se passe à Monastir</p>
           </div>
         </div>
-        <a href="#" class="see-all">Voir tout →</a>
+        <a href="#allNews" class="see-all" onclick="toggleAllNews(event)">Voir tout →</a>
       </div>
       <div class="news-grid" id="newsGrid"></div>
+      
+      <!-- AFFICHAGE COMPLET DE TOUTES LES ACTUALITÉS -->
+      <div id="allNews" class="all-news-container" style="display: none;">
+        <div class="close-all-btn" onclick="closeAllNews()">✕ Fermer</div>
+        <h3 class="all-news-title">Toutes les Actualités de Monastir</h3>
+        <div class="news-grid" id="allNewsGrid"></div>
+      </div>
     </div>
 
+    <!-- SECTION ÉVÉNEMENTS -->
     <div class="tabs-wrap" id="eventsSection">
       <div class="section-header">
         <div class="section-title-block">
@@ -138,11 +147,19 @@
             <p>Ne manquez aucune animation de la ville</p>
           </div>
         </div>
-        <a href="#" class="see-all">Calendrier complet →</a>
+        <a href="#allEvents" class="see-all" onclick="toggleAllEvents(event)">Calendrier complet →</a>
       </div>
       <div class="events-list" id="eventsList"></div>
+      
+      <!-- AFFICHAGE COMPLET DE TOUS LES ÉVÉNEMENTS -->
+      <div id="allEvents" class="all-events-container" style="display: none;">
+        <div class="close-all-btn" onclick="closeAllEvents()">✕ Fermer</div>
+        <h3 class="all-events-title">Calendrier Complet des Événements de Monastir</h3>
+        <div class="events-list" id="allEventsList"></div>
+      </div>
     </div>
 
+    <!-- SECTION NEWSLETTER -->
     <div class="newsletter-section">
       <div class="newsletter-box">
         <div class="newsletter-text">
@@ -171,10 +188,9 @@
         confiance
       </p>
     </footer>
+    
   <script src="../js/add.js"></script>
-<script src="../js/JS_nav_bar.js"></script>
-</body>
-  <scriptsrc="../js/news.js"
-></script>
   <script src="../js/JS_nav_bar.js"></script>
+  <script src="../js/news.js"></script>
+</body>
 </html>
