@@ -24,7 +24,7 @@ const articles = [
       "Construit au VIIIe siècle, le Ribat de Monastir est bien plus qu'une forteresse. Notre guide Karim dévoile les détails architecturaux et symboliques que même les habitants ignorent, ainsi que les dernières découvertes des fouilles.",
     date: "10 Fév 2025",
     readTime: "6 min",
-    img: "images/Ribat_news.jpg",
+    img: "../images/Ribat_news.jpg",
     author: {
       name: "Karim S.",
       avatar: "https://randomuser.me/api/portraits/men/32.jpg",
@@ -42,7 +42,7 @@ const articles = [
       "Miss Cake vous accueille au cœur de Stah Jaber, à Monastir. Située prés de ISIMM , notre boutique est facilement accessible et constitue la nouvelle halte gourmande du quartier.",
     date: "6 Fév 2025",
     readTime: "3 min",
-    img: "images/misscake.png",
+    img: "../images/misscake.png",
     author: {
       name: "Équipe LG",
       avatar: "https://randomuser.me/api/portraits/lego/1.jpg",
@@ -58,7 +58,7 @@ const articles = [
       "Pour fêter le lancement de notre nouvelle fonctionnalité de réservation en ligne, profitez d'une réduction exceptionnelle sur toutes les visites guidées du Ribat de Monastir samedi et dimanche.",
     date: "3 Fév 2025",
     readTime: "2 min",
-    img: "images/reduction tour ribat.avif",
+    img: "../images/reduction tour ribat.avif",
     author: {
       name: "Équipe LG",
       avatar: "https://randomuser.me/api/portraits/lego/2.jpg",
@@ -91,7 +91,7 @@ const articles = [
       "Symbole de la Tunisie indépendante, le mausolée de Habib Bourguiba domine la médina de Monastir. Leila Mansouri retrace son histoire, son architecture et les anecdotes que les guides locaux transmettent.",
     date: "20 Jan 2025",
     readTime: "5 min",
-    img: "images/bourguiba mosquee.jpg",
+    img: "../images/bourguiba mosquee.jpg",
     author: {
       name: "Leila M.",
       avatar: "https://randomuser.me/api/portraits/women/51.jpg",
