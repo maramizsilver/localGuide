@@ -1,0 +1,23 @@
+﻿# Fichiers sensibles (à ne PAS partager)
+.env
+.env.local
+.env.*.local
+
+# Librairies (trop lourdes)
+node_modules/
+
+# Fichiers temporaires de Supabase
+backend/supabase/.temp
+backend/supabase/.env
+
+# Fichiers de build
+dist/
+build/
+
+# Fichiers système
+.DS_Store
+Thumbs.db
+
+# Fichiers d'éditeur
+.vscode/
+.idea/

@@ -1,0 +1,15 @@
+﻿{
+  "name": "local-guide",
+  "version": "1.0.0",
+  "description": "Plateforme de découverte touristique avec guides locaux",
+  "scripts": {
+    "supabase:start": "cd backend/supabase && supabase start",
+    "supabase:stop": "cd backend/supabase && supabase stop",
+    "db:push": "cd backend/supabase && supabase db push",
+    "migration:new": "cd backend/supabase && supabase migration new",
+    "test": "echo \"Tests à implémenter\""
+  },
+  "devDependencies": {
+    "supabase": "^1.0.0"
+  }
+}
