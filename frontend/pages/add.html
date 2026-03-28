@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ajouter un commerce — LocalGuide</title>
+
+  <link rel="stylesheet" href="../css/style_nav_barre.css" />
+  <link rel="stylesheet" href="../css/style_add.css" />
+
+</head>
+
+<body>
+
+  <!-- ── NAVBAR ── -->
+  <header class="nav">
+    <div class="nav-inner">
+      <nav class="nav-left">
+        <a href="aceuil.html">Accueil</a>
+        <a href="add.html" class="active">Ajouter commerce</a>
+        <a href="fichecomm.html">Commerces</a>
+      </nav>
+      <a href="aceuil.html" class="nav-logo">
+        <img src="../images/logo.png" alt="LocalGuide Logo" />
+      </a>
+      <nav class="nav-right">
+        <a href="news.html">Nouveautés</a>
+        <a href="guide.html">Nos guides</a>
+        <a href="admin.html">Admin</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ── HERO ── -->
+  <div class="page-hero">
+
+    <!-- Colonne images gauche -->
+    <div class="hero-col hero-col-left">
+      <div class="hero-col-track">
+        <img class="hero-col-img" src="../images/commerce6.jpg"alt="" />
+        <img class="hero-col-img" src="../images/comeerce7.jpg" alt="" />
+        <img class="hero-col-img" src="../images/commerce8.jpg"alt="" />
+        <img class="hero-col-img" src="../images/commerce9.jpg" alt="" />
+        <img class="hero-col-img" src="../images/commerce10.jpg" alt="" />
+        <img class="hero-col-img" src="../images/image3.jpg" alt="" />
+        <!-- dupliqué pour boucle infinie -->
+        <img class="hero-col-img" src="../images/commerce6.jpg"alt="" />
+        <img class="hero-col-img" src="../images/comeerce7.jpg" alt="" />
+        <img class="hero-col-img" src="../images/commerce8.jpg"alt="" />
+        <img class="hero-col-img" src="../images/commerce9.jpg" alt="" />
+        <img class="hero-col-img" src="../images/commerce10.jpg" alt="" />
+        <img class="hero-col-img" src="../images/image3.jpg" alt="" />
+      </div>
+    </div>
+
+    <!-- Texte central -->
+    <div class="page-hero-eyebrow">Référencer mon établissement</div>
+    <h1>Ajouter <em>votre commerce</em></h1>
+    <p>Rejoignez le réseau LocalGuide et touchez des milliers de visiteurs à Monastir</p>
+
+    <!-- Colonne images droite -->
+    <div class="hero-col hero-col-right">
+      <div class="hero-col-track">
+        <img class="hero-col-img" src="../images/commerce1.jpg" alt="commerce en monastir" />
+        <img class="hero-col-img" src="../images/commerce2.jpg" alt="commerce en monastir" />
+        <img class="hero-col-img" src="../images/commerce3.jpg" alt="commerce en monastir" />
+        <img class="hero-col-img" src="../images/commerce4.jpg" alt="commerce en monastir" />
+        <img class="hero-col-img" src="../images/commerce5.jpg" alt="commerce en monastir" />
+        <img class="hero-col-img" src="../images/misscake.png" alt="commerce en monastir" />
+        <!-- dupliqué pour boucle infinie -->
+         <img class="hero-col-img" src="../images/commerce1.jpg" alt="commerce en monastir" />
+        <img class="hero-col-img" src="../images/commerce2.jpg" alt="commerce en monastir" />
+        <img class="hero-col-img" src="../images/commerce3.jpg" alt="commerce en monastir" />
+        <img class="hero-col-img" src="../images/commerce4.jpg" alt="commerce en monastir" />
+        <img class="hero-col-img" src="../images/commerce5.jpg" alt="commerce en monastir" />
+        <img class="hero-col-img" src="../images/misscake.png" alt="commerce en monastir" />
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── BODY ── -->
+  <div class="page-body">
+
+    
+
+    <form id="businessForm" novalidate>
+
+      <!-- SECTION 1 -->
+      <div class="form-section">
+        <div class="section-head">
+          <div class="section-icon">🏪</div>
+          <div>
+            <h2>Informations générales</h2>
+            <p>Présentez votre établissement</p>
+          </div>
+        </div>
+        <div class="section-body">
+
+          <div class="form-group">
+            <label for="name">Nom du commerce <span class="required">*</span></label>
+            <input type="text" id="name" name="name" placeholder="Ex : Café El Bahri, Boulangerie Bled…" required />
+            <div class="error-msg" id="nameError">Le nom du commerce est requis</div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="categorie">Catégorie <span class="required">*</span></label>
+              <select id="categorie" name="categorie" required>
+                <option value="">Choisir une catégorie</option>
+                <option value="restaurant">🍽️ Restaurant</option>
+                <option value="cafe">☕ Café</option>
+                <option value="pharmacie">💊 Pharmacie</option>
+                <option value="coiffeur">✂️ Coiffeur</option>
+                <option value="site">🏛️ Site touristique</option>
+                <option value="other">✨ Autre</option>
+              </select>
+              <div class="error-msg" id="categorieError">Veuillez sélectionner une catégorie</div>
+            </div>
+
+            <div class="form-group">
+              <label>Fourchette de prix</label>
+              <div class="price-group">
+                <label class="price-option">
+                  <input type="radio" name="fourchette" value="€" />
+                  <span class="price-btn">€ </span>
+                </label>
+                <label class="price-option">
+                  <input type="radio" name="fourchette" value="€€  " checked />
+                  <span class="price-btn">€€ </span>
+                </label>
+                <label class="price-option">
+                  <input type="radio" name="fourchette" value="€€€ " />
+                  <span class="price-btn">€€€</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-top:20px;">
+            <label for="description">Description</label>
+            <textarea id="description" name="description" placeholder="Décrivez votre commerce, votre ambiance, vos spécialités…" maxlength="500"></textarea>
+            <div class="char-counter"><span id="descCount">0</span> / 500 caractères</div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- SECTION 2 -->
+      <div class="form-section">
+        <div class="section-head">
+          <div class="section-icon">📍</div>
+          <div>
+            <h2>Coordonnées</h2>
+            <p>Où vous trouver ?</p>
+          </div>
+        </div>
+        <div class="section-body">
+
+          <div class="form-group">
+            <label for="adresse">Adresse <span class="required">*</span></label>
+            <input type="text" id="adresse" name="adresse" placeholder="Ex : Rue de la Liberté, Médina de Monastir" required />
+            <div class="error-msg" id="adresseError">L'adresse est requise</div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="ville">Ville <span class="required">*</span></label>
+              <input type="text" id="ville" name="ville" placeholder="Ex : Monastir" required />
+              <div class="error-msg" id="villeError">La ville est requise</div>
+            </div>
+            <div class="form-group">
+              <label for="codepostal">Code postal <span class="required">*</span></label>
+              <input type="text" id="codepostal" name="codepostal" placeholder="Ex : 5000" pattern="[0-9]{4}" required />
+              <div class="error-msg" id="codepostalError">Code postal invalide (4 chiffres)</div>
+            </div>
+          </div>
+
+          <div class="form-row" style="margin-top:20px;">
+            <div class="form-group">
+              <label for="phone">Téléphone <span class="required">*</span></label>
+              <input type="tel" id="phone" name="phone" placeholder="Ex : +216 73 000 000" required />
+              <div class="error-msg" id="phoneError">Numéro de téléphone invalide</div>
+            </div>
+            <div class="form-group">
+              <label for="email">Email <span class="required">*</span></label>
+              <input type="email" id="email" name="email" placeholder="Ex : contact@moncommerce.tn" required />
+              <div class="error-msg" id="emailError">Adresse email invalide</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- SECTION 3 -->
+      <div class="form-section">
+        <div class="section-head">
+          <div class="section-icon">🕐</div>
+          <div>
+            <h2>Horaires & Photo</h2>
+            <p>Quand vous rendre visite ?</p>
+          </div>
+        </div>
+        <div class="section-body">
+
+          <div class="form-group">
+            <label>Jours d'ouverture</label>
+            <div class="horaires-grid">
+              <label class="jour-toggle"><input type="checkbox" name="jours" value="lun" /><span class="jour-btn">Lun</span></label>
+              <label class="jour-toggle"><input type="checkbox" name="jours" value="mar" checked /><span class="jour-btn">Mar</span></label>
+              <label class="jour-toggle"><input type="checkbox" name="jours" value="mer" checked /><span class="jour-btn">Mer</span></label>
+              <label class="jour-toggle"><input type="checkbox" name="jours" value="jeu" checked /><span class="jour-btn">Jeu</span></label>
+              <label class="jour-toggle"><input type="checkbox" name="jours" value="ven" checked /><span class="jour-btn">Ven</span></label>
+              <label class="jour-toggle"><input type="checkbox" name="jours" value="sam" checked /><span class="jour-btn">Sam</span></label>
+              <label class="jour-toggle"><input type="checkbox" name="jours" value="dim" /><span class="jour-btn">Dim</span></label>
+            </div>
+          </div>
+
+          <div class="form-row" style="margin-top:20px;">
+            <div class="form-group">
+              <label for="hOpen">Heure d'ouverture <span class="required">*</span></label>
+              <input type="text" id="hOpen" name="hOpen" placeholder="Ex : 08:00" required />
+              <div class="error-msg" id="hOpenError">Heure d'ouverture requise</div>
+            </div>
+            <div class="form-group">
+              <label for="hClose">Heure de fermeture <span class="required">*</span></label>
+              <input type="text" id="hClose" name="hClose" placeholder="Ex : 22:00" required />
+              <div class="error-msg" id="hCloseError">Heure de fermeture requise</div>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-top:20px;">
+            <label>Photo du commerce</label>
+            <div class="upload-zone" id="uploadZone">
+              <input type="file" id="picture" name="picture" accept="image/*" />
+              <span class="upload-emoji">📸</span>
+              <span class="upload-label">Déposez votre image ici</span>
+              <span class="upload-hint">ou cliquez pour sélectionner — JPG / PNG, max 5 MB</span>
+              <div class="upload-preview" id="uploadPreview">
+                <img id="previewImg" src="" alt="Aperçu" />
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-cancel" id="cancelBtn">Annuler</button>
+          <button type="submit" class="btn-submit" id="submitBtn">
+            <span id="submitText">Soumettre mon commerce</span>
+            <span class="arrow" id="submitArrow">→</span>
+            <span class="spinner" id="submitSpinner"></span>
+          </button>
+        </div>
+      </div>
+
+    </form>
+  </div>
+
+  <!-- ── SUCCESS ── -->
+  <div class="overlay" id="overlay"></div>
+  <div class="success-box" id="successBox">
+    <div class="s-icon">✅</div>
+    <h3>Commerce ajouté !</h3>
+    <p>Votre établissement a été soumis avec succès. Notre équipe le validera sous 24h et il apparaîtra sur LocalGuide.</p>
+    <button class="btn-submit" style="margin:0 auto;" onclick="closeSuccess()">
+      Retour à l'accueil <span class="arrow">→</span>
+    </button>
+  </div>
+
+  <!-- ── FOOTER ── -->
+  <footer>
+    © 2025 LocalGuide — Tous droits réservés — Votre guide local de confiance
+  </footer>
+
+  <script src="../js/JS_nav_bar.js"></script>
+  <script>
+    // Char counter
+    const desc = document.getElementById('description');
+    const count = document.getElementById('descCount');
+    desc.addEventListener('input', () => count.textContent = desc.value.length);
+
+    // Upload preview
+    const picture = document.getElementById('picture');
+    const preview = document.getElementById('uploadPreview');
+    const previewImg = document.getElementById('previewImg');
+    picture.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      if (file.size > 5 * 1024 * 1024) { alert('Fichier trop lourd (max 5 MB)'); return; }
+      const reader = new FileReader();
+      reader.onload = (ev) => { previewImg.src = ev.target.result; preview.style.display = 'block'; };
+      reader.readAsDataURL(file);
+    });
+
+    // Drag & drop
+    const zone = document.getElementById('uploadZone');
+    zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.classList.add('drag-over'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+    zone.addEventListener('drop', (e) => {
+      e.preventDefault(); zone.classList.remove('drag-over');
+      const file = e.dataTransfer.files[0];
+      if (file) { const dt = new DataTransfer(); dt.items.add(file); picture.files = dt.files; picture.dispatchEvent(new Event('change')); }
+    });
+
+
+    // Validation
+    function validate() {
+      let valid = true;
+      const fields = [
+        { id:'name',       err:'nameError',       check: v => v.length > 0 },
+        { id:'categorie',  err:'categorieError',   check: v => v !== '' },
+        { id:'adresse',    err:'adresseError',     check: v => v.length > 0 },
+        { id:'ville',      err:'villeError',       check: v => v.length > 0 },
+        { id:'codepostal', err:'codepostalError',  check: v => /^\d{4}$/.test(v) },
+        { id:'phone',      err:'phoneError',       check: v => v.length >= 8 },
+        { id:'email',      err:'emailError',       check: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) },
+        { id:'hOpen',      err:'hOpenError',       check: v => v.length > 0 },
+        { id:'hClose',     err:'hCloseError',      check: v => v.length > 0 },
+      ];
+      fields.forEach(({ id, err, check }) => {
+        const el = document.getElementById(id);
+        const errEl = document.getElementById(err);
+        if (!check(el.value.trim())) { el.classList.add('invalid'); errEl.classList.add('show'); valid = false; }
+        else                         { el.classList.remove('invalid'); errEl.classList.remove('show'); }
+      });
+      return valid;
+    }
+
+    // Submit
+    document.getElementById('businessForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (!validate()) return;
+      const btn = document.getElementById('submitBtn');
+      const txt = document.getElementById('submitText');
+      const arr = document.getElementById('submitArrow');
+      const spin = document.getElementById('submitSpinner');
+      btn.disabled = true; txt.textContent = 'Envoi en cours…'; arr.style.display = 'none'; spin.style.display = 'block';
+      setTimeout(() => {
+        btn.disabled = false; txt.textContent = 'Soumettre mon commerce'; arr.style.display = ''; spin.style.display = 'none';
+        document.getElementById('overlay').classList.add('show');
+        document.getElementById('successBox').classList.add('show');
+      }, 1800);
+    });
+
+    function closeSuccess() {
+      document.getElementById('overlay').classList.remove('show');
+      document.getElementById('successBox').classList.remove('show');
+      window.location.href = 'aceuil.html';
+    }
+
+    document.getElementById('cancelBtn').addEventListener('click', () => {
+      if (confirm('Annuler la saisie ?')) window.location.href = 'aceuil.html';
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,291 @@
+/* admin — Sable & Rouge vif */
+body {
+  background: var(--nude);
+  padding-top: 68px;
+}
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.admin-section {
+  margin-top: 36px;
+  background: linear-gradient(135deg, var(--red-deep) 0%, #6b1212 100%);
+  border: 1px solid rgba(232, 201, 168, 0.22);
+  color: var(--nude);
+  padding: 32px;
+  border-radius: 18px;
+  margin-bottom: 28px;
+  box-shadow: 0 10px 36px rgba(139, 26, 26, 0.22);
+}
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 22px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid rgba(232, 201, 168, 0.22);
+}
+.admin-header h2 {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 400;
+  color: var(--nude);
+}
+.admin-header h2 span {
+  font-family: var(--font-body);
+  font-size: 14px;
+  background: rgba(232, 201, 168, 0.18);
+  padding: 4px 14px;
+  border-radius: 20px;
+  margin-left: 14px;
+  font-weight: 400;
+}
+.admin-badge {
+  background: var(--tan);
+  color: var(--dark);
+  padding: 8px 22px;
+  border-radius: 30px;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.alerts-container {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+.alert-card {
+  background: rgba(248, 242, 235, 0.09);
+  border: 1px solid rgba(232, 201, 168, 0.22);
+  padding: 22px;
+  border-radius: 14px;
+  flex: 1;
+  min-width: 240px;
+  backdrop-filter: blur(5px);
+  transition:
+    transform 0.25s,
+    border-color 0.25s;
+}
+.alert-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(232, 201, 168, 0.5);
+}
+.alert-icon {
+  font-size: 22px;
+  margin-bottom: 10px;
+}
+.alert-title {
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 7px;
+  color: var(--tan);
+}
+.alert-message {
+  font-size: 13px;
+  line-height: 1.55;
+  color: rgba(248, 242, 235, 0.75);
+}
+.alert-time {
+  margin-top: 12px;
+  font-size: 11px;
+  opacity: 0.5;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.mod-header {
+  background: linear-gradient(135deg, var(--red-deep), #5c1010);
+  border: 1px solid rgba(232, 201, 168, 0.2);
+  color: var(--nude);
+  padding: 22px 28px;
+  border-radius: 16px;
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 6px 24px rgba(139, 26, 26, 0.18);
+}
+.mod-header h1 {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 400;
+}
+.stats {
+  background: rgba(232, 201, 168, 0.18);
+  border: 1px solid rgba(232, 201, 168, 0.3);
+  padding: 8px 20px;
+  border-radius: 30px;
+  font-size: 13px;
+  color: var(--tan);
+  font-weight: 500;
+}
+
+.filters {
+  background: var(--nude-card);
+  padding: 22px 24px;
+  border-radius: 14px;
+  margin-bottom: 22px;
+  border: 1px solid rgba(184, 168, 152, 0.2);
+  box-shadow: 0 3px 12px rgba(139, 26, 26, 0.05);
+}
+.filters h3 {
+  font-family: var(--font-display);
+  color: var(--red);
+  margin-bottom: 14px;
+  font-size: 1.2rem;
+  font-weight: 400;
+}
+.filter-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.filter-btn {
+  padding: 9px 22px;
+  border: 1.5px solid rgba(212, 43, 43, 0.28);
+  background: transparent;
+  color: var(--red);
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 13px;
+  transition: all 0.25s;
+  font-family: var(--font-body);
+}
+.filter-btn.active {
+  background: var(--red);
+  color: var(--nude);
+  border-color: var(--red);
+}
+.filter-btn:hover {
+  background: rgba(212, 43, 43, 0.08);
+}
+
+.commerce-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.commerce-card {
+  background: var(--nude-card);
+  border-radius: 14px;
+  padding: 20px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid rgba(184, 168, 152, 0.2);
+  box-shadow: 0 2px 10px rgba(139, 26, 26, 0.05);
+  transition: all 0.22s;
+}
+.commerce-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(212, 43, 43, 0.22);
+  box-shadow: 0 8px 24px rgba(212, 43, 43, 0.09);
+}
+.commerce-info h3 {
+  font-family: var(--font-display);
+  color: var(--red);
+  font-size: 1.15rem;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+.commerce-info p {
+  color: var(--muted);
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+.commerce-meta {
+  display: flex;
+  gap: 14px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.badge {
+  background: rgba(212, 43, 43, 0.08);
+  border: 1px solid rgba(212, 43, 43, 0.22);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  color: var(--red);
+  font-weight: 500;
+}
+.badge.pending {
+  background: rgba(184, 168, 152, 0.15);
+  border-color: rgba(184, 168, 152, 0.3);
+  color: var(--muted);
+}
+.badge.warning {
+  background: rgba(139, 26, 26, 0.1);
+  border-color: rgba(139, 26, 26, 0.25);
+  color: var(--red-deep);
+}
+
+.commerce-actions {
+  display: flex;
+  gap: 8px;
+}
+.btn {
+  padding: 9px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 13px;
+  transition: all 0.25s;
+  font-family: var(--font-body);
+}
+.btn-approve {
+  background: transparent;
+  color: var(--red);
+  border: 1.5px solid rgba(212, 43, 43, 0.35);
+}
+.btn-approve:hover {
+  background: var(--red);
+  color: var(--nude);
+}
+.btn-reject {
+  background: transparent;
+  color: var(--muted);
+  border: 1.5px solid rgba(184, 168, 152, 0.3);
+}
+.btn-reject:hover {
+  background: rgba(184, 168, 152, 0.15);
+}
+.btn-view {
+  background: transparent;
+  color: var(--tan);
+  border: 1.5px solid rgba(232, 201, 168, 0.4);
+}
+.btn-view:hover {
+  background: rgba(232, 201, 168, 0.15);
+}
+
+.pagination {
+  margin-top: 28px;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+.page-btn {
+  width: 40px;
+  height: 40px;
+  border: 1.5px solid rgba(212, 43, 43, 0.28);
+  background: transparent;
+  color: var(--red);
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 500;
+  font-family: var(--font-body);
+  transition: all 0.25s;
+}
+.page-btn.active {
+  background: var(--red);
+  color: var(--nude);
+  border-color: var(--red);
+}
+.page-btn:hover {
+  background: rgba(212, 43, 43, 0.08);
+}
