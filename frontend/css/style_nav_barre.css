@@ -18,114 +18,171 @@
   --shadow-lg: 0 20px 60px rgba(139, 26, 26, 0.14);
 }
 
-
+*,
 *::before,
 *::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
+
 html {
   scroll-behavior: smooth;
 }
+
 body {
   font-family: var(--font-body);
   background: var(--nude);
   color: var(--text);
   line-height: 1.6;
 }
+
 a {
   text-decoration: none;
   color: inherit;
 }
+
 img {
   display: block;
   max-width: 100%;
 }
 
-/* ── NAV ── */
+/* ===== NAVBAR ÉLÉGANTE - COULEUR #8B1A1A ===== */
 .nav {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   z-index: 1000;
-  background: rgba(139, 26, 26, 0.97);
-  backdrop-filter: blur(16px);
+  background: #8b1a1a;
   border-bottom: 1px solid rgba(232, 201, 168, 0.25);
-  font-family: var(--font-body);
-  transition:
-    background 0.35s ease,
-    box-shadow 0.35s ease;
+  transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
 }
-.nav.transparent {
-  background: rgba(139, 26, 26, 0.8);
-  box-shadow: none;
+
+.nav.scrolled {
+  background: #6e1414;
+  box-shadow: 0 10px 30px rgba(139, 26, 26, 0.35);
 }
+
 .nav-inner {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 0 28px;
-  height: 68px;
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-  gap: 16px;
-}
-.nav-left {
+  padding: 0 32px;
+  height: 85px;
   display: flex;
-  gap: 4px;
-  justify-content: flex-start;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
 }
+
+/* Groupes gauche et droit */
+.nav-left,
 .nav-right {
   display: flex;
-  gap: 4px;
+  gap: 12px;
+  flex: 1;
+}
+
+.nav-left {
+  justify-content: flex-start;
+}
+
+.nav-right {
   justify-content: flex-end;
 }
+
+/* Liens de navigation */
 .nav-left a,
 .nav-right a {
-  color: rgba(248, 242, 235, 0.8);
-  font-size: 13px;
+  color: rgba(248, 242, 235, 0.9);
+  font-size: 14px;
   font-weight: 500;
-  padding: 7px 14px;
-  border-radius: 100px;
-  transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
-  white-space: nowrap;
-  letter-spacing: 0.01em;
+  padding: 8px 18px;
+  border-radius: 40px;
+  transition: all 0.25s ease;
+  letter-spacing: 0.3px;
+  position: relative;
 }
+
 .nav-left a:hover,
 .nav-right a:hover {
   color: var(--tan);
-  background: rgba(232, 201, 168, 0.14);
-  transform: translateY(-1px);
+  background: rgba(232, 201, 168, 0.12);
+  transform: translateY(-2px);
 }
+
 .nav-left a.active,
 .nav-right a.active {
   color: var(--tan);
   background: rgba(232, 201, 168, 0.2);
   font-weight: 600;
-}
-.nav-logo {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.nav-logo img {
-  height: 44px;
-  width: 44px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid rgba(232, 201, 168, 0.55);
-  transition:
-    transform 0.3s,
-    box-shadow 0.3s;
-}
-.nav-logo img:hover {
-  transform: scale(1.07);
-  box-shadow: 0 0 0 4px rgba(232, 201, 168, 0.22);
+  backdrop-filter: blur(4px);
 }
 
-/* ── BUTTONS ── */
+/* Indicateur actif élégant - doré */
+.nav-left a.active::after,
+.nav-right a.active::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24px;
+  height: 2px;
+  background: var(--tan);
+  border-radius: 2px;
+}
+
+/* ===== LOGO CENTRAL AVEC ANNEAU DORÉ ===== */
+.nav-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+/* Anneau décoratif autour du logo */
+.nav-logo::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(232, 201, 168, 0.4);
+  pointer-events: none;
+  transition: all 0.3s ease;
+}
+
+.nav-logo:hover::before {
+  width: 100px;
+  height: 100px;
+  border-color: rgba(232, 201, 168, 0.8);
+  box-shadow: 0 0 15px rgba(232, 201, 168, 0.35);
+}
+
+.nav-logo img {
+  height: 70px;
+  width: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2.5px solid var(--tan);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+  transition: all 0.35s cubic-bezier(0.2, 0.9, 0.4, 1.2);
+  background: var(--nude-card);
+}
+
+.nav-logo img:hover {
+  transform: scale(1.06);
+  border-color: var(--tan);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3), 0 0 0 4px rgba(232, 201, 168, 0.3);
+}
+
+/* ===== BOUTONS ===== */
 .btn-primary {
   display: inline-flex;
   align-items: center;
@@ -169,7 +226,7 @@ img {
   transform: translateY(-2px);
 }
 
-/* ── FORMS ── */
+/* ===== FORMULAIRES ===== */
 input,
 select,
 textarea {
@@ -203,17 +260,16 @@ label {
   margin-bottom: 6px;
 }
 
-/* ── FOOTER ── */
-
+/* ===== FOOTER ===== */
 footer {
   text-align: center;
   color: var(--muted);
   padding: 28px 20px;
- font-family: var(--font-body);
+  font-family: var(--font-body);
   background: none;
 }
 
-/* ── UTILS ── */
+/* ===== UTILITAIRES ===== */
 .section-eyebrow {
   font-size: 11px;
   font-weight: 600;
