@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion - LocalGuide</title>
+    <link rel="icon" type="image/png" href="../images/logo-pour-navigateur.png">
+    <link rel="stylesheet" href="../css/style_nav_barre.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: system-ui, sans-serif;
+            background: linear-gradient(135deg, #f5f0eb 0%, #e8ddd0 100%);
+            min-height: 100vh;
+        }
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100vh - 150px);
+            padding: 20px;
+        }
+        .login-card {
+            background: white;
+            border-radius: 32px;
+            padding: 40px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+            text-align: center;
+        }
+        .login-icon { font-size: 64px; margin-bottom: 20px; }
+        h1 { font-size: 28px; color: #2d2a24; margin-bottom: 8px; }
+        .subtitle { color: #7a6e5d; margin-bottom: 32px; font-size: 14px; }
+        .form-group { text-align: left; margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; color: #2d2a24; }
+        input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e8ddd0;
+            border-radius: 16px;
+            font-size: 15px;
+            transition: all 0.3s;
+            outline: none;
+        }
+        input:focus { border-color: #d42b2b; box-shadow: 0 0 0 3px rgba(212,43,43,0.1); }
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #d42b2b, #a31f1f);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn-login:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(212,43,43,0.3); }
+        .btn-register {
+            width: 100%;
+            padding: 14px;
+            background: transparent;
+            color: #d42b2b;
+            border: 2px solid #e8ddd0;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 12px;
+            transition: all 0.2s;
+        }
+        .btn-register:hover { border-color: #d42b2b; background: rgba(212,43,43,0.05); }
+        .message { margin-top: 20px; padding: 12px; border-radius: 12px; font-size: 14px; }
+        .message.error { background: #fee2e2; color: #d42b2b; }
+        .message.success { background: #dcfce7; color: #166534; }
+        footer { text-align: center; padding: 20px; color: #7a6e5d; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <header class="nav">
+        <div class="nav-inner">
+            <nav class="nav-left">
+                <a href="aceuil.html">Accueil</a>
+                <a href="add.html">Ajouter commerce</a>
+                <a href="fichecomm.html">Commerces</a>
+            </nav>
+            <a href="aceuil.html" class="nav-logo">
+                <img src="../images/logo.png" alt="LocalGuide Logo">
+            </a>
+            <nav class="nav-right">
+                <a href="news.html">Nouveautés</a>
+                <a href="guide.html">Nos guides</a>
+                <a href="admin.html">Admin</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-icon">🔐</div>
+            <h1>Connexion</h1>
+            <p class="subtitle">Connectez-vous à votre compte LocalGuide</p>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="email" placeholder="exemple@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Mot de passe</label>
+                    <input type="password" id="password" placeholder="Votre mot de passe" required>
+                </div>
+                <button type="submit" class="btn-login">Se connecter</button>
+            </form>
+            
+            <button class="btn-register" onclick="window.location.href='register.html'">
+                 S'inscrire
+            </button>
+            
+            <div id="message" class="message"></div>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2025 LocalGuide Monastir — Tous droits réservés</p>
+    </footer>
+
+    <script type="module">
+        import { supabase } from '../js/supabaseClient.js'
+
+        const form = document.getElementById('loginForm')
+        const messageDiv = document.getElementById('message')
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault()
+            
+            const email = document.getElementById('email').value
+            const password = document.getElementById('password').value
+            
+            messageDiv.innerHTML = 'Connexion en cours...'
+            messageDiv.className = 'message'
+            
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email: email,
+                password: password
+            })
+            
+            if (error) {
+                messageDiv.innerHTML = ' ' + error.message
+                messageDiv.className = 'message error'
+                return
+            }
+            
+            // Récupérer le rôle de l'utilisateur
+            const { data: profile } = await supabase
+                .from('users_profiles')
+                .select('role')
+                .eq('id', data.user.id)
+                .single()
+            
+            const role = profile?.role || 'client'
+            
+            messageDiv.innerHTML = `✅ Connecté en tant que ${role} ! Redirection...`
+            messageDiv.className = 'message success'
+            
+            // Rediriger selon le rôle
+            setTimeout(() => {
+                if (role === 'admin') {
+                    window.location.href = 'admin.html'
+                } else if (role === 'guide') {
+                    window.location.href = 'guide-dashboard.html'
+                } else if (role === 'commerçant') {
+                    window.location.href = 'commerce-dashboard.html'
+                } else {
+                    window.location.href = 'aceuil.html'
+                }
+            }, 1000)
+        })
+    </script>
+</body>
+</html>

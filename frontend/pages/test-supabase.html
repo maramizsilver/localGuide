@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Test Supabase</title>
+</head>
+<body>
+    <h1>Test Connexion Supabase</h1>
+    <div id="resultat">Test en cours...</div>
+
+    <script type="module">
+        import { supabase } from '../js/supabaseClient.js'
+        
+        async function tester() {
+            const { data, error } = await supabase
+                .from('guides')
+                .select('count')
+            
+            const div = document.getElementById('resultat')
+            
+            if (error) {
+                div.innerHTML = ` Erreur: ${error.message}`
+                div.style.color = 'red'
+            } else {
+                div.innerHTML = ' Supabase fonctionne ! Connexion réussie'
+                div.style.color = 'green'
+            }
+        }
+        
+        tester()
+    </script>
+</body>
+</html>

@@ -1,164 +1,251 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const form = document.querySelector(".form1");
-  const uploadSection = document.querySelector(".upload-section");
-  const fileInput = document.getElementById("picture");
-  const uploadText = document.querySelector(".upload-text");
-  const nav = document.querySelector(".nav");
-  const successMessage = document.getElementById("successMessage");
-  const successOverlay = document.getElementById("successOverlay");
-  const submitBtn = document.getElementById("submitBtn");
-  const submitText = document.getElementById("submitText");
-  const submitSpinner = document.getElementById("submitSpinner");
+// frontend/js/add.js
+import { supabase } from './supabaseClient.js'
 
-  // Gestion de la transparence au défilement
-  window.addEventListener("scroll", () => {
-    if (window.scrollY > 50) {
-      nav.classList.add("scrolled");
+// ============================================
+// 1. VÉRIFICATION ADMIN OU COMMERÇANT
+// ============================================
+async function checkCommerceAccess() {
+    const { data: { user } } = await supabase.auth.getUser()
+    
+    if (!user) {
+        alert('🔐 Veuillez vous connecter pour ajouter un commerce.')
+        window.location.href = 'login.html'
+        return false
+    }
+    
+    const { data: profile } = await supabase
+        .from('users_profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single()
+    
+    if (!profile || (profile.role !== 'admin' && profile.role !== 'commerçant')) {
+        alert('⛔ Seuls les commerçants ou administrateurs peuvent ajouter un commerce.')
+        window.location.href = 'aceuil.html'
+        return false
+    }
+    
+    return true
+}
+
+// ============================================
+// 2. INITIALISATION
+// ============================================
+document.addEventListener('DOMContentLoaded', async () => {
+    console.log('🟢 add.js chargé et DOM prêt')
+    
+    // Vérifier accès
+    const hasAccess = await checkCommerceAccess()
+    if (!hasAccess) return
+    
+    // Récupérer l'utilisateur connecté
+    const { data: { user } } = await supabase.auth.getUser()
+    console.log('🟢 Utilisateur connecté:', user?.email)
+    
+    // ============================================
+    // 3. COMPTEUR DE CARACTÈRES
+    // ============================================
+    const desc = document.getElementById('description')
+    const count = document.getElementById('descCount')
+    if (desc && count) {
+        desc.addEventListener('input', () => count.textContent = desc.value.length)
+    }
+    
+    // ============================================
+    // 4. UPLOAD PHOTO
+    // ============================================
+    const picture = document.getElementById('picture')
+    const preview = document.getElementById('uploadPreview')
+    const previewImg = document.getElementById('previewImg')
+    
+    if (picture) {
+        picture.addEventListener('change', (e) => {
+            const file = e.target.files[0]
+            if (!file) return
+            if (file.size > 5 * 1024 * 1024) { 
+                alert('Fichier trop lourd (max 5 MB)')
+                return 
+            }
+            const reader = new FileReader()
+            reader.onload = (ev) => { 
+                if (previewImg) previewImg.src = ev.target.result
+                if (preview) preview.style.display = 'block'
+            }
+            reader.readAsDataURL(file)
+        })
+    }
+    
+    // Drag & drop
+    const zone = document.getElementById('uploadZone')
+    if (zone) {
+        zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.classList.add('drag-over') })
+        zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'))
+        zone.addEventListener('drop', (e) => {
+            e.preventDefault()
+            zone.classList.remove('drag-over')
+            const file = e.dataTransfer.files[0]
+            if (file) {
+                const dt = new DataTransfer()
+                dt.items.add(file)
+                picture.files = dt.files
+                picture.dispatchEvent(new Event('change'))
+            }
+        })
+    }
+    
+    // ============================================
+    // 5. VALIDATION
+    // ============================================
+    function validate() {
+        console.log('🔍 Validation en cours...')
+        let valid = true
+        const fields = [
+            { id:'name',       err:'nameError',       check: v => v.length > 0 },
+            { id:'categorie',  err:'categorieError',  check: v => v !== '' },
+            { id:'adresse',    err:'adresseError',    check: v => v.length > 0 },
+            { id:'ville',      err:'villeError',      check: v => v.length > 0 },
+            { id:'codepostal', err:'codepostalError', check: v => /^\d{4}$/.test(v) },
+            { id:'phone',      err:'phoneError',      check: v => v.length >= 8 },
+            { id:'email',      err:'emailError',      check: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) },
+            { id:'hOpen',      err:'hOpenError',      check: v => v.length > 0 },
+            { id:'hClose',     err:'hCloseError',     check: v => v.length > 0 },
+        ]
+        fields.forEach(({ id, err, check }) => {
+            const el = document.getElementById(id)
+            const errEl = document.getElementById(err)
+            const value = el ? el.value.trim() : ''
+            if (!check(value)) { 
+                console.log(`❌ Champ invalide: ${id}`)
+                if (el) el.classList.add('invalid')
+                if (errEl) errEl.classList.add('show')
+                valid = false
+            } else { 
+                if (el) el.classList.remove('invalid')
+                if (errEl) errEl.classList.remove('show')
+            }
+        })
+        console.log(`🔍 Validation résultat: ${valid ? '✅ OK' : '❌ ÉCHEC'}`)
+        return valid
+    }
+    
+    // ============================================
+    // 6. SOUMISSION À SUPABASE
+    // ============================================
+    const form = document.getElementById('businessForm')
+    const overlay = document.getElementById('overlay')
+    const successBox = document.getElementById('successBox')
+    
+    if (form) {
+        console.log('✅ Formulaire trouvé, ajout de l\'écouteur')
+        
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault()
+            console.log(' FORMULAIRE SOUMIS !')
+            
+            const isValid = validate()
+            if (!isValid) {
+                console.log('❌ Validation échouée, arrêt')
+                retur
+            }
+            
+            console.log('✅ Validation OK, envoi à Supabase...')
+            
+            const btn = document.getElementById('submitBtn')
+            const txt = document.getElementById('submitText')
+            const arr = document.getElementById('submitArrow')
+            const spin = document.getElementById('submitSpinner')
+            
+            btn.disabled = true
+            if (txt) txt.textContent = 'Envoi en cours…'
+            if (arr) arr.style.display = 'none'
+            if (spin) spin.style.display = 'block'
+            
+            // Récupérer les valeurs
+            const nom = document.getElementById('name').value
+            const categorie = document.getElementById('categorie').value
+            let fourchette = document.querySelector('input[name="fourchette"]:checked')?.value || '€€'
+            fourchette = fourchette.trim()
+            
+            const description = document.getElementById('description').value || null
+            const adresse = document.getElementById('adresse').value
+            const ville = document.getElementById('ville').value
+            const code_postal = document.getElementById('codepostal').value
+            const phone = document.getElementById('phone').value
+            const email = document.getElementById('email').value
+            const h_ouverture = document.getElementById('hOpen').value
+            const h_fermeture = document.getElementById('hClose').value
+            
+            console.log(' Données à envoyer:', { nom, categorie, fourchette, ville })
+            
+            // Upload image si présente
+            let image_url = null
+            if (picture && picture.files && picture.files[0]) {
+                const file = picture.files[0]
+                const fileName = `commerces/${Date.now()}_${file.name}`
+                const { error: uploadError } = await supabase.storage
+                    .from('commerces')
+                    .upload(fileName, file)
+                
+                if (!uploadError) {
+                    const { data: { publicUrl } } = supabase.storage
+                        .from('commerces')
+                        .getPublicUrl(fileName)
+                    image_url = publicUrl
+                }
+            }
+            
+            // Insérer dans Supabase avec statut 'en_attente'
+            const { error } = await supabase
+                .from('commerces')
+                .insert({
+                    owner_id: user.id,
+                    nom: nom,
+                    categorie: categorie,
+                    fourchette_prix: fourchette,
+                    description: description,
+                    adresse: adresse,
+                    ville: ville,
+                    code_postal: code_postal,
+                    phone: phone,
+                    email: email,
+                    h_ouverture: h_ouverture,
+                    h_fermeture: h_fermeture,
+                    image_url: image_url,
+                    statut: 'suspendu'
+                })
+            
+            btn.disabled = false
+            if (txt) txt.textContent = 'Soumettre mon commerce'
+            if (arr) arr.style.display = ''
+            if (spin) spin.style.display = 'none'
+            
+            if (error) {
+                console.error('❌ Erreur Supabase:', error)
+                alert('❌ Erreur: ' + error.message)
+            } else {
+                console.log('✅ Commerce ajouté avec succès !')
+                if (overlay) overlay.classList.add('show')
+                if (successBox) successBox.classList.add('show')
+            }
+        })
     } else {
-      nav.classList.remove("scrolled");
+        console.error('❌ Formulaire non trouvé ! Vérifie id="businessForm"')
     }
-  });
-
-  // Upload
-  uploadSection.addEventListener("click", () => fileInput.click());
-
-  fileInput.addEventListener("change", function () {
-    if (this.files && this.files[0]) {
-      const fileName = this.files[0].name;
-      uploadText.textContent = `Fichier sélectionné : ${fileName}`;
-      uploadSection.style.borderColor = "#4CAF50";
-      uploadSection.style.background = "rgba(76, 175, 80, 0.1)";
+    
+    // ============================================
+    // 7. FERMETURE SUCCÈS
+    // ============================================
+    window.closeSuccess = function() {
+        if (overlay) overlay.classList.remove('show')
+        if (successBox) successBox.classList.remove('show')
+        window.location.href = 'aceuil.html'
     }
-  });
-
-  // Drag & Drop
-  ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
-    uploadSection.addEventListener(eventName, (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-    });
-  });
-
-  uploadSection.addEventListener("dragover", () => {
-    uploadSection.style.transform = "scale(1.02)";
-    uploadSection.style.backgroundColor = "rgba(255, 255, 255, 0.2)";
-  });
-
-  uploadSection.addEventListener("dragleave", () => {
-    uploadSection.style.transform = "scale(1)";
-    uploadSection.style.backgroundColor = "#676767";
-  });
-
-  uploadSection.addEventListener("drop", (e) => {
-    const dt = e.dataTransfer;
-    const files = dt.files;
-    fileInput.files = files;
-    uploadText.textContent = `Fichier déposé : ${files[0].name}`;
-    uploadSection.style.transform = "scale(1)";
-  });
-
-  // Bouton Annuler
-  const btnCancel = document.querySelector(".btn-secondary");
-  btnCancel.addEventListener("click", () => {
-    if (
-      confirm("Êtes-vous sûr de vouloir effacer toutes les données saisies ?")
-    ) {
-      form.reset();
-      uploadText.textContent = "Déposez votre image ici";
-      uploadSection.style.borderColor = "#cbd5e0";
-      uploadSection.style.background =
-        "linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%)";
+    
+    // Annuler
+    const cancelBtn = document.getElementById('cancelBtn')
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', () => {
+            if (confirm('Annuler la saisie ?')) window.location.href = 'aceuil.html'
+        })
     }
-  });
-
-  // Fonction pour afficher le message de succès
-  function showSuccessMessage() {
-    successOverlay.style.display = "block";
-    successMessage.style.display = "block";
-    document.body.style.overflow = "hidden"; // Empêche le défilement
-  }
-
-  // Fonction pour fermer le message de succès
-  window.closeSuccessMessage = function () {
-    successOverlay.style.display = "none";
-    successMessage.style.display = "none";
-    document.body.style.overflow = "auto"; // Réactive le défilement
-  };
-
-  // Soumission du formulaire
-  form.addEventListener("submit", (e) => {
-    e.preventDefault(); // Empêche l'envoi réel pour la démo
-
-    // Validation simple
-    const name = document.getElementById("name").value;
-    const categorie = document.getElementById("categorie").value;
-    const adresse = document.getElementById("adresse").value;
-    const ville = document.getElementById("ville").value;
-    const codepostal = document.getElementById("codepostal").value;
-    const phone = document.getElementById("phone").value;
-    const email = document.getElementById("email").value;
-    const open = document.getElementById("open").value;
-
-    // Vérifie si tous les champs requis sont remplis
-    if (
-      !name ||
-      !categorie ||
-      !adresse ||
-      !ville ||
-      !codepostal ||
-      !phone ||
-      !email ||
-      !open
-    ) {
-      alert("Veuillez remplir tous les champs obligatoires");
-      return;
-    }
-
-    // Affiche le spinner
-    submitBtn.disabled = true;
-    submitText.style.display = "none";
-    submitSpinner.style.display = "inline-block";
-
-    // Simule un envoi (2 secondes)
-    setTimeout(() => {
-      // Cache le spinner
-      submitBtn.disabled = false;
-      submitText.style.display = "inline";
-      submitSpinner.style.display = "none";
-
-      // Affiche le message de succès
-      showSuccessMessage();
-
-      // Réinitialise le formulaire
-      form.reset();
-      uploadText.textContent = "Déposez votre image ici";
-      uploadSection.style.borderColor = "#cbd5e0";
-      uploadSection.style.background =
-        "linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%)";
-    }, 2000);
-  });
-
-  // Fermer le message de succès en cliquant sur l'overlay
-  successOverlay.addEventListener("click", closeSuccessMessage);
-
-  // Compteur de caractères
-  const description = document.getElementById("description");
-  const charCounter = document.getElementById("charCounter");
-
-  description.addEventListener("input", () => {
-    const remaining = description.value.length;
-    charCounter.textContent = `${remaining}/500 caractères`;
-
-    if (remaining > 450) {
-      charCounter.classList.add("warning");
-    } else {
-      charCounter.classList.remove("warning");
-    }
-
-    if (remaining >= 500) {
-      charCounter.classList.add("danger");
-    } else {
-      charCounter.classList.remove("danger");
-    }
-  });
-});
+})

@@ -275,85 +275,8 @@
   </footer>
 
   <script src="../js/JS_nav_bar.js"></script>
-  <script>
-    // Char counter
-    const desc = document.getElementById('description');
-    const count = document.getElementById('descCount');
-    desc.addEventListener('input', () => count.textContent = desc.value.length);
+  <script type="module" src="../js/add.js"></script>
 
-    // Upload preview
-    const picture = document.getElementById('picture');
-    const preview = document.getElementById('uploadPreview');
-    const previewImg = document.getElementById('previewImg');
-    picture.addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      if (file.size > 5 * 1024 * 1024) { alert('Fichier trop lourd (max 5 MB)'); return; }
-      const reader = new FileReader();
-      reader.onload = (ev) => { previewImg.src = ev.target.result; preview.style.display = 'block'; };
-      reader.readAsDataURL(file);
-    });
-
-    // Drag & drop
-    const zone = document.getElementById('uploadZone');
-    zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.classList.add('drag-over'); });
-    zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
-    zone.addEventListener('drop', (e) => {
-      e.preventDefault(); zone.classList.remove('drag-over');
-      const file = e.dataTransfer.files[0];
-      if (file) { const dt = new DataTransfer(); dt.items.add(file); picture.files = dt.files; picture.dispatchEvent(new Event('change')); }
-    });
-
-
-    // Validation
-    function validate() {
-      let valid = true;
-      const fields = [
-        { id:'name',       err:'nameError',       check: v => v.length > 0 },
-        { id:'categorie',  err:'categorieError',   check: v => v !== '' },
-        { id:'adresse',    err:'adresseError',     check: v => v.length > 0 },
-        { id:'ville',      err:'villeError',       check: v => v.length > 0 },
-        { id:'codepostal', err:'codepostalError',  check: v => /^\d{4}$/.test(v) },
-        { id:'phone',      err:'phoneError',       check: v => v.length >= 8 },
-        { id:'email',      err:'emailError',       check: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) },
-        { id:'hOpen',      err:'hOpenError',       check: v => v.length > 0 },
-        { id:'hClose',     err:'hCloseError',      check: v => v.length > 0 },
-      ];
-      fields.forEach(({ id, err, check }) => {
-        const el = document.getElementById(id);
-        const errEl = document.getElementById(err);
-        if (!check(el.value.trim())) { el.classList.add('invalid'); errEl.classList.add('show'); valid = false; }
-        else                         { el.classList.remove('invalid'); errEl.classList.remove('show'); }
-      });
-      return valid;
-    }
-
-    // Submit
-    document.getElementById('businessForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      if (!validate()) return;
-      const btn = document.getElementById('submitBtn');
-      const txt = document.getElementById('submitText');
-      const arr = document.getElementById('submitArrow');
-      const spin = document.getElementById('submitSpinner');
-      btn.disabled = true; txt.textContent = 'Envoi en cours…'; arr.style.display = 'none'; spin.style.display = 'block';
-      setTimeout(() => {
-        btn.disabled = false; txt.textContent = 'Soumettre mon commerce'; arr.style.display = ''; spin.style.display = 'none';
-        document.getElementById('overlay').classList.add('show');
-        document.getElementById('successBox').classList.add('show');
-      }, 1800);
-    });
-
-    function closeSuccess() {
-      document.getElementById('overlay').classList.remove('show');
-      document.getElementById('successBox').classList.remove('show');
-      window.location.href = 'aceuil.html';
-    }
-
-    document.getElementById('cancelBtn').addEventListener('click', () => {
-      if (confirm('Annuler la saisie ?')) window.location.href = 'aceuil.html';
-    });
-  </script>
 
 </body>
 </html>

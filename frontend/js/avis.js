@@ -1,4 +1,5 @@
-// ===== avis.js =====
+// frontend/js/avis.js
+import { supabase } from './supabaseClient.js'
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -26,8 +27,163 @@ document.addEventListener("DOMContentLoaded", () => {
   let uploadedFiles = [];
   let pointsForts = [];
   let pointsFaibles = [];
+  let selectedCommerceId = null;
+  let selectedCommerceNom = '';
+  let searchTimeout = null;
 
   const noteCriteres = { qualite: 0, service: 0, prix: 0, ambiance: 0 };
+
+  // Récupérer l'ID du commerce depuis l'URL
+  const urlParams = new URLSearchParams(window.location.search)
+  const commerceId = urlParams.get('commerce_id')
+  
+  console.log('Commerce ID reçu:', commerceId)
+
+  /* ══════════════════════════════
+     RECHERCHE DE COMMERCE AVEC AUTOCOMPLÉTION
+  ══════════════════════════════ */
+  const commerceInput = document.getElementById('commerce')
+  const searchResults = document.createElement('div')
+  searchResults.className = 'search-results'
+  searchResults.style.cssText = `
+    position: absolute;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none;
+    width: 100%;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  `
+  
+  if (commerceInput) {
+    commerceInput.parentNode.style.position = 'relative'
+    commerceInput.parentNode.appendChild(searchResults)
+    
+    // Si ID dans l'URL, charger le commerce automatiquement
+    if (commerceId) {
+      loadCommerceById(commerceId)
+    }
+    
+    commerceInput.addEventListener('input', async (e) => {
+      const searchTerm = e.target.value.trim()
+      
+      if (searchTimeout) clearTimeout(searchTimeout)
+      
+      if (searchTerm.length < 2) {
+        searchResults.style.display = 'none'
+        selectedCommerceId = null
+        return
+      }
+      
+      searchTimeout = setTimeout(async () => {
+        const { data, error } = await supabase
+          .from('commerces')
+          .select('id, nom, ville, categorie')
+          .ilike('nom', `%${searchTerm}%`)
+          .limit(5)
+        
+        if (error) {
+          console.error('Erreur recherche:', error)
+          return
+        }
+        
+        if (data && data.length > 0) {
+          searchResults.innerHTML = data.map(commerce => `
+            <div class="search-result-item" data-id="${commerce.id}" data-nom="${commerce.nom}" style="
+              padding: 10px;
+              cursor: pointer;
+              border-bottom: 1px solid #eee;
+              transition: background 0.2s;
+            ">
+              <strong>${commerce.nom}</strong><br>
+              <small>📍 ${commerce.ville} • 🏷️ ${commerce.categorie}</small>
+            </div>
+          `).join('')
+          
+          document.querySelectorAll('.search-result-item').forEach(item => {
+            item.addEventListener('click', () => {
+              selectedCommerceId = item.dataset.id
+              selectedCommerceNom = item.dataset.nom
+              commerceInput.value = selectedCommerceNom
+              searchResults.style.display = 'none'
+              commerceInput.disabled = true
+              
+              // Afficher confirmation
+              const confirmMsg = document.createElement('div')
+              confirmMsg.className = 'commerce-confirmed'
+              confirmMsg.style.cssText = `
+                color: green;
+                font-size: 12px;
+                margin-top: 5px;
+                padding: 5px;
+                background: #d4edda;
+                border-radius: 5px;
+              `
+              confirmMsg.innerHTML = `✅ Commerce sélectionné : ${selectedCommerceNom}`
+              
+              const oldMsg = commerceInput.parentNode.querySelector('.commerce-confirmed')
+              if (oldMsg) oldMsg.remove()
+              commerceInput.parentNode.appendChild(confirmMsg)
+              
+              setTimeout(() => confirmMsg.remove(), 3000)
+              updateProgress()
+            })
+          })
+          
+          searchResults.style.display = 'block'
+        } else {
+          searchResults.innerHTML = '<div style="padding: 10px; color: red;">❌ Aucun commerce trouvé.</div>'
+          searchResults.style.display = 'block'
+        }
+      }, 300)
+    })
+    
+    // Fermer les résultats en cliquant ailleurs
+    document.addEventListener('click', (e) => {
+      if (!commerceInput.parentNode.contains(e.target)) {
+        searchResults.style.display = 'none'
+      }
+    })
+  }
+  
+  async function loadCommerceById(id) {
+    const { data, error } = await supabase
+      .from('commerces')
+      .select('id, nom')
+      .eq('id', id)
+      .single()
+    
+    if (!error && data) {
+      selectedCommerceId = data.id
+      selectedCommerceNom = data.nom
+      commerceInput.value = data.nom
+      commerceInput.disabled = true
+    }
+  }
+
+  /* ══════════════════════════════
+     VALIDATION DU COMMERCE
+  ══════════════════════════════ */
+  function validateCommerce() {
+    const commerce = document.getElementById("commerce").value
+    const commerceError = document.getElementById("commerceError")
+    
+    if (!commerce.trim()) {
+      showError(commerceError, "Le nom du commerce est requis")
+      return false
+    }
+    
+    if (!selectedCommerceId && !commerceId) {
+      showError(commerceError, "❌ Veuillez sélectionner un commerce existant dans la liste")
+      return false
+    }
+    
+    hideError(commerceError)
+    return true
+  }
 
   /* ══════════════════════════════
      BARRE DE PROGRESSION
@@ -41,11 +197,12 @@ document.addEventListener("DOMContentLoaded", () => {
       if (el && el.value.trim() !== "") filled++;
     });
     if (noteGlobale > 0) filled++;
+    if (selectedCommerceId || commerceId) filled++;
     const conditions = document.getElementById("conditions");
     if (conditions && conditions.checked) filled++;
 
     const total = requiredFields.length + 2;
-    progressFill.style.width = Math.round((filled / total) * 100) + "%";
+    if (progressFill) progressFill.style.width = Math.round((filled / total) * 100) + "%";
   }
 
   requiredFields.forEach(id => {
@@ -55,10 +212,12 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("conditions")?.addEventListener("change", updateProgress);
 
   /* ── Compteur description ── */
-  avisTexte.addEventListener("input", () => {
-    charCounter.textContent = `${avisTexte.value.length}/1000 caractères`;
-    updateProgress();
-  });
+  if (avisTexte) {
+    avisTexte.addEventListener("input", () => {
+      if (charCounter) charCounter.textContent = `${avisTexte.value.length}/1000 caractères`;
+      updateProgress();
+    });
+  }
 
   /* ══════════════════════════════
      ÉTOILES GLOBALES
@@ -74,19 +233,23 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  starsGlobal.forEach(star => {
-    star.addEventListener("mouseenter", () => paintGlobalStars(parseInt(star.dataset.val)));
-    star.addEventListener("mouseleave", () => paintGlobalStars(noteGlobale));
-    star.addEventListener("click", () => {
-      noteGlobale = parseInt(star.dataset.val);
-      noteInput.value = noteGlobale;
-      noteLabel.textContent = noteLabels[noteGlobale];
-      noteLabel.style.color = "var(--primary)";
-      paintGlobalStars(noteGlobale);
-      hideError(document.getElementById("noteGlobaleError"));
-      updateProgress();
+  if (starsGlobal.length) {
+    starsGlobal.forEach(star => {
+      star.addEventListener("mouseenter", () => paintGlobalStars(parseInt(star.dataset.val)));
+      star.addEventListener("mouseleave", () => paintGlobalStars(noteGlobale));
+      star.addEventListener("click", () => {
+        noteGlobale = parseInt(star.dataset.val);
+        if (noteInput) noteInput.value = noteGlobale;
+        if (noteLabel) {
+          noteLabel.textContent = noteLabels[noteGlobale];
+          noteLabel.style.color = "var(--primary)";
+        }
+        paintGlobalStars(noteGlobale);
+        hideError(document.getElementById("noteGlobaleError"));
+        updateProgress();
+      });
     });
-  });
+  }
 
   /* ══════════════════════════════
      ÉTOILES CRITÈRES
@@ -113,7 +276,7 @@ document.addEventListener("DOMContentLoaded", () => {
       star.addEventListener("mouseleave", () => paintMini(noteCriteres[key]));
       star.addEventListener("click", () => {
         noteCriteres[key] = parseInt(star.dataset.val);
-        input.value = noteCriteres[key];
+        if (input) input.value = noteCriteres[key];
         paintMini(noteCriteres[key]);
       });
     });
@@ -130,13 +293,9 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   /* ══════════════════════════════
-     TAGS — POINTS FORTS
+     TAGS
   ══════════════════════════════ */
   setupTags("fortsInput", "fortsList", "fortsHidden", pointsForts, "fort");
-
-  /* ══════════════════════════════
-     TAGS — POINTS FAIBLES
-  ══════════════════════════════ */
   setupTags("faiblesInput", "faiblesList", "faiblesHidden", pointsFaibles, "faible");
 
   function setupTags(inputId, listId, hiddenId, arr, type) {
@@ -144,6 +303,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const list   = document.getElementById(listId);
     const hidden = document.getElementById(hiddenId);
 
+    if (!input) return;
+    
     input.addEventListener("keydown", e => {
       if (e.key === "Enter" || e.key === ",") {
         e.preventDefault();
@@ -162,6 +323,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function renderTags(arr, list, hidden, type, input) {
+    if (!list) return;
     list.innerHTML = "";
     arr.forEach((tag, i) => {
       const pill = document.createElement("span");
@@ -173,26 +335,30 @@ document.addEventListener("DOMContentLoaded", () => {
       });
       list.appendChild(pill);
     });
-    hidden.value = arr.join(",");
+    if (hidden) hidden.value = arr.join(",");
   }
 
   /* ══════════════════════════════
      UPLOAD PHOTOS
   ══════════════════════════════ */
-  uploadSection.addEventListener("click", () => picturesInput.click());
+  if (uploadSection) {
+    uploadSection.addEventListener("click", () => picturesInput?.click());
 
-  uploadSection.addEventListener("dragover", e => { e.preventDefault(); uploadSection.style.borderColor = "var(--primary)"; });
-  uploadSection.addEventListener("dragleave", () => { uploadSection.style.borderColor = ""; });
-  uploadSection.addEventListener("drop", e => {
-    e.preventDefault();
-    uploadSection.style.borderColor = "";
-    Array.from(e.dataTransfer.files).forEach(f => addPhoto(f));
-  });
+    uploadSection.addEventListener("dragover", e => { e.preventDefault(); uploadSection.style.borderColor = "var(--primary)"; });
+    uploadSection.addEventListener("dragleave", () => { uploadSection.style.borderColor = ""; });
+    uploadSection.addEventListener("drop", e => {
+      e.preventDefault();
+      uploadSection.style.borderColor = "";
+      Array.from(e.dataTransfer.files).forEach(f => addPhoto(f));
+    });
+  }
 
-  picturesInput.addEventListener("change", () => {
-    Array.from(picturesInput.files).forEach(f => addPhoto(f));
-    picturesInput.value = "";
-  });
+  if (picturesInput) {
+    picturesInput.addEventListener("change", () => {
+      Array.from(picturesInput.files).forEach(f => addPhoto(f));
+      picturesInput.value = "";
+    });
+  }
 
   function addPhoto(file) {
     const error = document.getElementById("pictureError");
@@ -200,13 +366,14 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) { showError(error, "Format non supporté (JPG/PNG)."); return; }
     if (file.size > 5 * 1024 * 1024) { showError(error, "Photo trop lourde (max 5MB)."); return; }
 
-    error.classList.remove("visible");
+    if (error) error.classList.remove("visible");
     uploadedFiles.push(file);
     renderPreviews();
-    uploadText.textContent = `✅ ${uploadedFiles.length} photo(s) sélectionnée(s)`;
+    if (uploadText) uploadText.textContent = `✅ ${uploadedFiles.length} photo(s) sélectionnée(s)`;
   }
 
   function renderPreviews() {
+    if (!uploadPreviews) return;
     uploadPreviews.innerHTML = "";
     uploadedFiles.forEach((file, i) => {
       const reader = new FileReader();
@@ -218,7 +385,7 @@ document.addEventListener("DOMContentLoaded", () => {
         thumb.querySelector(".remove-thumb").addEventListener("click", () => {
           uploadedFiles.splice(i, 1);
           renderPreviews();
-          uploadText.textContent = uploadedFiles.length
+          if (uploadText) uploadText.textContent = uploadedFiles.length
             ? `✅ ${uploadedFiles.length} photo(s) sélectionnée(s)`
             : "Déposez vos photos ici";
         });
@@ -231,15 +398,16 @@ document.addEventListener("DOMContentLoaded", () => {
   /* ══════════════════════════════
      VALIDATION
   ══════════════════════════════ */
-  function showError(el, msg = null) { if (msg) el.textContent = msg; el.classList.add("visible"); }
-  function hideError(el) { el.classList.remove("visible"); }
+  function showError(el, msg = null) { if (el) { if (msg) el.textContent = msg; el.classList.add("visible"); } }
+  function hideError(el) { if (el) el.classList.remove("visible"); }
   function validateEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
 
   function validateForm() {
     let valid = true;
 
+    if (!validateCommerce()) valid = false;
+
     const simpleRequired = [
-      { id: "commerce", errId: "commerceError" },
       { id: "ville",    errId: "villeError" },
       { id: "titre",    errId: "titreError" },
       { id: "prenom",   errId: "prenomError" },
@@ -248,45 +416,39 @@ document.addEventListener("DOMContentLoaded", () => {
     simpleRequired.forEach(({ id, errId }) => {
       const el = document.getElementById(id);
       const err = document.getElementById(errId);
-      if (!el.value.trim()) { showError(err); el.classList.add("invalid"); valid = false; }
-      else { hideError(err); el.classList.remove("invalid"); }
+      if (!el.value.trim()) { showError(err); if (el) el.classList.add("invalid"); valid = false; }
+      else { hideError(err); if (el) el.classList.remove("invalid"); }
     });
 
-    // Catégorie
     const categorie = document.getElementById("categorie");
     const categorieError = document.getElementById("categorieError");
-    if (!categorie.value) { showError(categorieError); categorie.classList.add("invalid"); valid = false; }
-    else { hideError(categorieError); categorie.classList.remove("invalid"); }
+    if (!categorie.value) { showError(categorieError); if (categorie) categorie.classList.add("invalid"); valid = false; }
+    else { hideError(categorieError); if (categorie) categorie.classList.remove("invalid"); }
 
-    // Date visite
     const dateVisite = document.getElementById("dateVisite");
     const dateVisiteError = document.getElementById("dateVisiteError");
-    if (!dateVisite.value) { showError(dateVisiteError); dateVisite.classList.add("invalid"); valid = false; }
+    if (!dateVisite.value) { showError(dateVisiteError); if (dateVisite) dateVisite.classList.add("invalid"); valid = false; }
     else {
       const today = new Date(); today.setHours(0,0,0,0);
       const visited = new Date(dateVisite.value);
-      if (visited > today) { showError(dateVisiteError, "La date ne peut pas être dans le futur."); dateVisite.classList.add("invalid"); valid = false; }
-      else { hideError(dateVisiteError); dateVisite.classList.remove("invalid"); }
+      if (visited > today) { showError(dateVisiteError, "La date ne peut pas être dans le futur."); if (dateVisite) dateVisite.classList.add("invalid"); valid = false; }
+      else { hideError(dateVisiteError); if (dateVisite) dateVisite.classList.remove("invalid"); }
     }
 
-    // Note globale
     const noteGlobaleError = document.getElementById("noteGlobaleError");
     if (noteGlobale === 0) { showError(noteGlobaleError); valid = false; }
     else { hideError(noteGlobaleError); }
 
-    // Texte avis
     const avisErr = document.getElementById("avisTexteError");
     if (!avisTexte.value.trim() || avisTexte.value.trim().length < 50) {
-      showError(avisErr); avisTexte.classList.add("invalid"); valid = false;
-    } else { hideError(avisErr); avisTexte.classList.remove("invalid"); }
+      showError(avisErr); if (avisTexte) avisTexte.classList.add("invalid"); valid = false;
+    } else { hideError(avisErr); if (avisTexte) avisTexte.classList.remove("invalid"); }
 
-    // Email
     const email = document.getElementById("email");
     const emailError = document.getElementById("emailError");
-    if (!validateEmail(email.value)) { showError(emailError); email.classList.add("invalid"); valid = false; }
-    else { hideError(emailError); email.classList.remove("invalid"); }
+    if (!validateEmail(email.value)) { showError(emailError); if (email) email.classList.add("invalid"); valid = false; }
+    else { hideError(emailError); if (email) email.classList.remove("invalid"); }
 
-    // Conditions
     const conditions = document.getElementById("conditions");
     const conditionsError = document.getElementById("conditionsError");
     if (!conditions.checked) { showError(conditionsError); valid = false; }
@@ -296,127 +458,220 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /* ══════════════════════════════
-     SOUMISSION
+     SOUMISSION À SUPABASE
   ══════════════════════════════ */
-  form.addEventListener("submit", e => {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
     if (!validateForm()) {
       const firstErr = form.querySelector(".error-message.visible");
       if (firstErr) firstErr.scrollIntoView({ behavior: "smooth", block: "center" });
       return;
     }
+    
     submitText.style.display = "none";
     submitSpinner.style.display = "inline-block";
     submitBtn.disabled = true;
-
-    setTimeout(() => {
+    
+    const { data: { user } } = await supabase.auth.getUser()
+    
+    if (!user) {
+      alert('❌ Veuillez vous connecter pour laisser un avis')
+      window.location.href = 'login.html'
+      return
+    }
+    
+    // Récupérer les valeurs du formulaire
+    const commerce = document.getElementById("commerce").value
+    const categorie = document.getElementById("categorie").value
+    const ville = document.getElementById("ville").value
+    const dateVisite = document.getElementById("dateVisite").value
+    const typeVisite = document.getElementById("typeVisite")?.value || null
+    const titre = document.getElementById("titre").value
+    const avisTexteValue = document.getElementById("avisTexte").value
+    const prenom = document.getElementById("prenom").value
+    const email = document.getElementById("email").value
+    const recommande = document.querySelector('input[name="recommande"]:checked')?.value || null
+    
+    // Utiliser l'ID du commerce sélectionné
+    let finalCommerceId = commerceId || selectedCommerceId
+    
+    if (!finalCommerceId) {
+      alert('❌ Veuillez sélectionner un commerce existant dans la liste.')
       submitText.style.display = "inline";
       submitSpinner.style.display = "none";
       submitBtn.disabled = false;
-      openSuccess();
-    }, 1800);
+      return
+    }
+    
+    // Upload des photos vers Supabase Storage
+    let photoUrls = []
+    for (const file of uploadedFiles) {
+      const fileName = `avis/${Date.now()}_${file.name}`
+      const { error: uploadError } = await supabase.storage
+        .from('avis')
+        .upload(fileName, file)
+      
+      if (!uploadError) {
+        const { data: { publicUrl } } = supabase.storage
+          .from('avis')
+          .getPublicUrl(fileName)
+        photoUrls.push(publicUrl)
+      }
+    }
+    
+    // Insérer l'avis dans Supabase
+    const { error } = await supabase
+      .from('avis')
+      .insert({
+        commerce_id: finalCommerceId,
+        user_id: user.id,
+        ville: ville,
+        date_visite: dateVisite,
+        type_visite: typeVisite,
+        note_globale: noteGlobale,
+        note_qualite: noteCriteres.qualite || null,
+        note_service: noteCriteres.service || null,
+        note_prix: noteCriteres.prix || null,
+        note_ambiance: noteCriteres.ambiance || null,
+        recommande: recommande,
+        titre: titre,
+        avis_texte: avisTexteValue,
+        points_forts: pointsForts.join(','),
+        photos: photoUrls
+      })
+    
+    submitText.style.display = "inline";
+    submitSpinner.style.display = "none";
+    submitBtn.disabled = false;
+    
+    if (error) {
+      alert('❌ Erreur: ' + error.message)
+    } else {
+      openSuccess()
+    }
   });
 
   /* ══════════════════════════════
      APERÇU
   ══════════════════════════════ */
-  previewBtn.addEventListener("click", () => {
-    const titre    = document.getElementById("titre").value || "Titre de l'avis";
-    const commerce = document.getElementById("commerce").value || "Commerce";
-    const ville    = document.getElementById("ville").value || "Ville";
-    const prenom   = document.getElementById("prenom").value || "Anonyme";
-    const texte    = avisTexte.value || "Aucun texte.";
-    const dateVal  = document.getElementById("dateVisite").value;
-    const catEl    = document.getElementById("categorie");
-    const catText  = catEl.options[catEl.selectedIndex]?.text?.replace(/^.\s/, "") || "—";
+  if (previewBtn) {
+    previewBtn.addEventListener("click", () => {
+      const titre    = document.getElementById("titre").value || "Titre de l'avis";
+      const commerce = document.getElementById("commerce").value || "Commerce";
+      const ville    = document.getElementById("ville").value || "Ville";
+      const prenom   = document.getElementById("prenom").value || "Anonyme";
+      const texte    = avisTexte.value || "Aucun texte.";
+      const dateVal  = document.getElementById("dateVisite").value;
+      const catEl    = document.getElementById("categorie");
+      const catText  = catEl.options[catEl.selectedIndex]?.text?.replace(/^.\s/, "") || "—";
 
-    document.getElementById("previewTitre").textContent = titre;
-    document.getElementById("previewCommerce").textContent = `${commerce} — ${ville}`;
-    document.getElementById("previewCat").textContent = catText;
-    document.getElementById("previewDesc").textContent = texte;
-    document.getElementById("previewAuteur").textContent =
-      `Par ${prenom} · 📅 ${dateVal ? new Date(dateVal).toLocaleDateString("fr-FR", { day:"2-digit", month:"long", year:"numeric" }) : "—"}`;
+      const previewTitre = document.getElementById("previewTitre");
+      const previewCommerce = document.getElementById("previewCommerce");
+      const previewCat = document.getElementById("previewCat");
+      const previewDesc = document.getElementById("previewDesc");
+      const previewAuteur = document.getElementById("previewAuteur");
+      const previewStars = document.getElementById("previewStars");
+      const previewForts = document.getElementById("previewForts");
 
-    // Étoiles
-    document.getElementById("previewStars").textContent = "★".repeat(noteGlobale) + "☆".repeat(5 - noteGlobale);
+      if (previewTitre) previewTitre.textContent = titre;
+      if (previewCommerce) previewCommerce.textContent = `${commerce} — ${ville}`;
+      if (previewCat) previewCat.textContent = catText;
+      if (previewDesc) previewDesc.textContent = texte;
+      if (previewAuteur) previewAuteur.textContent = `Par ${prenom} · 📅 ${dateVal ? new Date(dateVal).toLocaleDateString("fr-FR", { day:"2-digit", month:"long", year:"numeric" }) : "—"}`;
+      if (previewStars) previewStars.textContent = "★".repeat(noteGlobale) + "☆".repeat(5 - noteGlobale);
 
-    // Tags forts
-    const fortsRow = document.getElementById("previewForts");
-    fortsRow.innerHTML = "";
-    pointsForts.forEach(t => {
-      const pill = document.createElement("span");
-      pill.className = "tag-pill fort";
-      pill.textContent = "✅ " + t;
-      fortsRow.appendChild(pill);
+      if (previewForts) {
+        previewForts.innerHTML = "";
+        pointsForts.forEach(t => {
+          const pill = document.createElement("span");
+          pill.className = "tag-pill fort";
+          pill.textContent = "✅ " + t;
+          previewForts.appendChild(pill);
+        });
+      }
+
+      if (previewOverlay) previewOverlay.classList.add("visible");
+      if (previewModal) previewModal.classList.add("visible");
     });
-
-    previewOverlay.classList.add("visible");
-    previewModal.classList.add("visible");
-  });
+  }
 
   window.closePreview = function () {
-    previewOverlay.classList.remove("visible");
-    previewModal.classList.remove("visible");
+    if (previewOverlay) previewOverlay.classList.remove("visible");
+    if (previewModal) previewModal.classList.remove("visible");
   };
 
-  previewOverlay.addEventListener("click", () => {
-    if (previewModal.classList.contains("visible")) closePreview();
-  });
+  if (previewOverlay) {
+    previewOverlay.addEventListener("click", () => {
+      if (previewModal && previewModal.classList.contains("visible")) closePreview();
+    });
+  }
 
   /* ══════════════════════════════
      SUCCÈS
   ══════════════════════════════ */
   function openSuccess() {
-    successOverlay.classList.add("visible");
-    successMessage.classList.add("visible");
-    progressFill.style.width = "100%";
+    if (successOverlay) successOverlay.classList.add("visible");
+    if (successMessage) successMessage.classList.add("visible");
+    if (progressFill) progressFill.style.width = "100%";
   }
 
   window.closeSuccessMessage = function () {
-    successOverlay.classList.remove("visible");
-    successMessage.classList.remove("visible");
+    if (successOverlay) successOverlay.classList.remove("visible");
+    if (successMessage) successMessage.classList.remove("visible");
     resetForm();
   };
 
   /* ══════════════════════════════
      ANNULER
   ══════════════════════════════ */
-  cancelBtn.addEventListener("click", () => {
-    if (confirm("Voulez-vous vraiment annuler ? Votre avis sera perdu.")) resetForm();
-  });
+  if (cancelBtn) {
+    cancelBtn.addEventListener("click", () => {
+      if (confirm("Voulez-vous vraiment annuler ? Votre avis sera perdu.")) resetForm();
+    });
+  }
 
   function resetForm() {
-    form.reset();
+    if (form) form.reset();
 
-    // Stars
     noteGlobale = 0;
-    document.getElementById("noteGlobale").value = "";
-    document.getElementById("noteLabel").textContent = "Cliquez pour noter";
-    document.getElementById("noteLabel").style.color = "";
+    selectedCommerceId = null;
+    selectedCommerceNom = '';
+    if (commerceInput) {
+      commerceInput.disabled = false;
+      commerceInput.value = '';
+    }
+    
+    const noteGlobaleInput = document.getElementById("noteGlobale");
+    if (noteGlobaleInput) noteGlobaleInput.value = "";
+    if (noteLabel) {
+      noteLabel.textContent = "Cliquez pour noter";
+      noteLabel.style.color = "";
+    }
     starsGlobal.forEach(s => s.classList.remove("active"));
     Object.keys(noteCriteres).forEach(k => { noteCriteres[k] = 0; });
     document.querySelectorAll(".star-mini").forEach(s => s.classList.remove("active"));
 
-    // Recommend
     document.querySelectorAll(".recommend-card").forEach(c => c.classList.remove("selected"));
 
-    // Tags
     pointsForts.length = 0;
     pointsFaibles.length = 0;
-    ["fortsList", "faiblesList"].forEach(id => { document.getElementById(id).innerHTML = ""; });
-    ["fortsHidden", "faiblesHidden"].forEach(id => { document.getElementById(id).value = ""; });
+    const fortsList = document.getElementById("fortsList");
+    const faiblesList = document.getElementById("faiblesList");
+    const fortsHidden = document.getElementById("fortsHidden");
+    const faiblesHidden = document.getElementById("faiblesHidden");
+    if (fortsList) fortsList.innerHTML = "";
+    if (faiblesList) faiblesList.innerHTML = "";
+    if (fortsHidden) fortsHidden.value = "";
+    if (faiblesHidden) faiblesHidden.value = "";
 
-    // Photos
     uploadedFiles = [];
-    uploadPreviews.innerHTML = "";
-    uploadText.textContent = "Déposez vos photos ici";
-    uploadSection.style.borderColor = "";
+    if (uploadPreviews) uploadPreviews.innerHTML = "";
+    if (uploadText) uploadText.textContent = "Déposez vos photos ici";
+    if (uploadSection) uploadSection.style.borderColor = "";
 
-    // Progress
-    progressFill.style.width = "0%";
-    charCounter.textContent = "0/1000 caractères";
+    if (progressFill) progressFill.style.width = "0%";
+    if (charCounter) charCounter.textContent = "0/1000 caractères";
 
-    // Errors
     form.querySelectorAll(".invalid").forEach(el => el.classList.remove("invalid"));
     form.querySelectorAll(".error-message.visible").forEach(el => el.classList.remove("visible"));
   }
@@ -424,7 +679,7 @@ document.addEventListener("DOMContentLoaded", () => {
   /* ══════════════════════════════
      INLINE BLUR VALIDATION
   ══════════════════════════════ */
-  ["commerce", "ville", "titre", "prenom"].forEach(id => {
+  ["ville", "titre", "prenom"].forEach(id => {
     const el = document.getElementById(id);
     if (!el) return;
     el.addEventListener("blur", () => {
@@ -434,21 +689,24 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  document.getElementById("email").addEventListener("blur", () => {
-    const el = document.getElementById("email");
-    const err = document.getElementById("emailError");
-    if (!validateEmail(el.value)) { showError(err); el.classList.add("invalid"); }
-    else { hideError(err); el.classList.remove("invalid"); }
-  });
+  const emailEl = document.getElementById("email");
+  if (emailEl) {
+    emailEl.addEventListener("blur", () => {
+      const err = document.getElementById("emailError");
+      if (!validateEmail(emailEl.value)) { showError(err); emailEl.classList.add("invalid"); }
+      else { hideError(err); emailEl.classList.remove("invalid"); }
+    });
+  }
 
-  document.getElementById("dateVisite").addEventListener("change", () => {
-    const el = document.getElementById("dateVisite");
-    const err = document.getElementById("dateVisiteError");
-    const today = new Date(); today.setHours(0,0,0,0);
-    if (!el.value) { showError(err, "La date de visite est requise."); el.classList.add("invalid"); }
-    else if (new Date(el.value) > today) { showError(err, "La date ne peut pas être dans le futur."); el.classList.add("invalid"); }
-    else { hideError(err); el.classList.remove("invalid"); }
-    updateProgress();
-  });
-
+  const dateVisiteEl = document.getElementById("dateVisite");
+  if (dateVisiteEl) {
+    dateVisiteEl.addEventListener("change", () => {
+      const err = document.getElementById("dateVisiteError");
+      const today = new Date(); today.setHours(0,0,0,0);
+      if (!dateVisiteEl.value) { showError(err, "La date de visite est requise."); dateVisiteEl.classList.add("invalid"); }
+      else if (new Date(dateVisiteEl.value) > today) { showError(err, "La date ne peut pas être dans le futur."); dateVisiteEl.classList.add("invalid"); }
+      else { hideError(err); dateVisiteEl.classList.remove("invalid"); }
+      updateProgress();
+    });
+  }
 });

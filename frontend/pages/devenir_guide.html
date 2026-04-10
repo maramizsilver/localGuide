@@ -324,6 +324,93 @@
         </button>
       </div>
     </div>
+    <!-- SECTION ABONNEMENT -->
+<section class="form-part">
+  <h2 class="section-title">Choisissez votre abonnement</h2>
+  <p class="section-subtitle">Devenez guide local et bénéficiez de nos services</p>
+
+  <div class="abonnement-grid" id="abonnementGrid">
+    <div class="abonnement-card" data-duree="1" data-prix="29">
+      <div class="abonnement-header">
+        <h3>Mensuel</h3>
+        <span class="abonnement-prix">29 DT</span>
+        <span class="abonnement-periode">/mois</span>
+      </div>
+      <div class="abonnement-body">
+        <ul>
+          <li>✅ Visibilité sur la plateforme</li>
+          <li>✅ Accès au tableau de bord</li>
+          <li>✅ Support prioritaire</li>
+        </ul>
+      </div>
+      <div class="abonnement-footer">
+        <button type="button" class="btn-abonnement" data-duree="1" data-prix="29">Choisir</button>
+      </div>
+    </div>
+
+    <div class="abonnement-card" data-duree="3" data-prix="79">
+      <div class="abonnement-header">
+        <h3>Trimestriel</h3>
+        <span class="abonnement-prix">79 DT</span>
+        <span class="abonnement-periode">/3 mois</span>
+        <span class="abonnement-economie">Économisez 8 DT</span>
+      </div>
+      <div class="abonnement-body">
+        <ul>
+          <li>✅ Tout du forfait Mensuel</li>
+          <li>✅ Statistiques avancées</li>
+          <li>✅ Mise en avant 1 semaine</li>
+        </ul>
+      </div>
+      <div class="abonnement-footer">
+        <button type="button" class="btn-abonnement" data-duree="3" data-prix="79">Choisir</button>
+      </div>
+    </div>
+
+    <div class="abonnement-card" data-duree="6" data-prix="149">
+      <div class="abonnement-header">
+        <h3>Semestriel</h3>
+        <span class="abonnement-prix">149 DT</span>
+        <span class="abonnement-periode">/6 mois</span>
+        <span class="abonnement-economie">Économisez 25 DT</span>
+      </div>
+      <div class="abonnement-body">
+        <ul>
+          <li>✅ Tout du forfait Trimestriel</li>
+          <li>✅ Badge "Guide Certifié"</li>
+          <li>✅ Mise en avant 1 mois</li>
+        </ul>
+      </div>
+      <div class="abonnement-footer">
+        <button type="button" class="btn-abonnement" data-duree="6" data-prix="149">Choisir</button>
+      </div>
+    </div>
+
+    <div class="abonnement-card" data-duree="12" data-prix="279">
+      <div class="abonnement-header">
+        <h3>Annuel</h3>
+        <span class="abonnement-prix">279 DT</span>
+        <span class="abonnement-periode">/an</span>
+        <span class="abonnement-economie">Économisez 69 DT</span>
+      </div>
+      <div class="abonnement-body">
+        <ul>
+          <li>✅ Tout du forfait Semestriel</li>
+          <li>✅ Accès aux événements exclusifs</li>
+          <li>✅ Mise en avant permanente</li>
+          <li>✅ Formation gratuite</li>
+        </ul>
+      </div>
+      <div class="abonnement-footer">
+        <button type="button" class="btn-abonnement" data-duree="12" data-prix="279">Choisir</button>
+      </div>
+    </div>
+  </div>
+
+  <input type="hidden" id="abonnementDuree" name="abonnementDuree" />
+  <input type="hidden" id="abonnementPrix" name="abonnementPrix" />
+  <div class="error-message" id="abonnementError">Veuillez choisir un abonnement</div>
+</section>
 
     <footer>
       <p>
@@ -332,8 +419,7 @@
       </p>
     </footer>
 
-    
-  <script src="../js/devenir_guide.js"></script>
+<script type="module" src="../js/devenir_guide.js"></script>
 <script src="../js/JS_nav_bar.js"></script>
 </body>
 </html>
