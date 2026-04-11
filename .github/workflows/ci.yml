@@ -2,9 +2,9 @@ name: CI LocalGuide
 
 on:
   push:
-    branches: [main]
+    branches: [main, develop]
   pull_request:
-    branches: [main]
+    branches: [main, develop]
 
 jobs:
   lint-and-check:
@@ -12,12 +12,12 @@ jobs:
 
     steps:
       - name: Checkout du code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4        # ← v3 → v4
 
       - name: Installer Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4      # ← v3 → v4
         with:
-          node-version: 18
+          node-version: 20
 
       - name: Installer les dépendances
         run: npm install
