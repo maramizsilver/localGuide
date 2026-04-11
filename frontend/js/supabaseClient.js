@@ -1,11 +1,9 @@
-// frontend/js/supabaseClient.js
-
-// Version SANS Vite - mets TES vraies valeurs directement
-const SUPABASE_URL = 'https://auumbkcfwjpvdifnxzly.supabase.co' 
-const SUPABASE_ANON_KEY = 'sb_publishable_2S0l2S3ETAq8u-VuSd7flg_QoTgdkKq'      
+// ✅ BON - Les clés viennent des variables d'environnement
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
 
-export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
 console.log('✅ Supabase connecté')
