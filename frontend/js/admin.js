@@ -4,6 +4,9 @@ import { supabase } from './supabaseClient.js'
 // ============================================
 // 1. VÉRIFICATION ADMIN
 // ============================================
+// ============================================
+// 1. VÉRIFICATION ADMIN (MODIFIÉE)
+// ============================================
 async function checkAdminAccess() {
     const { data: { user } } = await supabase.auth.getUser()
     
@@ -12,6 +15,13 @@ async function checkAdminAccess() {
         return false
     }
     
+    //ADMIN POUR CET EMAIL
+    if (user.email === 'admin@localguide.com') {
+        console.log(' Admin détecté par email')
+        return true
+    }
+    
+    // Sinon, vérifier dans la base
     const { data: profile } = await supabase
         .from('users_profiles')
         .select('role')
@@ -19,7 +29,7 @@ async function checkAdminAccess() {
         .single()
     
     if (!profile || profile.role !== 'admin') {
-        alert('⛔ Accès interdit. Cette page est réservée aux administrateurs.')
+        alert(' Accès interdit. Cette page est réservée aux administrateurs.')
         window.location.href = 'aceuil.html'
         return false
     }
@@ -249,7 +259,7 @@ async function approveGuide(id) {
         .eq('id', id)
     
     if (error) {
-        alert('❌ Erreur: ' + error.message)
+        alert(' Erreur: ' + error.message)
     } else {
         alert('✅ Guide approuvé ! Il est maintenant visible sur le site.')
         renderGuidesEnAttente()
@@ -306,14 +316,14 @@ async function renderGuidesEnAttente() {
                     <div>
                         <h3>${escapeHtml(guide.prenom)} ${escapeHtml(guide.nom)}</h3>
                         <p>📧 ${escapeHtml(guide.email)} | 📞 ${escapeHtml(guide.phone)}</p>
-                        <p>📍 ${escapeHtml(guide.ville)} | 🎯 ${escapeHtml(guide.specialite)}</p>
-                        <p>📅 Expérience: ${guide.experience} ans | 🗣️ Langues: ${guide.langue?.join(', ')}</p>
-                        <p>💬 Motivation: ${escapeHtml(guide.motivation?.substring(0, 100))}...</p>
-                        ${guide.abonnement_duree ? `<p>📦 Abonnement: ${guide.abonnement_duree} mois (${guide.abonnement_prix} DT)</p>` : ''}
+                        <p>📍 ${escapeHtml(guide.ville)} |  ${escapeHtml(guide.specialite)}</p>
+                        <p> Expérience: ${guide.experience} ans |  Langues: ${guide.langue?.join(', ')}</p>
+                        <p> Motivation: ${escapeHtml(guide.motivation?.substring(0, 100))}...</p>
+                        ${guide.abonnement_duree ? `<p> Abonnement: ${guide.abonnement_duree} mois (${guide.abonnement_prix} DT)</p>` : ''}
                     </div>
                     <div style="display: flex; gap: 10px; margin-top: 10px;">
-                        <button class="btn-approve-guide" data-id="${guide.id}" style="background: #2c6e49; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">✅ Approuver</button>
-                        <button class="btn-reject-guide" data-id="${guide.id}" style="background: #c0392b; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">❌ Refuser</button>
+                        <button class="btn-approve-guide" data-id="${guide.id}" style="background: #47eb8e; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">Approuver</button>
+                        <button class="btn-reject-guide" data-id="${guide.id}" style="background: #981000; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"> Refuser</button>
                     </div>
                 </div>
             </div>
