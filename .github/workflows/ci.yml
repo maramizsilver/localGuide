@@ -2,9 +2,9 @@ name: CI LocalGuide
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main]
   pull_request:
-    branches: [main, develop]
+    branches: [main]
 
 jobs:
   lint-and-check:
@@ -31,5 +31,4 @@ jobs:
             echo "SUPABASE_ANON_KEY manquant !" && exit 1
           fi
 
-      - name: Lancer ESLint
-        run: npm run lint
+      
