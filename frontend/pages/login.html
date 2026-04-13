@@ -126,57 +126,65 @@
         <p>© 2025 LocalGuide Monastir — Tous droits réservés</p>
     </footer>
 
-    <script type="module">
-        import { supabase } from '../js/supabaseClient.js'
+   <script type="module">
+    import { supabase } from '../js/supabaseClient.js'
 
-        const form = document.getElementById('loginForm')
-        const messageDiv = document.getElementById('message')
+    const form = document.getElementById('loginForm')
+    const messageDiv = document.getElementById('message')
 
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault()
-            
-            const email = document.getElementById('email').value
-            const password = document.getElementById('password').value
-            
-            messageDiv.innerHTML = 'Connexion en cours...'
-            messageDiv.className = 'message'
-            
-            const { data, error } = await supabase.auth.signInWithPassword({
-                email: email,
-                password: password
-            })
-            
-            if (error) {
-                messageDiv.innerHTML = ' ' + error.message
-                messageDiv.className = 'message error'
-                return
-            }
-            
-            // Récupérer le rôle de l'utilisateur
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault()
+        
+        const email = document.getElementById('email').value
+        const password = document.getElementById('password').value
+        
+        messageDiv.innerHTML = 'Connexion en cours...'
+        messageDiv.className = 'message'
+        
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email: email,
+            password: password
+        })
+        
+        if (error) {
+            messageDiv.innerHTML = '❌ ' + error.message
+            messageDiv.className = 'message error'
+            return
+        }
+        
+        // Déterminer le rôle
+        let role = 'client'
+        const userEmail = data.user.email
+        
+        // 🔥 FORCER ADMIN POUR CET EMAIL
+        if (userEmail === 'admin@localguide.com') {
+            role = 'admin'
+            console.log('✅ Admin détecté !')
+        } else {
+            // Vérifier dans users_profiles
             const { data: profile } = await supabase
                 .from('users_profiles')
                 .select('role')
                 .eq('id', data.user.id)
                 .single()
             
-            const role = profile?.role || 'client'
-            
-            messageDiv.innerHTML = `✅ Connecté en tant que ${role} ! Redirection...`
-            messageDiv.className = 'message success'
-            
-            // Rediriger selon le rôle
-            setTimeout(() => {
-                if (role === 'admin') {
-                    window.location.href = 'admin.html'
-                } else if (role === 'guide') {
-                    window.location.href = 'guide-dashboard.html'
-                } else if (role === 'commerçant') {
-                    window.location.href = 'commerce-dashboard.html'
-                } else {
-                    window.location.href = 'aceuil.html'
-                }
-            }, 1000)
-        })
-    </script>
+            if (profile && profile.role) {
+                role = profile.role
+            }
+        }
+        
+        messageDiv.innerHTML = `✅ Connecté en tant que ${role} ! Redirection...`
+        messageDiv.className = 'message success'
+        
+        // Rediriger
+        setTimeout(() => {
+            if (role === 'admin') {
+                window.location.href = 'admin.html'
+            } else {
+                window.location.href = 'aceuil.html'
+            }
+        }, 1000)
+    })
+</script>
 </body>
 </html>
