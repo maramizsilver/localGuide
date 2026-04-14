@@ -1,251 +1,705 @@
 // frontend/js/fichecomm.js
 import { supabase } from './supabaseClient.js'
 
-// Récupérer l'ID du commerce dans l'URL
-const urlParams = new URLSearchParams(window.location.search)
-const commerceId = urlParams.get('id')
-
-// Variables globales
-let currentCommerce = null
+let allCommerces = []        // Tous les commerces (source)
+let displayedCommerces = []  // Commerces après filtres/recherche
+let currentPage = 1
+let itemsPerPage = 6
+let activeFilter = "all"
+let searchQuery = ""
+let sortBy = "note"
+let currentUser = null
+let isLoading = false
+let hasMore = true
 
 // ============================================
-// 1. CHARGER LES DONNÉES DU COMMERCE
+// COMMERCES PAR DÉFAUT DE MONASTIR (6 commerces)
 // ============================================
-async function loadCommerce() {
-    if (!commerceId) {
-        console.error('Aucun ID de commerce dans l\'URL')
-        return
+const DEFAULT_COMMERCES = [
+    {
+        id: 'default-1',
+        nom: "Café & Restaurant Elgrotte",
+        categorie: "restaurant",
+        description: "Café et restaurant situé au Port Kahlia. Cuisine locale et ambiance chaleureuse face à la mer.",
+        adresse: "Port Kahlia, route el karraiya",
+        ville: "Monastir",
+        phone: "22 769 3200",
+        email: "contact@elgrotte.tn",
+        h_ouverture: "09:00",
+        h_fermeture: "23:00",
+        fourchette_prix: "€€",
+        image_url: "../images/elgrotte.jpg",
+        statut: "actif",
+        note_moyenne: 4.7,
+        nb_avis: 89,
+        isDefault: true
+    },
+    {
+        id: 'default-2',
+        nom: "Restaurant le Pirate Monastir",
+        categorie: "restaurant",
+        description: "Restaurant de fruits de mer au port de pêche. Spécialités de poisson grillé.",
+        adresse: "Fishing Port 5000, El Ghedir",
+        ville: "Monastir",
+        phone: "73 468 1260",
+        email: "contact@lepirate.tn",
+        h_ouverture: "12:00",
+        h_fermeture: "23:00",
+        fourchette_prix: "€€€",
+        image_url: "../images/pirate.jpg",
+        statut: "actif",
+        note_moyenne: 4.8,
+        nb_avis: 127,
+        isDefault: true
+    },
+    {
+        id: 'default-3',
+        nom: "Ribat de Monastir",
+        categorie: "site",
+        description: "Forteresse historique du VIIIe siècle. Monument emblématique de Monastir.",
+        adresse: "Avenue Habib Bourguiba",
+        ville: "Monastir",
+        phone: null,
+        email: "ribat@monastir.tn",
+        h_ouverture: "08:00",
+        h_fermeture: "17:00",
+        fourchette_prix: "€",
+        image_url: "../images/ribat.jpg",
+        statut: "actif",
+        note_moyenne: 4.9,
+        nb_avis: 203,
+        isDefault: true
+    },
+    {
+        id: 'default-4',
+        nom: "Café Bahri - coworking space",
+        categorie: "cafe",
+        description: "Café moderne avec espace coworking. Idéal pour travailler.",
+        adresse: "Rue Mohammed Slim, à côté de la Mosquée Bourguiba",
+        ville: "Monastir",
+        phone: "52 966 1980",
+        email: "contact@cafebahri.tn",
+        h_ouverture: "08:00",
+        h_fermeture: "22:00",
+        fourchette_prix: "€",
+        image_url: "../images/cbahri.jpg",
+        statut: "actif",
+        note_moyenne: 4.6,
+        nb_avis: 112,
+        isDefault: true
+    },
+    {
+        id: 'default-5',
+        nom: "ZEN",
+        categorie: "boutique",
+        description: "Boutique de vêtements et accessoires tendance.",
+        adresse: "Avenue des Martyrs, en face de la gare Habib Bourguiba",
+        ville: "Monastir",
+        phone: null,
+        email: "contact@zenboutique.tn",
+        h_ouverture: "09:00",
+        h_fermeture: "20:00",
+        fourchette_prix: "€€",
+        image_url: "../images/zen.jpg",
+        statut: "actif",
+        note_moyenne: 4.5,
+        nb_avis: 67,
+        isDefault: true
+    },
+    {
+        id: 'default-6',
+        nom: "YOYO",
+        categorie: "restaurant",
+        description: "Restaurant moderne sur la route de la Falaise. Cuisine fusion.",
+        adresse: "QQHR+8Q9, Route de la Falaise",
+        ville: "Monastir",
+        phone: "95 232 8820",
+        email: "contact@yoyo.tn",
+        h_ouverture: "11:00",
+        h_fermeture: "23:00",
+        fourchette_prix: "€€",
+        image_url: "../images/yoyo.jpg",
+        statut: "actif",
+        note_moyenne: 4.4,
+        nb_avis: 45,
+        isDefault: true
+    }
+]
+
+// ============================================
+// 1. VÉRIFIER SI LE COMMERCE EST OUVERT
+// ============================================
+function isCommerceOpen(ouverture, fermeture) {
+    if (!ouverture || !fermeture) return { open: false, text: "Horaires non renseignés" }
+    
+    const now = new Date()
+    const currentHour = now.getHours()
+    const currentMinute = now.getMinutes()
+    const currentTime = currentHour + currentMinute / 60
+    
+    const [openHour, openMinute] = ouverture.split(':').map(Number)
+    const [closeHour, closeMinute] = fermeture.split(':').map(Number)
+    
+    const openTime = openHour + (openMinute || 0) / 60
+    const closeTime = closeHour + (closeMinute || 0) / 60
+    
+    let isOpen = false
+    if (closeTime > openTime) {
+        isOpen = currentTime >= openTime && currentTime <= closeTime
+    } else {
+        // Cas où le commerce ferme après minuit
+        isOpen = currentTime >= openTime || currentTime <= closeTime
     }
     
-    const { data, error } = await supabase
-        .from('commerces')
-        .select('*')
-        .eq('id', commerceId)
-        .single()
-    
-    if (error) {
-        console.error('Erreur chargement commerce:', error)
-        return
+    return { 
+        open: isOpen, 
+        text: isOpen ? "Ouvert" : "Fermé",
+        openTime: ouverture,
+        closeTime: fermeture
     }
-    
-    currentCommerce = data
-    renderCommerce(data)
 }
 
 // ============================================
-// 2. AFFICHER LES DONNÉES DU COMMERCE
+// 2. RÉCUPÉRER L'UTILISATEUR CONNECTÉ
 // ============================================
-function renderCommerce(commerce) {
-    // Mettre à jour le titre
-    const titleElement = document.querySelector('h1')
-    if (titleElement) titleElement.textContent = commerce.nom
+async function getCurrentUser() {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return null
     
-    // Mettre à jour la localisation
-    const locationElements = document.querySelectorAll('.pill')
-    locationElements.forEach(el => {
-        if (el.textContent.includes('Corniche') || el.textContent.includes('Centre-ville')) {
-            el.textContent = commerce.adresse
-        }
-    })
-    
-    // Mettre à jour la description
-    const descElement = document.querySelector('.card-body .muted')
-    if (descElement && !descElement.closest('.review')) {
-        descElement.textContent = commerce.description || 'Aucune description disponible.'
+    let isAdmin = false
+    if (user.email === 'admin@localguide.com') {
+        isAdmin = true
+    } else {
+        const { data: profile } = await supabase
+            .from('users_profiles')
+            .select('role')
+            .eq('id', user.id)
+            .single()
+        isAdmin = profile?.role === 'admin'
     }
     
-    // Mettre à jour les horaires
-    const hoursElements = document.querySelectorAll('.hour')
-    if (hoursElements.length > 0 && commerce.h_ouverture && commerce.h_fermeture) {
-        hoursElements.forEach(el => {
-            const timeSpan = el.querySelector('.time')
-            if (timeSpan) {
-                timeSpan.textContent = `${commerce.h_ouverture} – ${commerce.h_fermeture}`
-            }
+    return {
+        id: user.id,
+        email: user.email,
+        isAdmin: isAdmin
+    }
+}
+
+// ============================================
+// 3. CHARGER LES COMMERCES (BASE + DÉFAUT)
+// ============================================
+async function getCommerces() {
+    console.log('Chargement des commerces...')
+    
+    try {
+        const { data, error } = await supabase
+            .from('commerces')
+            .select('*')
+            .eq('statut', 'actif')
+            .order('created_at', { ascending: false })
+        
+        if (error) {
+            console.log('📦 Erreur Supabase → commerces par défaut')
+            return DEFAULT_COMMERCES
+        }
+        
+        const bddCommerces = (data && data.length > 0) ? data : []
+        const allCommerces = [...DEFAULT_COMMERCES, ...bddCommerces]
+        
+        console.log(`✅ ${bddCommerces.length} de la base + ${DEFAULT_COMMERCES.length} par défaut = ${allCommerces.length} total`)
+        return allCommerces
+    } catch (err) {
+        console.error('Erreur:', err)
+        return DEFAULT_COMMERCES
+    }
+}
+
+// ============================================
+// 4. SUPPRIMER UN COMMERCE
+// ============================================
+async function deleteCommerce(id, ownerId) {
+    if (!currentUser) {
+        alert('🔒 Vous devez être connecté pour supprimer un commerce')
+        return false
+    }
+    
+    const canDelete = currentUser.isAdmin || (currentUser.id === ownerId)
+    
+    if (!canDelete) {
+        alert('❌ Vous n\'avez pas le droit de supprimer ce commerce')
+        return false
+    }
+    
+    if (!confirm('🗑️ Supprimer définitivement ce commerce ? Cette action est irréversible.')) return false
+    
+    const { error } = await supabase
+        .from('commerces')
+        .delete()
+        .eq('id', id)
+    
+    if (error) {
+        alert('❌ Erreur: ' + error.message)
+        return false
+    }
+    
+    alert('✅ Commerce supprimé avec succès')
+    return true
+}
+
+// ============================================
+// 5. MODIFIER UN COMMERCE
+// ============================================
+async function modifierCommerce(id, commerce) {
+    if (!currentUser) {
+        alert('🔒 Vous devez être connecté pour modifier un commerce')
+        return false
+    }
+    
+    const canEdit = currentUser.isAdmin || (currentUser.id === commerce.ownerId)
+    
+    if (!canEdit) {
+        alert('❌ Vous n\'avez pas le droit de modifier ce commerce')
+        return false
+    }
+    
+    // Ouvrir un modal ou prompt pour modifier
+    const nouveauNom = prompt("Nouveau nom du commerce :", commerce.nom)
+    if (nouveauNom && nouveauNom !== commerce.nom) {
+        const { error } = await supabase
+            .from('commerces')
+            .update({ nom: nouveauNom })
+            .eq('id', id)
+        
+        if (error) {
+            alert('❌ Erreur: ' + error.message)
+            return false
+        }
+        commerce.nom = nouveauNom
+    }
+    
+    const nouvelleAdresse = prompt("Nouvelle adresse :", commerce.adresse)
+    if (nouvelleAdresse && nouvelleAdresse !== commerce.adresse) {
+        const { error } = await supabase
+            .from('commerces')
+            .update({ adresse: nouvelleAdresse })
+            .eq('id', id)
+        
+        if (error) {
+            alert('❌ Erreur: ' + error.message)
+            return false
+        }
+        commerce.adresse = nouvelleAdresse
+    }
+    
+    const nouvelleHoraireOuverture = prompt("Nouvelle heure d'ouverture (HH:MM) :", commerce.h_ouverture)
+    if (nouvelleHoraireOuverture && nouvelleHoraireOuverture !== commerce.h_ouverture) {
+        const { error } = await supabase
+            .from('commerces')
+            .update({ h_ouverture: nouvelleHoraireOuverture })
+            .eq('id', id)
+        
+        if (error) {
+            alert('❌ Erreur: ' + error.message)
+            return false
+        }
+        commerce.h_ouverture = nouvelleHoraireOuverture
+    }
+    
+    const nouvelleHoraireFermeture = prompt("Nouvelle heure de fermeture (HH:MM) :", commerce.h_fermeture)
+    if (nouvelleHoraireFermeture && nouvelleHoraireFermeture !== commerce.h_fermeture) {
+        const { error } = await supabase
+            .from('commerces')
+            .update({ h_fermeture: nouvelleHoraireFermeture })
+            .eq('id', id)
+        
+        if (error) {
+            alert('❌ Erreur: ' + error.message)
+            return false
+        }
+        commerce.h_fermeture = nouvelleHoraireFermeture
+    }
+    
+    alert('✅ Commerce modifié avec succès !')
+    return true
+}
+
+// ============================================
+// 6. TRANSFORMER LES DONNÉES POUR L'AFFICHAGE
+// ============================================
+function adaptCommerce(commerce) {
+    const iconMap = {
+        'restaurant': '🍽️', 'cafe': '☕', 'boutique': '👗',
+        'artisan': '🔨', 'sante': '💊', 'service': '🔧',
+        'coiffeur': '✂️', 'site': '🏛️', 'default': '🏪'
+    }
+    
+    const category = commerce.categorie?.toLowerCase() || 'default'
+    const icon = iconMap[category] || iconMap.default
+    const status = isCommerceOpen(commerce.h_ouverture, commerce.h_fermeture)
+    
+    const fullAddress = `${commerce.adresse || ''}, ${commerce.ville || 'Monastir'}, Tunisie`
+    const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(fullAddress)}`
+    
+    return {
+        id: commerce.id,
+        nom: commerce.nom,
+        categorie: commerce.categorie,
+        description: commerce.description,
+        adresse: commerce.adresse,
+        ville: commerce.ville,
+        h_ouverture: commerce.h_ouverture,
+        h_fermeture: commerce.h_fermeture,
+        horaires: `${commerce.h_ouverture || '?'} - ${commerce.h_fermeture || '?'}`,
+        tel: commerce.phone,
+        note: commerce.note_moyenne || 4.0,
+        avis: commerce.nb_avis || 10,
+        prix: commerce.fourchette_prix || '€€',
+        icon: icon,
+        image_url: commerce.image_url,
+        mapsUrl: mapsUrl,
+        featured: commerce.publicite_prix > 0 || false,
+        ownerId: commerce.owner_id || commerce.user_id,
+        isDefault: commerce.isDefault || false,
+        status: status
+    }
+}
+
+// ============================================
+// 7. FONCTIONS UTILITAIRES
+// ============================================
+function starsHtml(note) {
+    const full = Math.floor(note);
+    return "★".repeat(full) + "☆".repeat(5 - full);
+}
+
+function escapeHtml(str) {
+    if (!str) return ''
+    return String(str).replace(/[&<>]/g, function(m) {
+        if (m === '&') return '&amp;'
+        if (m === '<') return '&lt;'
+        if (m === '>') return '&gt;'
+        return m
+    })
+}
+
+function getGradientColor(categorie) {
+    const colorMap = {
+        'restaurant': 'linear-gradient(135deg, #d4956a 0%, #8b4513 100%)',
+        'cafe': 'linear-gradient(135deg, #c8a87a 0%, #6b4423 100%)',
+        'boutique': 'linear-gradient(135deg, #e8c9a8 0%, #d42b2b 100%)',
+        'site': 'linear-gradient(135deg, #6a4e3a 0%, #3a2a1a 100%)',
+        'default': 'linear-gradient(135deg, #e8a87c 0%, #b5451b 100%)'
+    }
+    return colorMap[categorie?.toLowerCase()] || colorMap.default
+}
+
+// ============================================
+// 8. RENDU D'UNE CARTE
+// ============================================
+// ============================================
+// 8. RENDU D'UNE CARTE (Version avec boutons texte)
+// ============================================
+function renderCard(c) {
+    const canDelete = currentUser && (currentUser.isAdmin || (c.ownerId && currentUser.id === c.ownerId)) && !c.isDefault
+    const canEdit = currentUser && (currentUser.isAdmin || (c.ownerId && currentUser.id === c.ownerId)) && !c.isDefault
+    
+    const statusClass = c.status.open ? 'open' : 'closed'
+    const statusText = c.status.open ? 'Ouvert' : 'Fermé'
+    const statusColor = c.status.open ? '#2ea84a' : '#dc3545'
+    
+    const deleteButton = canDelete ? `
+        <button class="btn-delete" onclick="supprimerCommerce('${c.id}', '${c.ownerId || ''}')" title="Supprimer">Supprimer</button>
+    ` : ''
+    
+    const editButton = canEdit ? `
+        <button class="btn-edit" onclick="editerCommerce('${c.id}')" title="Modifier">Modifier</button>
+    ` : ''
+    
+    const imageHtml = c.image_url ? 
+        `<img src="${c.image_url}" alt="${escapeHtml(c.nom)}" style="width:100%; height:100%; object-fit:cover;">` :
+        `<div class="card-image-placeholder" style="background:${getGradientColor(c.categorie)};">${c.icon}</div>`
+    
+    return `
+        <div class="card" data-id="${c.id}" data-cat="${c.categorie}">
+            <div class="card-image">
+                ${imageHtml}
+                <div class="card-status">
+                    <span class="status-dot ${statusClass}" style="background:${statusColor}; box-shadow:0 0 0 3px ${statusColor}33;"></span>
+                    <span class="status-text ${statusClass}" style="color:${statusColor};">${statusText}</span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="card-header">
+                    <div class="comm-icon">${c.icon}</div>
+                    <div class="card-meta">
+                        <div class="card-name">${escapeHtml(c.nom)}</div>
+                        <div class="card-category">${escapeHtml(c.categorie)}</div>
+                    </div>
+                    <div class="card-actions">
+                        ${editButton}
+                        ${deleteButton}
+                    </div>
+                </div>
+                <p class="card-desc">${escapeHtml(c.description?.substring(0, 80))}...</p>
+                <div class="card-info">
+                    <div class="card-info-row"><span class="info-icon">📍</span>${escapeHtml(c.adresse)}</div>
+                    <div class="card-info-row"><span class="info-icon">🕐</span>${escapeHtml(c.horaires)}</div>
+                </div>
+                <div class="card-footer">
+                    <div class="card-rating">
+                        <span class="stars">${starsHtml(c.note)}</span>
+                        <span class="rating-num">${c.note.toFixed(1)}</span>
+                        <span class="review-count">(${c.avis} avis)</span>
+                    </div>
+                    <div class="card-price">${escapeHtml(c.prix)}</div>
+                </div>
+                <div class="card-cta">
+                    <button class="btn-book" onclick="voirCommerce('${c.id}')">Voir la fiche</button>
+                    <button class="btn-profile" onclick="ouvrirItineraire('${c.mapsUrl}')" title="Itinéraire">🗺️</button>
+                    ${c.tel ? `<button class="btn-profile" onclick="appeler('${c.tel}')" title="Appeler">📞</button>` : ''}
+                </div>
+            </div>
+        </div>`
+}
+// ============================================
+// 9. FILTRES ET RECHERCHE (avec reset page)
+// ============================================
+function applyFiltersAndResetPage() {
+    let liste = [...allCommerces]
+    
+    if (activeFilter !== "all") {
+        liste = liste.filter(c => c.categorie === activeFilter)
+    }
+    
+    if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase()
+        liste = liste.filter(c =>
+            c.nom.toLowerCase().includes(q) ||
+            c.description?.toLowerCase().includes(q)
+        )
+    }
+    
+    if (sortBy === "note") liste.sort((a, b) => b.note - a.note)
+    if (sortBy === "nom") liste.sort((a, b) => a.nom.localeCompare(b.nom))
+    
+    displayedCommerces = liste
+    currentPage = 1
+    hasMore = displayedCommerces.length > itemsPerPage
+    
+    const countDisplay = document.getElementById("countDisplay")
+    if (countDisplay) countDisplay.textContent = displayedCommerces.length
+    
+    renderCurrentPage()
+    renderPaginationButtons()
+}
+
+// ============================================
+// 10. AFFICHER LA PAGE COURANTE
+// ============================================
+function renderCurrentPage() {
+    const start = (currentPage - 1) * itemsPerPage
+    const end = start + itemsPerPage
+    const pageItems = displayedCommerces.slice(start, end)
+    
+    const grid = document.getElementById("commerceGrid")
+    if (!grid) return
+    
+    if (pageItems.length === 0) {
+        grid.innerHTML = `<div class="empty-state"><h3>Aucun commerce trouvé</h3></div>`
+        return
+    }
+    
+    grid.innerHTML = pageItems.map(renderCard).join("")
+    console.log(`📄 Page ${currentPage}: ${pageItems.length} commerces affichés`)
+    checkInfiniteScroll()
+}
+
+// ============================================
+// 11. AFFICHER LES BOUTONS DE PAGINATION
+// ============================================
+function renderPaginationButtons() {
+    const totalPages = Math.ceil(displayedCommerces.length / itemsPerPage)
+    const paginationContainer = document.getElementById("paginationContainer")
+    
+    if (!paginationContainer) return
+    
+    if (totalPages <= 1) {
+        paginationContainer.innerHTML = ''
+        return
+    }
+    
+    let buttonsHtml = `
+        <button class="pagination-btn" onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
+            ◀ Précédent
+        </button>
+    `
+    
+    const maxVisible = 5
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2))
+    let endPage = Math.min(totalPages, startPage + maxVisible - 1)
+    
+    if (endPage - startPage < maxVisible - 1) {
+        startPage = Math.max(1, endPage - maxVisible + 1)
+    }
+    
+    if (startPage > 1) {
+        buttonsHtml += `<button class="pagination-btn" onclick="goToPage(1)">1</button>`
+        if (startPage > 2) buttonsHtml += `<span class="pagination-dots">...</span>`
+    }
+    
+    for (let i = startPage; i <= endPage; i++) {
+        buttonsHtml += `
+            <button class="pagination-btn ${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">
+                ${i}
+            </button>
+        `
+    }
+    
+    if (endPage < totalPages) {
+        if (endPage < totalPages - 1) buttonsHtml += `<span class="pagination-dots">...</span>`
+        buttonsHtml += `<button class="pagination-btn" onclick="goToPage(${totalPages})">${totalPages}</button>`
+    }
+    
+    buttonsHtml += `
+        <button class="pagination-btn" onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
+            Suivant ▶
+        </button>
+    `
+    
+    paginationContainer.innerHTML = buttonsHtml
+}
+
+// ============================================
+// 12. CHANGER DE PAGE
+// ============================================
+window.goToPage = function(page) {
+    const totalPages = Math.ceil(displayedCommerces.length / itemsPerPage)
+    if (page < 1 || page > totalPages) return
+    
+    currentPage = page
+    renderCurrentPage()
+    renderPaginationButtons()
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+}
+
+// ============================================
+// 13. CHARGER PLUS (Infinite Scroll)
+// ============================================
+function loadMore() {
+    if (isLoading) return
+    
+    const totalPages = Math.ceil(displayedCommerces.length / itemsPerPage)
+    if (currentPage >= totalPages) {
+        hasMore = false
+        return
+    }
+    
+    isLoading = true
+    currentPage++
+    renderCurrentPage()
+    renderPaginationButtons()
+    isLoading = false
+}
+
+function checkInfiniteScroll() {
+    const scrollPosition = window.innerHeight + window.scrollY
+    const pageHeight = document.body.offsetHeight
+    
+    if (scrollPosition >= pageHeight - 300) {
+        const totalPages = Math.ceil(displayedCommerces.length / itemsPerPage)
+        if (currentPage < totalPages && !isLoading) {
+            loadMore()
+        }
+    }
+}
+
+// ============================================
+// 14. ACTIONS GLOBALES
+// ============================================
+window.voirCommerce = function(id) {
+    window.location.href = `fiche-detail.html?id=${id}`
+}
+
+window.ouvrirItineraire = function(url) {
+    if (url) window.open(url, '_blank')
+    else alert('Adresse non disponible')
+}
+
+window.appeler = function(tel) {
+    if (tel) window.location.href = `tel:${tel.replace(/\s/g, '')}`
+    else alert('Numéro non disponible')
+}
+
+window.supprimerCommerce = async function(id, ownerId) {
+    const success = await deleteCommerce(id, ownerId)
+    if (success) {
+        const commercesData = await getCommerces()
+        allCommerces = commercesData.map(adaptCommerce)
+        applyFiltersAndResetPage()
+    }
+}
+
+window.editerCommerce = async function(id) {
+    const commerce = allCommerces.find(c => c.id === id)
+    if (!commerce) return
+    
+    const success = await modifierCommerce(id, commerce)
+    if (success) {
+        const commercesData = await getCommerces()
+        allCommerces = commercesData.map(adaptCommerce)
+        applyFiltersAndResetPage()
+    }
+}
+
+// ============================================
+// 15. INITIALISATION
+// ============================================
+async function init() {
+    console.log('🟢 Initialisation avec pagination + infinite scroll...')
+    
+    currentUser = await getCurrentUser()
+    console.log('👤 Utilisateur:', currentUser?.email || 'Non connecté')
+    
+    const grid = document.getElementById("commerceGrid")
+    if (!grid) {
+        console.error('❌ #commerceGrid introuvable')
+        return
+    }
+    
+    const commercesData = await getCommerces()
+    allCommerces = commercesData.map(adaptCommerce)
+    console.log(`📊 ${allCommerces.length} commerces préparés`)
+    
+    applyFiltersAndResetPage()
+    
+    document.querySelectorAll(".chip").forEach(chip => {
+        chip.addEventListener("click", () => {
+            document.querySelectorAll(".chip").forEach(c => c.classList.remove("active"))
+            chip.classList.add("active")
+            activeFilter = chip.dataset.cat
+            applyFiltersAndResetPage()
+        })
+    })
+    
+    const searchInput = document.getElementById("searchInput")
+    if (searchInput) {
+        searchInput.addEventListener("input", e => {
+            searchQuery = e.target.value
+            applyFiltersAndResetPage()
         })
     }
     
-    // Mettre à jour les infos de contact
-    const infoRows = document.querySelectorAll('.info-row')
-    infoRows.forEach(row => {
-        const strong = row.querySelector('strong')
-        if (strong && strong.textContent === 'Téléphone') {
-            const link = row.querySelector('a')
-            if (link) {
-                link.textContent = commerce.phone || 'Non renseigné'
-                link.href = `tel:${commerce.phone}`
-            }
-        }
-        if (strong && strong.textContent === 'Adresse') {
-            const span = row.querySelector('span')
-            if (span) span.textContent = commerce.adresse || 'Non renseignée'
-        }
+    const sortSelect = document.getElementById("sortSelect")
+    if (sortSelect) {
+        sortSelect.addEventListener("change", e => {
+            sortBy = e.target.value
+            applyFiltersAndResetPage()
+        })
+    }
+    
+    window.addEventListener('scroll', () => {
+        checkInfiniteScroll()
     })
-    
-    // Mettre à jour la photo de couverture
-    const coverElement = document.querySelector('.cover')
-    if (coverElement && commerce.image_url) {
-        coverElement.style.backgroundImage = `url(${commerce.image_url})`
-        coverElement.style.backgroundSize = 'cover'
-        coverElement.style.backgroundPosition = 'center'
-    }
 }
 
-// ============================================
-// 3. CHARGER LES AVIS
-// ============================================
-async function loadAvis() {
-    if (!commerceId) return
-    
-    const { data, error } = await supabase
-        .from('avis')
-        .select('*, users_profiles(display_name)')
-        .eq('commerce_id', commerceId)
-        .order('created_at', { ascending: false })
-    
-    if (error) {
-        console.error('Erreur chargement avis:', error)
-        return
-    }
-    
-    const container = document.querySelector('.reviews')
-    if (!container) return
-    
-    if (data.length === 0) {
-        container.innerHTML = '<p style="padding: 20px; text-align: center;">Aucun avis pour le moment. Soyez le premier à donner votre avis !</p>'
-        return
-    }
-    
-    container.innerHTML = data.map(avis => `
-        <div class="review">
-            <div class="review-head">
-                <div class="user">
-                    <div class="avatar">${avis.users_profiles?.display_name?.charAt(0) || '?'}</div>
-                    <div>
-                        <strong>${avis.users_profiles?.display_name || 'Anonyme'}</strong><br />
-                        <span class="muted" style="font-size: 12px">${new Date(avis.created_at).toLocaleDateString('fr-FR')}</span>
-                    </div>
-                </div>
-                <div class="stars">${'⭐'.repeat(avis.note_globale)}</div>
-            </div>
-            <div class="review-title" style="font-weight: 600; margin: 8px 0 4px;">${avis.titre}</div>
-            <div class="muted">${avis.avis_texte}</div>
-        </div>
-    `).join('')
-}
-
-// ============================================
-// 4. AJOUTER UN FORMULAIRE D'AVIS
-// ============================================
-async function addReviewForm() {
-    const { data: { user } } = await supabase.auth.getUser()
-    
-    // Trouver l'endroit où ajouter le formulaire
-    const reviewsSection = document.querySelector('.card:has(.reviews)')
-    if (!reviewsSection) return
-    
-    // Vérifier si le formulaire existe déjà
-    if (document.getElementById('reviewFormSection')) return
-    
-    const formHtml = `
-        <div id="reviewFormSection" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(0,0,0,0.1);">
-            <h3>${user ? '📝 Donnez votre avis' : '🔐 Connectez-vous pour laisser un avis'}</h3>
-            ${user ? `
-                <form id="reviewForm">
-                    <div style="margin-bottom: 15px;">
-                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Titre de l'avis *</label>
-                        <input type="text" id="reviewTitle" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;" required>
-                    </div>
-                    <div style="margin-bottom: 15px;">
-                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Note (1 à 5) *</label>
-                        <select id="reviewNote" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;" required>
-                            <option value="5">⭐⭐⭐⭐⭐ 5/5 - Excellent</option>
-                            <option value="4">⭐⭐⭐⭐ 4/5 - Très bien</option>
-                            <option value="3">⭐⭐⭐ 3/5 - Bien</option>
-                            <option value="2">⭐⭐ 2/5 - Moyen</option>
-                            <option value="1">⭐ 1/5 - Décevant</option>
-                        </select>
-                    </div>
-                    <div style="margin-bottom: 15px;">
-                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Votre avis *</label>
-                        <textarea id="reviewText" rows="4" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;" required></textarea>
-                    </div>
-                    <button type="submit" style="background: #d42b2b; color: white; border: none; padding: 12px 24px; border-radius: 50px; cursor: pointer; font-weight: 600;">
-                        📨 Publier mon avis
-                    </button>
-                </form>
-                <div id="reviewMessage" style="margin-top: 15px;"></div>
-            ` : `
-                <p><a href="login.html" style="color: #d42b2b;">Connectez-vous</a> pour laisser un avis.</p>
-            `}
-        </div>
-    `
-    
-    reviewsSection.insertAdjacentHTML('beforeend', formHtml)
-    
-    // Ajouter l'écouteur d'événement si l'utilisateur est connecté
-    if (user) {
-        const form = document.getElementById('reviewForm')
-        const messageDiv = document.getElementById('reviewMessage')
-        
-        if (form) {
-            form.addEventListener('submit', async (e) => {
-                e.preventDefault()
-                
-                const titre = document.getElementById('reviewTitle').value
-                const note_globale = parseInt(document.getElementById('reviewNote').value)
-                const avis_texte = document.getElementById('reviewText').value
-                
-                messageDiv.innerHTML = '⏳ Envoi en cours...'
-                messageDiv.style.color = 'blue'
-                
-                const { error } = await supabase
-                    .from('avis')
-                    .insert({
-                        commerce_id: commerceId,
-                        user_id: user.id,
-                        note_globale: note_globale,
-                        titre: titre,
-                        avis_texte: avis_texte,
-                        ville: currentCommerce?.ville || 'Monastir',
-                        date_visite: new Date().toISOString().split('T')[0]
-                    })
-                
-                if (error) {
-                    messageDiv.innerHTML = '❌ Erreur: ' + error.message
-                    messageDiv.style.color = 'red'
-                } else {
-                    messageDiv.innerHTML = '✅ Merci pour votre avis !'
-                    messageDiv.style.color = 'green'
-                    form.reset()
-                    setTimeout(() => {
-                        loadAvis()
-                        messageDiv.innerHTML = ''
-                    }, 2000)
-                }
-            })
-        }
-    }
-}
-
-// ============================================
-// 5. INITIALISATION
-// ============================================
-document.addEventListener('DOMContentLoaded', async () => {
-    // Gestion navbar
-    const nav = document.querySelector(".nav");
-    if (nav) {
-        window.addEventListener("scroll", () => {
-            if (window.scrollY > 50) {
-                nav.classList.add("scrolled");
-            } else {
-                nav.classList.remove("scrolled");
-            }
-        });
-    }
-    
-    // Charger les données
-    await loadCommerce()
-    await loadAvis()
-    await addReviewForm()
-})
+document.addEventListener('DOMContentLoaded', init)

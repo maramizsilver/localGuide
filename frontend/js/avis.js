@@ -28,8 +28,6 @@ document.addEventListener("DOMContentLoaded", () => {
   let pointsForts = [];
   let pointsFaibles = [];
   let selectedCommerceId = null;
-  let selectedCommerceNom = '';
-  let searchTimeout = null;
 
   const noteCriteres = { qualite: 0, service: 0, prix: 0, ambiance: 0 };
 
@@ -40,147 +38,74 @@ document.addEventListener("DOMContentLoaded", () => {
   console.log('Commerce ID reçu:', commerceId)
 
   /* ══════════════════════════════
-     RECHERCHE DE COMMERCE AVEC AUTOCOMPLÉTION
+     CHARGER LA LISTE DES COMMERCES (SELECT)
   ══════════════════════════════ */
-  const commerceInput = document.getElementById('commerce')
-  const searchResults = document.createElement('div')
-  searchResults.className = 'search-results'
-  searchResults.style.cssText = `
-    position: absolute;
-    background: white;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    max-height: 200px;
-    overflow-y: auto;
-    z-index: 1000;
-    display: none;
-    width: 100%;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  `
-  
-  if (commerceInput) {
-    commerceInput.parentNode.style.position = 'relative'
-    commerceInput.parentNode.appendChild(searchResults)
+async function loadCommerces() {
+    const commerceSelect = document.getElementById('commerce')
+    if (!commerceSelect) return
     
-    // Si ID dans l'URL, charger le commerce automatiquement
-    if (commerceId) {
-      loadCommerceById(commerceId)
-    }
+    commerceSelect.innerHTML = '<option value="">⏳ Chargement...</option>'
     
-    commerceInput.addEventListener('input', async (e) => {
-      const searchTerm = e.target.value.trim()
-      
-      if (searchTimeout) clearTimeout(searchTimeout)
-      
-      if (searchTerm.length < 2) {
-        searchResults.style.display = 'none'
-        selectedCommerceId = null
-        return
-      }
-      
-      searchTimeout = setTimeout(async () => {
+    try {
+        console.log('🔍 Chargement des commerces actifs...')
+        
         const { data, error } = await supabase
-          .from('commerces')
-          .select('id, nom, ville, categorie')
-          .ilike('nom', `%${searchTerm}%`)
-          .limit(5)
+            .from('commerces')
+            .select('id, nom')
+            .eq('statut', 'actif')
+            .order('nom')
         
         if (error) {
-          console.error('Erreur recherche:', error)
-          return
+            console.error('❌ Erreur Supabase:', error)
+            commerceSelect.innerHTML = '<option value="">❌ Erreur: ' + error.message + '</option>'
+            return
         }
         
-        if (data && data.length > 0) {
-          searchResults.innerHTML = data.map(commerce => `
-            <div class="search-result-item" data-id="${commerce.id}" data-nom="${commerce.nom}" style="
-              padding: 10px;
-              cursor: pointer;
-              border-bottom: 1px solid #eee;
-              transition: background 0.2s;
-            ">
-              <strong>${commerce.nom}</strong><br>
-              <small>📍 ${commerce.ville} • 🏷️ ${commerce.categorie}</small>
-            </div>
-          `).join('')
-          
-          document.querySelectorAll('.search-result-item').forEach(item => {
-            item.addEventListener('click', () => {
-              selectedCommerceId = item.dataset.id
-              selectedCommerceNom = item.dataset.nom
-              commerceInput.value = selectedCommerceNom
-              searchResults.style.display = 'none'
-              commerceInput.disabled = true
-              
-              // Afficher confirmation
-              const confirmMsg = document.createElement('div')
-              confirmMsg.className = 'commerce-confirmed'
-              confirmMsg.style.cssText = `
-                color: green;
-                font-size: 12px;
-                margin-top: 5px;
-                padding: 5px;
-                background: #d4edda;
-                border-radius: 5px;
-              `
-              confirmMsg.innerHTML = `✅ Commerce sélectionné : ${selectedCommerceNom}`
-              
-              const oldMsg = commerceInput.parentNode.querySelector('.commerce-confirmed')
-              if (oldMsg) oldMsg.remove()
-              commerceInput.parentNode.appendChild(confirmMsg)
-              
-              setTimeout(() => confirmMsg.remove(), 3000)
-              updateProgress()
-            })
-          })
-          
-          searchResults.style.display = 'block'
-        } else {
-          searchResults.innerHTML = '<div style="padding: 10px; color: red;">❌ Aucun commerce trouvé.</div>'
-          searchResults.style.display = 'block'
+        console.log('📊 Données reçues:', data)
+        
+        if (!data || data.length === 0) {
+            console.log('⚠️ Aucun commerce actif trouvé')
+            commerceSelect.innerHTML = '<option value="">⚠️ Aucun commerce disponible</option>'
+            return
         }
-      }, 300)
-    })
-    
-    // Fermer les résultats en cliquant ailleurs
-    document.addEventListener('click', (e) => {
-      if (!commerceInput.parentNode.contains(e.target)) {
-        searchResults.style.display = 'none'
-      }
-    })
-  }
-  
-  async function loadCommerceById(id) {
-    const { data, error } = await supabase
-      .from('commerces')
-      .select('id, nom')
-      .eq('id', id)
-      .single()
-    
-    if (!error && data) {
-      selectedCommerceId = data.id
-      selectedCommerceNom = data.nom
-      commerceInput.value = data.nom
-      commerceInput.disabled = true
+        
+        // Générer les options
+        let options = '<option value="">-- Sélectionnez un commerce --</option>'
+        data.forEach(commerce => {
+            options += `<option value="${commerce.id}">${commerce.nom}</option>`
+        })
+        commerceSelect.innerHTML = options
+        
+        console.log(` ${data.length} commerces chargés:`, data.map(c => c.nom))
+        
+        // Si un ID est passé dans l'URL, le sélectionner
+        const urlParams = new URLSearchParams(window.location.search)
+        const commerceId = urlParams.get('commerce_id')
+        if (commerceId) {
+            commerceSelect.value = commerceId
+            selectedCommerceId = commerceId
+            updateProgress()
+        }
+        
+    } catch (err) {
+        console.error('❌ Erreur complète:', err)
+        commerceSelect.innerHTML = '<option value="">❌ Erreur de connexion</option>'
     }
-  }
+}
 
   /* ══════════════════════════════
      VALIDATION DU COMMERCE
   ══════════════════════════════ */
   function validateCommerce() {
-    const commerce = document.getElementById("commerce").value
+    const commerceSelect = document.getElementById("commerce")
     const commerceError = document.getElementById("commerceError")
     
-    if (!commerce.trim()) {
-      showError(commerceError, "Le nom du commerce est requis")
+    if (!commerceSelect.value) {
+      showError(commerceError, "Veuillez sélectionner un commerce")
       return false
     }
     
-    if (!selectedCommerceId && !commerceId) {
-      showError(commerceError, "❌ Veuillez sélectionner un commerce existant dans la liste")
-      return false
-    }
-    
+    selectedCommerceId = commerceSelect.value
     hideError(commerceError)
     return true
   }
@@ -194,10 +119,10 @@ document.addEventListener("DOMContentLoaded", () => {
     let filled = 0;
     requiredFields.forEach(id => {
       const el = document.getElementById(id);
-      if (el && el.value.trim() !== "") filled++;
+      if (el && el.value && el.value.trim() !== "") filled++;
     });
     if (noteGlobale > 0) filled++;
-    if (selectedCommerceId || commerceId) filled++;
+    if (selectedCommerceId) filled++;
     const conditions = document.getElementById("conditions");
     if (conditions && conditions.checked) filled++;
 
@@ -207,9 +132,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
   requiredFields.forEach(id => {
     const el = document.getElementById(id);
-    if (el) { el.addEventListener("input", updateProgress); el.addEventListener("change", updateProgress); }
+    if (el) { 
+      el.addEventListener("input", updateProgress); 
+      el.addEventListener("change", updateProgress); 
+    }
   });
   document.getElementById("conditions")?.addEventListener("change", updateProgress);
+
+  // Écouter le changement du select commerce
+  const commerceSelect = document.getElementById("commerce");
+  if (commerceSelect) {
+    commerceSelect.addEventListener("change", () => {
+      selectedCommerceId = commerceSelect.value;
+      updateProgress();
+    });
+  }
 
   /* ── Compteur description ── */
   if (avisTexte) {
@@ -481,7 +418,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     
     // Récupérer les valeurs du formulaire
-    const commerce = document.getElementById("commerce").value
+    const finalCommerceId = document.getElementById("commerce").value
     const categorie = document.getElementById("categorie").value
     const ville = document.getElementById("ville").value
     const dateVisite = document.getElementById("dateVisite").value
@@ -492,11 +429,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const email = document.getElementById("email").value
     const recommande = document.querySelector('input[name="recommande"]:checked')?.value || null
     
-    // Utiliser l'ID du commerce sélectionné
-    let finalCommerceId = commerceId || selectedCommerceId
-    
     if (!finalCommerceId) {
-      alert('❌ Veuillez sélectionner un commerce existant dans la liste.')
+      alert('❌ Veuillez sélectionner un commerce')
       submitText.style.display = "inline";
       submitSpinner.style.display = "none";
       submitBtn.disabled = false;
@@ -557,7 +491,8 @@ document.addEventListener("DOMContentLoaded", () => {
   if (previewBtn) {
     previewBtn.addEventListener("click", () => {
       const titre    = document.getElementById("titre").value || "Titre de l'avis";
-      const commerce = document.getElementById("commerce").value || "Commerce";
+      const commerceSelect = document.getElementById("commerce");
+      const commerceName = commerceSelect.options[commerceSelect.selectedIndex]?.text || "Commerce";
       const ville    = document.getElementById("ville").value || "Ville";
       const prenom   = document.getElementById("prenom").value || "Anonyme";
       const texte    = avisTexte.value || "Aucun texte.";
@@ -574,7 +509,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const previewForts = document.getElementById("previewForts");
 
       if (previewTitre) previewTitre.textContent = titre;
-      if (previewCommerce) previewCommerce.textContent = `${commerce} — ${ville}`;
+      if (previewCommerce) previewCommerce.textContent = `${commerceName} — ${ville}`;
       if (previewCat) previewCat.textContent = catText;
       if (previewDesc) previewDesc.textContent = texte;
       if (previewAuteur) previewAuteur.textContent = `Par ${prenom} · 📅 ${dateVal ? new Date(dateVal).toLocaleDateString("fr-FR", { day:"2-digit", month:"long", year:"numeric" }) : "—"}`;
@@ -635,11 +570,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     noteGlobale = 0;
     selectedCommerceId = null;
-    selectedCommerceNom = '';
-    if (commerceInput) {
-      commerceInput.disabled = false;
-      commerceInput.value = '';
-    }
     
     const noteGlobaleInput = document.getElementById("noteGlobale");
     if (noteGlobaleInput) noteGlobaleInput.value = "";
@@ -674,6 +604,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     form.querySelectorAll(".invalid").forEach(el => el.classList.remove("invalid"));
     form.querySelectorAll(".error-message.visible").forEach(el => el.classList.remove("visible"));
+    
+    // Recharger la liste des commerces
+    loadCommerces();
   }
 
   /* ══════════════════════════════
@@ -709,4 +642,7 @@ document.addEventListener("DOMContentLoaded", () => {
       updateProgress();
     });
   }
+
+  // Charger les commerces au démarrage
+  loadCommerces();
 });

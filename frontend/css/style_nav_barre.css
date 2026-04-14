@@ -47,7 +47,7 @@ img {
   max-width: 100%;
 }
 
-/* ===== NAVBAR ÉLÉGANTE - COULEUR #8B1A1A ===== */
+/* ===== NAVBAR ÉLÉGANTE - EFFET TRANSPARENT AU SCROLL ===== */
 .nav {
   position: fixed;
   top: 0;
@@ -59,9 +59,11 @@ img {
   transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
 }
 
+/* Au scroll - devient transparent avec flou */
 .nav.scrolled {
-  background: #6e1414;
-  box-shadow: 0 10px 30px rgba(139, 26, 26, 0.35);
+  background: rgba(139, 26, 26, 0.75);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
 }
 
 .nav-inner {
@@ -107,7 +109,7 @@ img {
 .nav-left a:hover,
 .nav-right a:hover {
   color: var(--tan);
-  background: rgba(232, 201, 168, 0.12);
+  background: rgba(232, 201, 168, 0.2);
   transform: translateY(-2px);
 }
 
@@ -200,6 +202,7 @@ img {
   letter-spacing: 0.02em;
   box-shadow: 0 6px 20px rgba(212, 43, 43, 0.28);
 }
+
 .btn-primary:hover {
   transform: translateY(-2px);
   box-shadow: 0 12px 30px rgba(212, 43, 43, 0.4);
@@ -220,6 +223,7 @@ img {
   cursor: pointer;
   transition: all 0.3s;
 }
+
 .btn-secondary:hover {
   background: rgba(212, 43, 43, 0.06);
   border-color: var(--red);
@@ -241,16 +245,19 @@ textarea {
   outline: none;
   transition: all 0.25s;
 }
+
 input::placeholder,
 textarea::placeholder {
   color: var(--gray);
 }
+
 input:focus,
 select:focus,
 textarea:focus {
   border-color: var(--red);
   box-shadow: 0 0 0 3px rgba(212, 43, 43, 0.1);
 }
+
 label {
   font-family: var(--font-body);
   font-weight: 500;
@@ -260,7 +267,7 @@ label {
   margin-bottom: 6px;
 }
 
-/* ===== FOOTER ===== */
+/* ===== FOOTER (neutre pour les autres pages) ===== */
 footer {
   text-align: center;
   color: var(--muted);
@@ -281,6 +288,7 @@ footer {
   gap: 10px;
   margin-bottom: 10px;
 }
+
 .section-eyebrow::before,
 .section-eyebrow::after {
   content: "";

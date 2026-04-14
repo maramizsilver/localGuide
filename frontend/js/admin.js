@@ -4,9 +4,6 @@ import { supabase } from './supabaseClient.js'
 // ============================================
 // 1. VÉRIFICATION ADMIN
 // ============================================
-// ============================================
-// 1. VÉRIFICATION ADMIN (MODIFIÉE)
-// ============================================
 async function checkAdminAccess() {
     const { data: { user } } = await supabase.auth.getUser()
     
@@ -15,13 +12,13 @@ async function checkAdminAccess() {
         return false
     }
     
-    //ADMIN POUR CET EMAIL
+    // ADMIN PAR EMAIL
     if (user.email === 'admin@localguide.com') {
         console.log(' Admin détecté par email')
         return true
     }
     
-    // Sinon, vérifier dans la base
+    // Vérifier dans la base
     const { data: profile } = await supabase
         .from('users_profiles')
         .select('role')
@@ -38,7 +35,20 @@ async function checkAdminAccess() {
 }
 
 // ============================================
-// 2. CHARGER LES COMMERCES
+// 2. FONCTIONS UTILITAIRES
+// ============================================
+function escapeHtml(str) {
+    if (!str) return ''
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;')
+}
+
+// ============================================
+// 3. GESTION DES COMMERCES
 // ============================================
 async function loadCommerces() {
     const { data, error } = await supabase
@@ -53,11 +63,8 @@ async function loadCommerces() {
     return data
 }
 
-// ============================================
-// 3. APPROUVER UN COMMERCE (suspendu → actif)
-// ============================================
 async function approveCommerce(id) {
-    if (!confirm('✅ Valider ce commerce ? Il sera visible sur le site.')) return
+    if (!confirm(' Valider ce commerce ? Il sera visible sur le site.')) return
     
     const { error } = await supabase
         .from('commerces')
@@ -65,20 +72,18 @@ async function approveCommerce(id) {
         .eq('id', id)
     
     if (error) {
-        alert('❌ Erreur: ' + error.message)
+        alert(' Erreur: ' + error.message)
     } else {
-        alert('✅ Commerce approuvé ! Il est maintenant visible sur le site.')
-        renderCommerces()
+        alert(' Commerce approuvé !')
+        await renderCommerces()
+        await renderGuidesEnAttente()
     }
 }
 
-// ============================================
-// 4. REFUSER UN COMMERCE (suspendu → fermé)
-// ============================================
 async function rejectCommerce(id) {
-    const raison = prompt('❌ Pourquoi refusez-vous ce commerce ? (Optionnel)')
+    const raison = prompt('Pourquoi refusez-vous ce commerce ? (Optionnel)')
     
-    if (!confirm('⛔ Refuser ce commerce ? Il ne sera pas visible sur le site.')) return
+    if (!confirm(' Refuser ce commerce ?')) return
     
     const { error } = await supabase
         .from('commerces')
@@ -89,35 +94,44 @@ async function rejectCommerce(id) {
         .eq('id', id)
     
     if (error) {
-        alert('❌ Erreur: ' + error.message)
+        alert(' Erreur: ' + error.message)
     } else {
-        alert('❌ Commerce refusé.')
-        renderCommerces()
+        alert(' Commerce refusé.')
+        await renderCommerces()
+        await renderGuidesEnAttente()
     }
 }
 
-// ============================================
-// 5. VOIR LE DÉTAIL D'UN COMMERCE
-// ============================================
-function viewCommerce(id) {
-    window.location.href = `fichecomm.html?id=${id}`
-}
-
-// ============================================
-// 6. AFFICHER LES COMMERCES
-// ============================================
 async function renderCommerces() {
     const commerces = await loadCommerces()
+    
+    // Calcul des stats
+    const total = commerces.length
+    const enAttente = commerces.filter(c => c.statut === 'suspendu').length
+    const approuves = commerces.filter(c => c.statut === 'actif').length
+    const refuses = commerces.filter(c => c.statut === 'fermé').length
+    
+    // Mettre à jour les boutons de filtre
+    const filterBtns = document.querySelectorAll('.filter-btn')
+    filterBtns.forEach(btn => {
+        const filter = btn.dataset.filter
+        if (filter === 'all') btn.textContent = `Tous (${total})`
+        else if (filter === 'suspendu') btn.textContent = `En attente (${enAttente})`
+        else if (filter === 'actif') btn.textContent = `Approuvés (${approuves})`
+        else if (filter === 'fermé') btn.textContent = `Refusés (${refuses})`
+    })
+    
+    // Mettre à jour les stats en haut
+    const statsElement = document.querySelector('.stats span')
+    if (statsElement) {
+        statsElement.textContent = ` Total: ${total} |  En attente: ${enAttente} |  Approuvés: ${approuves} |  Refusés: ${refuses}`
+    }
     
     // Récupérer le filtre actif
     let filterType = 'suspendu'
     const activeFilter = document.querySelector('.filter-btn.active')
     if (activeFilter) {
-        const text = activeFilter.textContent
-        if (text.includes('Tous')) filterType = 'all'
-        else if (text.includes('Approuvés')) filterType = 'actif'
-        else if (text.includes('Refusés')) filterType = 'fermé'
-        else filterType = 'suspendu'
+        filterType = activeFilter.dataset.filter || 'suspendu'
     }
     
     // Filtrer
@@ -130,98 +144,68 @@ async function renderCommerces() {
         filtered = commerces.filter(c => c.statut === 'fermé')
     }
     
-    // Mettre à jour les compteurs dans les boutons
-    const enAttente = commerces.filter(c => c.statut === 'suspendu').length
-    const approuves = commerces.filter(c => c.statut === 'actif').length
-    const refuses = commerces.filter(c => c.statut === 'fermé').length
-    
-    const filterBtns = document.querySelectorAll('.filter-btn')
-    filterBtns.forEach(btn => {
-        const text = btn.textContent
-        if (text.includes('Tous')) btn.textContent = `Tous (${commerces.length})`
-        if (text.includes('En attente')) btn.textContent = `En attente (${enAttente})`
-        if (text.includes('Approuvés')) btn.textContent = `Approuvés (${approuves})`
-        if (text.includes('Refusés')) btn.textContent = `Refusés (${refuses})`
-    })
-    
-    // Mettre à jour le stats
-    const statsElement = document.querySelector('.stats span')
-    if (statsElement) {
-        statsElement.textContent = `⏳ En attente : ${enAttente}`
-    }
-    
-    // Afficher la liste des commerces
-    const container = document.querySelector('.mod-header')?.parentElement
+    // Afficher dans le container
+    const container = document.getElementById('commercesList')
     if (!container) return
     
-    // Supprimer les anciennes cartes
-    const existingCards = container.querySelectorAll('.commerce-card')
-    existingCards.forEach(card => card.remove())
-    
     if (filtered.length === 0) {
-        container.innerHTML += '<div style="padding:20px; text-align:center;">Aucun commerce dans cette catégorie</div>'
+        container.innerHTML = '<div style="padding: 40px; text-align: center; background: white; border-radius: 12px;">Aucun commerce dans cette catégorie</div>'
         return
     }
     
-    filtered.forEach(commerce => {
-        // Déterminer l'affichage selon le statut
+    container.innerHTML = filtered.map(commerce => {
         let statutBadge = ''
         let badgeColor = ''
         
         if (commerce.statut === 'actif') {
-            statutBadge = '✅ Approuvé'
+            statutBadge = ' Approuvé'
             badgeColor = '#d4edda'
         } else if (commerce.statut === 'suspendu') {
-            statutBadge = '⏳ En attente'
-            badgeColor = '#ffc107'
+            statutBadge = ' En attente'
+            badgeColor = '#fff3cd'
         } else if (commerce.statut === 'fermé') {
-            statutBadge = '❌ Refusé'
+            statutBadge = ' Refusé'
             badgeColor = '#f8d7da'
-        } else {
-            statutBadge = '❓ Inconnu'
-            badgeColor = '#e2e3e5'
         }
         
-        const card = document.createElement('div')
-        card.className = 'commerce-card'
-        card.dataset.id = commerce.id
-        card.innerHTML = `
-            <div class="commerce-info">
-                <h3>${commerce.nom}</h3>
-                <p>📍 ${commerce.adresse}</p>
-                <div class="commerce-meta">
-                    <span class="badge">🏷️ ${commerce.categorie}</span>
-                    <span class="badge" style="background-color: ${badgeColor};">${statutBadge}</span>
+        return `
+            <div class="commerce-card" style="background: white; border-radius: 12px; padding: 20px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <div class="commerce-info">
+                    <h3 style="margin: 0 0 10px 0;">${escapeHtml(commerce.nom)}</h3>
+                    <p style="margin: 5px 0;">📍 ${escapeHtml(commerce.adresse)}</p>
+                    <div class="commerce-meta" style="display: flex; gap: 10px; margin-top: 10px;">
+                        <span class="badge" style="background: #e9ecef; padding: 4px 12px; border-radius: 20px;">🏷️ ${escapeHtml(commerce.categorie)}</span>
+                        <span class="badge" style="background: ${badgeColor}; padding: 4px 12px; border-radius: 20px;">${statutBadge}</span>
+                    </div>
+                    ${commerce.raison_refus ? `<p style="color: #dc3545; font-size: 12px; margin-top: 10px;">❌ Raison: ${escapeHtml(commerce.raison_refus)}</p>` : ''}
                 </div>
-                ${commerce.raison_refus ? `<p style="color:red; font-size:12px;">❌ Raison: ${commerce.raison_refus}</p>` : ''}
-            </div>
-            <div class="commerce-actions">
-                <button class="btn btn-view" data-id="${commerce.id}">👁️ Voir</button>
-                ${commerce.statut === 'suspendu' ? 
-                    `<button class="btn btn-approve" data-id="${commerce.id}">✅ Valider</button>
-                     <button class="btn btn-reject" data-id="${commerce.id}">❌ Refuser</button>` : ''}
-                ${commerce.statut === 'actif' ? 
-                    `<button class="btn btn-reject" data-id="${commerce.id}">🔒 Désactiver</button>` : ''}
+                <div class="commerce-actions" style="display: flex; gap: 10px;">
+                    ${commerce.statut === 'suspendu' ? `
+                        <button class="btn btn-approve" data-id="${commerce.id}" style="background: #10b981; color: white; padding: 8px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">✅ Approuver</button>
+                        <button class="btn btn-reject" data-id="${commerce.id}" style="background: #ef4444; color: white; padding: 8px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;"> Refuser</button>
+                    ` : ''}
+                    ${commerce.statut === 'actif' ? `
+                        <button class="btn btn-reject" data-id="${commerce.id}" style="background: #ef4444; color: white; padding: 8px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;"> Désactiver</button>
+                    ` : ''}
+                    ${commerce.statut === 'fermé' ? `
+                        <button class="btn btn-approve" data-id="${commerce.id}" style="background: #10b981; color: white; padding: 8px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;"> Réactiver</button>
+                    ` : ''}
+                </div>
             </div>
         `
-        container.appendChild(card)
-    })
+    }).join('')
     
     // Ajouter les événements
-    document.querySelectorAll('.btn-view').forEach(btn => {
-        btn.addEventListener('click', () => viewCommerce(btn.dataset.id))
-    })
     document.querySelectorAll('.btn-approve').forEach(btn => {
+        btn.removeEventListener('click', () => approveCommerce(btn.dataset.id))
         btn.addEventListener('click', () => approveCommerce(btn.dataset.id))
     })
     document.querySelectorAll('.btn-reject').forEach(btn => {
+        btn.removeEventListener('click', () => rejectCommerce(btn.dataset.id))
         btn.addEventListener('click', () => rejectCommerce(btn.dataset.id))
     })
 }
 
-// ============================================
-// 7. INITIALISATION DES FILTRES COMMERCES
-// ============================================
 function initFilters() {
     const filterButtons = document.querySelectorAll('.filter-btn')
     filterButtons.forEach(btn => {
@@ -234,7 +218,7 @@ function initFilters() {
 }
 
 // ============================================
-// 8. GESTION DES GUIDES EN ATTENTE (NOUVEAU)
+// 4. GESTION DES GUIDES EN ATTENTE
 // ============================================
 async function loadGuidesEnAttente() {
     const { data, error } = await supabase
@@ -251,25 +235,26 @@ async function loadGuidesEnAttente() {
 }
 
 async function approveGuide(id) {
-    if (!confirm('✅ Approuver ce guide ? Il sera visible sur le site.')) return
+    if (!confirm(' Approuver ce guide ? Il sera visible sur la page des guides.')) return
     
     const { error } = await supabase
         .from('guides')
-        .update({ statut: 'disponible' })
+        .update({ 
+            statut: 'disponible',
+            updated_at: new Date()
+        })
         .eq('id', id)
     
     if (error) {
         alert(' Erreur: ' + error.message)
     } else {
-        alert('✅ Guide approuvé ! Il est maintenant visible sur le site.')
-        renderGuidesEnAttente()
+        alert('Guide approuvé ! Il est maintenant visible sur le site.')
+        await renderGuidesEnAttente()
     }
 }
 
 async function rejectGuide(id) {
-    const raison = prompt('❌ Pourquoi refusez-vous ce guide ? (Optionnel)')
-    
-    if (!confirm('⛔ Refuser ce guide ?')) return
+    if (!confirm(' Refuser définitivement cette candidature ?')) return
     
     const { error } = await supabase
         .from('guides')
@@ -277,10 +262,10 @@ async function rejectGuide(id) {
         .eq('id', id)
     
     if (error) {
-        alert('❌ Erreur: ' + error.message)
+        alert(' Erreur: ' + error.message)
     } else {
-        alert('❌ Guide refusé.')
-        renderGuidesEnAttente()
+        alert(' Candidature refusée et supprimée.')
+        await renderGuidesEnAttente()
     }
 }
 
@@ -290,17 +275,22 @@ async function renderGuidesEnAttente() {
     let guidesSection = document.getElementById('guidesEnAttenteSection')
     
     if (!guidesSection) {
-        const container = document.querySelector('.admin-container')
-        if (!container) return
+        const container = document.querySelector('.admin-container') || document.querySelector('.container')
+        if (!container) {
+            console.error('Container non trouvé')
+            return
+        }
         
         guidesSection = document.createElement('div')
         guidesSection.id = 'guidesEnAttenteSection'
         guidesSection.style.marginTop = '40px'
-        guidesSection.innerHTML = '<h2>👨‍🦯 Candidatures Guides (à valider)</h2>'
+        guidesSection.style.padding = '20px'
+        guidesSection.style.background = '#f8f9fa'
+        guidesSection.style.borderRadius = '12px'
+        guidesSection.innerHTML = '<h2 style="margin-bottom: 20px;">👨‍🦯 Candidatures Guides (à valider)</h2>'
         container.appendChild(guidesSection)
     }
     
-    // Supprimer l'ancienne liste
     const oldList = document.getElementById('guidesListContainer')
     if (oldList) oldList.remove()
     
@@ -308,52 +298,62 @@ async function renderGuidesEnAttente() {
     listContainer.id = 'guidesListContainer'
     
     if (guides.length === 0) {
-        listContainer.innerHTML = '<p>Aucune candidature en attente.</p>'
+        listContainer.innerHTML = '<p style="padding: 20px; text-align: center; background: white; border-radius: 8px;" Aucune candidature en attente.</p>'
     } else {
-        listContainer.innerHTML = guides.map(guide => `
-            <div class="guide-card" style="border: 1px solid #ddd; padding: 15px; margin: 10px 0; border-radius: 10px; background: white;">
-                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
-                    <div>
-                        <h3>${escapeHtml(guide.prenom)} ${escapeHtml(guide.nom)}</h3>
-                        <p>📧 ${escapeHtml(guide.email)} | 📞 ${escapeHtml(guide.phone)}</p>
-                        <p>📍 ${escapeHtml(guide.ville)} |  ${escapeHtml(guide.specialite)}</p>
-                        <p> Expérience: ${guide.experience} ans |  Langues: ${guide.langue?.join(', ')}</p>
-                        <p> Motivation: ${escapeHtml(guide.motivation?.substring(0, 100))}...</p>
-                        ${guide.abonnement_duree ? `<p> Abonnement: ${guide.abonnement_duree} mois (${guide.abonnement_prix} DT)</p>` : ''}
+        listContainer.innerHTML = guides.map(guide => {
+            let languesDisplay = ''
+            if (Array.isArray(guide.langue) && guide.langue.length > 0) {
+                languesDisplay = guide.langue.join(', ')
+            } else if (typeof guide.langue === 'string' && guide.langue) {
+                languesDisplay = guide.langue
+            } else {
+                languesDisplay = 'Non spécifié'
+            }
+            
+            return `
+            <div class="guide-card" style="background: white; border-radius: 12px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 15px;">
+                    <div style="flex: 1;">
+                        <h3 style="margin: 0 0 10px 0; color: #333;">${escapeHtml(guide.prenom)} ${escapeHtml(guide.nom)}</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 10px; margin-top: 10px;">
+                            <div>📧 <strong>Email:</strong> ${escapeHtml(guide.email)}</div>
+                            <div>📞 <strong>Téléphone:</strong> ${escapeHtml(guide.telephone || guide.phone)}</div>
+                            <div> <strong>Ville:</strong> ${escapeHtml(guide.ville)}</div>
+                            <div> <strong>Spécialité:</strong> ${escapeHtml(guide.specialite)}</div>
+                            <div> <strong>Expérience:</strong> ${guide.experience || 0} ans</div>
+                            <div> <strong>Langues:</strong> ${escapeHtml(languesDisplay)}</div>
+                        </div>
+                        <div style="margin-top: 10px;">
+                            <strong>💬 Motivation:</strong>
+                            <p style="background: #f8f9fa; padding: 10px; border-radius: 8px; margin-top: 5px;">${escapeHtml(guide.motivation || 'Non renseignée')}</p>
+                        </div>
+                        ${guide.abonnement_duree ? `<div style="margin-top: 10px;"><strong>💰 Abonnement:</strong> ${guide.abonnement_duree} mois (${guide.abonnement_prix} DT)</div>` : ''}
+                        ${guide.image_url ? `<div style="margin-top: 10px;"><strong>🖼️ Photo:</strong> <a href="${guide.image_url}" target="_blank" style="color: #4f46e5;">Voir la photo</a></div>` : ''}
                     </div>
-                    <div style="display: flex; gap: 10px; margin-top: 10px;">
-                        <button class="btn-approve-guide" data-id="${guide.id}" style="background: #47eb8e; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">Approuver</button>
-                        <button class="btn-reject-guide" data-id="${guide.id}" style="background: #981000; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;"> Refuser</button>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn-approve-guide" data-id="${guide.id}" style="background: #286d56; color: white; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">Approuver</button>
+                        <button class="btn-reject-guide" data-id="${guide.id}" style="background: #812d2d; color: white; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">Refuser</button>
                     </div>
                 </div>
             </div>
-        `).join('')
+        `}).join('')
     }
     
     guidesSection.appendChild(listContainer)
     
     // Ajouter les événements
     document.querySelectorAll('.btn-approve-guide').forEach(btn => {
+        btn.removeEventListener('click', () => approveGuide(btn.dataset.id))
         btn.addEventListener('click', () => approveGuide(btn.dataset.id))
     })
     document.querySelectorAll('.btn-reject-guide').forEach(btn => {
+        btn.removeEventListener('click', () => rejectGuide(btn.dataset.id))
         btn.addEventListener('click', () => rejectGuide(btn.dataset.id))
     })
 }
 
-// Fonction utilitaire pour éviter les injections XSS
-function escapeHtml(str) {
-    if (!str) return ''
-    return str
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;')
-}
-
 // ============================================
-// 9. INITIALISATION
+// 5. INITIALISATION
 // ============================================
 document.addEventListener('DOMContentLoaded', async () => {
     const isAdmin = await checkAdminAccess()

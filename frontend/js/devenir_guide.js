@@ -18,23 +18,23 @@ document.addEventListener("DOMContentLoaded", () => {
   const successOverlay = document.getElementById("successOverlay");
   const successMessage = document.getElementById("successMessage");
 
-  // ── Variables abonnement ──
+  // Variables
   let selectedAbonnement = null
   let selectedPrix = null
   let uploadedImageUrl = null
 
-  // ── Champs requis pour la progression ──
+  // Champs requis pour la progression
   const requiredFields = [
     "prenom", "nom", "email", "phone", "ville",
     "specialite", "experience", "motivation"
   ];
 
-  // ── Barre de progression ──
+  // Barre de progression
   function updateProgress() {
     let filled = 0;
     requiredFields.forEach(id => {
       const el = document.getElementById(id);
-      if (el && el.value.trim() !== "") filled++;
+      if (el && el.value && el.value.trim() !== "") filled++;
     });
     const languesChecked = document.querySelectorAll('input[name="langues"]:checked').length;
     if (languesChecked > 0) filled++;
@@ -61,15 +61,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.getElementById("conditions")?.addEventListener("change", updateProgress);
 
-  // ── Compteur de caractères ──
+  // Compteur de caractères
   if (motivationField && charCounter) {
-    motivationField.addEventListener("input", () => {
-      charCounter.textContent = `${motivationField.value.length}/600 caractères`;
+    const updateCharCounter = () => {
+      const length = motivationField.value.length;
+      charCounter.textContent = `${length}/600 caractères`;
+      if (length >= 50) {
+        charCounter.style.color = "green";
+      } else {
+        charCounter.style.color = "#999";
+      }
       updateProgress();
-    });
+    };
+    motivationField.addEventListener("input", updateCharCounter);
+    updateCharCounter();
   }
 
-  // ── GESTION ABONNEMENT ──
+  // Gestion abonnement
   function initAbonnement() {
     const abonnementCards = document.querySelectorAll('.abonnement-card')
     const abonnementDureeInput = document.getElementById('abonnementDuree')
@@ -78,32 +86,107 @@ document.addEventListener("DOMContentLoaded", () => {
 
     console.log('Cartes abonnement trouvées:', abonnementCards.length)
 
+    if (abonnementCards.length === 0) {
+      console.error('⚠️ Aucune carte avec la classe "abonnement-card" trouvée!')
+      return
+    }
+
     abonnementCards.forEach(card => {
-      card.addEventListener('click', () => {
-        console.log('Carte cliquée')
+      if (card._handler) {
+        card.removeEventListener('click', card._handler)
+      }
+      
+      const handler = () => {
+        console.log('Carte cliquée!', card.dataset)
+        
         abonnementCards.forEach(c => c.classList.remove('selected'))
         card.classList.add('selected')
         
         selectedAbonnement = parseInt(card.dataset.duree)
         selectedPrix = parseInt(card.dataset.prix)
         
-        console.log('Abonnement sélectionné:', selectedAbonnement, 'mois - prix:', selectedPrix, 'DT')
+        console.log('✅ Abonnement sélectionné:', selectedAbonnement, 'mois -', selectedPrix, 'DT')
         
         if (abonnementDureeInput) abonnementDureeInput.value = selectedAbonnement
         if (abonnementPrixInput) abonnementPrixInput.value = selectedPrix
         if (abonnementError) hideError(abonnementError)
         updateProgress()
-      })
+      }
+      
+      card._handler = handler
+      card.addEventListener('click', handler)
     })
   }
 
-  // ── Upload photo ──
+  // ✅ Upload photo vers 'guides-photos' (AVEC 's')
+  async function handleFile(file) {
+    const error = document.getElementById("pictureError");
+    const maxSize = 5 * 1024 * 1024;
+    const allowed = ["image/jpeg", "image/png", "image/webp"];
+
+    if (!allowed.includes(file.type)) {
+      showError(error, "Format non supporté. Utilisez JPG, PNG ou WEBP.");
+      return;
+    }
+    
+    if (file.size > maxSize) {
+      showError(error, `Fichier trop lourd (max 5MB). Votre fichier: ${(file.size / 1024 / 1024).toFixed(2)}MB`);
+      return;
+    }
+
+    if (uploadText) {
+      uploadText.innerHTML = "⏳ Upload en cours...";
+      uploadText.style.color = "#d42b2b";
+    }
+    
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `guide_${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+      
+      console.log('Upload vers bucket:', 'guides-photos');
+      console.log('Nom du fichier:', fileName);
+      
+      // ✅ Bucket 'guides-photos' (avec 's')
+      const { error: uploadError } = await supabase.storage
+        .from('guides-photos')  // ← CORRECTION: guides-photos (avec 's')
+        .upload(fileName, file)
+      
+      if (uploadError) {
+        console.error('Erreur upload:', uploadError);
+        showError(error, "Erreur d'upload: " + uploadError.message);
+        if (uploadText) uploadText.innerHTML = "❌ Échec de l'upload";
+        return;
+      }
+      
+      // ✅ Récupérer l'URL publique
+      const { data: { publicUrl } } = supabase.storage
+        .from('guides-photos')  // ← CORRECTION: guides-photos (avec 's')
+        .getPublicUrl(fileName)
+      
+      uploadedImageUrl = publicUrl
+      console.log('✅ Photo uploadée avec succès:', publicUrl)
+      
+      if (error) hideError(error)
+      if (uploadText) {
+        uploadText.innerHTML = `✅ ${file.name} (${(file.size / 1024).toFixed(0)} KB)`;
+        uploadText.style.color = "green";
+      }
+      if (uploadSection) uploadSection.style.borderColor = "#4caf50";
+      
+    } catch (err) {
+      console.error('Erreur:', err);
+      showError(error, "Erreur inattendue lors de l'upload");
+      if (uploadText) uploadText.innerHTML = "❌ Erreur, réessayez";
+    }
+  }
+
+  // Événements upload
   if (uploadSection) {
     uploadSection.addEventListener("click", () => pictureInput?.click());
 
     uploadSection.addEventListener("dragover", (e) => {
       e.preventDefault();
-      uploadSection.style.borderColor = "var(--primary)";
+      uploadSection.style.borderColor = "#d42b2b";
     });
 
     uploadSection.addEventListener("dragleave", () => {
@@ -124,41 +207,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  async function handleFile(file) {
-    const error = document.getElementById("pictureError");
-    const maxSize = 5 * 1024 * 1024;
-    const allowed = ["image/jpeg", "image/png", "image/webp"];
-
-    if (!allowed.includes(file.type)) {
-      showError(error, "Format non supporté. Utilisez JPG ou PNG.");
-      return;
-    }
-    if (file.size > maxSize) {
-      showError(error, "Fichier trop lourd (max 5MB).");
-      return;
-    }
-
-    const fileName = `guides/${Date.now()}_${file.name}`
-    const { error: uploadError } = await supabase.storage
-      .from('guides')
-      .upload(fileName, file)
-    
-    if (uploadError) {
-      showError(error, "Erreur upload: " + uploadError.message)
-      return
-    }
-    
-    const { data: { publicUrl } } = supabase.storage
-      .from('guides')
-      .getPublicUrl(fileName)
-    
-    uploadedImageUrl = publicUrl
-    if (error) error.classList.remove("visible");
-    if (uploadText) uploadText.textContent = `✅ ${file.name}`;
-    if (uploadSection) uploadSection.style.borderColor = "var(--primary)";
-  }
-
-  // ── Validation ──
+  // Validation
   function validateEmail(email) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   }
@@ -181,67 +230,56 @@ document.addEventListener("DOMContentLoaded", () => {
   function validateForm() {
     let valid = true;
 
-    // Prénom
     const prenom = document.getElementById("prenom");
     const prenomError = document.getElementById("prenomError");
     if (!prenom.value.trim()) { showError(prenomError); prenom.classList.add("invalid"); valid = false; }
     else { hideError(prenomError); prenom.classList.remove("invalid"); }
 
-    // Nom
     const nom = document.getElementById("nom");
     const nomError = document.getElementById("nomError");
     if (!nom.value.trim()) { showError(nomError); nom.classList.add("invalid"); valid = false; }
     else { hideError(nomError); nom.classList.remove("invalid"); }
 
-    // Email
     const email = document.getElementById("email");
     const emailError = document.getElementById("emailError");
     if (!validateEmail(email.value)) { showError(emailError); email.classList.add("invalid"); valid = false; }
     else { hideError(emailError); email.classList.remove("invalid"); }
 
-    // Téléphone
     const phone = document.getElementById("phone");
     const phoneError = document.getElementById("phoneError");
     if (!validatePhone(phone.value)) { showError(phoneError); phone.classList.add("invalid"); valid = false; }
     else { hideError(phoneError); phone.classList.remove("invalid"); }
 
-    // Ville
     const ville = document.getElementById("ville");
     const villeError = document.getElementById("villeError");
     if (!ville.value.trim()) { showError(villeError); ville.classList.add("invalid"); valid = false; }
     else { hideError(villeError); ville.classList.remove("invalid"); }
 
-    // Spécialité
     const specialite = document.getElementById("specialite");
     const specialiteError = document.getElementById("specialiteError");
     if (!specialite.value) { showError(specialiteError); specialite.classList.add("invalid"); valid = false; }
     else { hideError(specialiteError); specialite.classList.remove("invalid"); }
 
-    // Expérience
     const experience = document.getElementById("experience");
     const experienceError = document.getElementById("experienceError");
     if (!experience.value) { showError(experienceError); experience.classList.add("invalid"); valid = false; }
     else { hideError(experienceError); experience.classList.remove("invalid"); }
 
-    // Langues
     const languesChecked = document.querySelectorAll('input[name="langues"]:checked').length;
     const languesError = document.getElementById("languesError");
     if (languesChecked === 0) { showError(languesError); valid = false; }
     else { hideError(languesError); }
 
-    // Motivation
     const motivation = document.getElementById("motivation");
     const motivationError = document.getElementById("motivationError");
     if (!motivation.value.trim() || motivation.value.trim().length < 50) {
       showError(motivationError); motivation.classList.add("invalid"); valid = false;
     } else { hideError(motivationError); motivation.classList.remove("invalid"); }
 
-    // Abonnement
     const abonnementError = document.getElementById("abonnementError");
     if (!selectedAbonnement) { showError(abonnementError); valid = false; }
     else { hideError(abonnementError); }
 
-    // Conditions
     const conditions = document.getElementById("conditions");
     const conditionsError = document.getElementById("conditionsError");
     if (!conditions.checked) { showError(conditionsError); valid = false; }
@@ -250,7 +288,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return valid;
   }
 
-  // ── SOUMISSION À SUPABASE ──
+  // ✅ SOUMISSION vers table 'guides'
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -289,11 +327,11 @@ document.addEventListener("DOMContentLoaded", () => {
     else if (experienceValue === 'intermediaire') experienceYears = 3
     else if (experienceValue === 'expert') experienceYears = 5
 
-    // Calcul des dates d'abonnement
     const now = new Date()
     const dateDebut = now.toISOString()
     const dateFin = new Date(now.setMonth(now.getMonth() + selectedAbonnement)).toISOString()
 
+    // ✅ Insertion dans la table 'guides'
     const { error } = await supabase
       .from('guides')
       .insert({
@@ -301,7 +339,7 @@ document.addEventListener("DOMContentLoaded", () => {
         prenom: prenom,
         nom: nom,
         email: email,
-        phone: phone,
+        telephone: phone,
         ville: ville,
         specialite: specialite,
         experience: experienceYears,
@@ -329,14 +367,17 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // ── Annuler ──
+  // Annuler
   if (cancelBtn) {
     cancelBtn.addEventListener("click", () => {
       if (confirm("Voulez-vous vraiment annuler ? Vos informations seront perdues.")) {
         form.reset();
         if (progressFill) progressFill.style.width = "0%";
         if (charCounter) charCounter.textContent = "0/600 caractères";
-        if (uploadText) uploadText.textContent = "Déposez votre photo ici";
+        if (uploadText) {
+          uploadText.innerHTML = "Déposez votre photo ici";
+          uploadText.style.color = "";
+        }
         if (uploadSection) uploadSection.style.borderColor = "";
         selectedAbonnement = null;
         selectedPrix = null;
@@ -348,7 +389,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // ── Succès ──
   function openSuccessMessage() {
     if (successOverlay) successOverlay.classList.add("visible");
     if (successMessage) successMessage.classList.add("visible");
@@ -361,7 +401,10 @@ document.addEventListener("DOMContentLoaded", () => {
     form.reset();
     if (progressFill) progressFill.style.width = "0%";
     if (charCounter) charCounter.textContent = "0/600 caractères";
-    if (uploadText) uploadText.textContent = "Déposez votre photo ici";
+    if (uploadText) {
+      uploadText.innerHTML = "Déposez votre photo ici";
+      uploadText.style.color = "";
+    }
     if (uploadSection) uploadSection.style.borderColor = "";
     selectedAbonnement = null;
     selectedPrix = null;
@@ -369,10 +412,10 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll('.abonnement-card').forEach(c => c.classList.remove('selected'));
   };
 
-  // ── Initialisation ──
+  // Initialisation
   initAbonnement()
 
-  // ── Inline validation ──
+  // Inline validation
   ["prenom", "nom", "ville"].forEach(id => {
     const el = document.getElementById(id);
     if (!el) return;

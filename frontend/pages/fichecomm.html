@@ -1,19 +1,24 @@
+
+</body>
+</html>
 <!DOCTYPE html>
 <html lang="fr">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Fiche Commerce | LocalGuide Monastir</title>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+   <title>Fiche Commerce | LocalGuide Monastir</title>
+   
     <link rel="icon" type="image/png" href="../images/logo-pour-navigateur.png">
-
     <link rel="stylesheet" href="../css/style_fiche_comm.css" />
     <link rel="stylesheet" href="../css/style_nav_barre.css" />
     <script src="../js/JS_nav_bar.js"></script>
-  </head>
 
-  <body>
-    <!-- NAVBAR - IDENTIQUE POUR TOUTES LES PAGES -->
-<header class="nav">
+  
+</head>
+<body>
+
+  <!-- ===== NAVBAR ===== -->
+  <header class="nav">
   <div class="nav-inner">
     <nav class="nav-left">
       <a href="aceuil.html">Accueil</a>
@@ -26,438 +31,64 @@
     <nav class="nav-right">
       <a href="news.html">Nouveautés</a>
       <a href="guide.html">Nos guides</a>
-      <a href="admin.html">Admin</a>
+      <!-- ✅ LIEN ADMIN AVEC ID (caché par défaut) -->
+      <a href="admin.html" id="adminNavLink" style="display: none;">Admin</a>
     </nav>
   </div>
 </header>
+  <!-- ===== HERO ===== -->
+  <section class="hero">
+    <div class="hero-eyebrow"> Annuaire Local</div>
+    <h1>Commerces & Boutiques</h1>
+    <p>Découvrez les meilleures adresses locales — restaurants, artisans, services et bien plus encore.</p>
+    <div class="hero-location">
+       <span>Monastir, Tunisie</span>
+    </div>
+  </section>
 
-    <main class="container">
-      <!-- HERO -->
-      <section class="heroo">
-        <div class="hero-top">
-          <div>
-            <div class="crumbs">
-              <a href="aceuil.html">Accueil</a>
-              <span>›</span>
-              <a href="fichecomm.html">Commerces</a>
-              <span>›</span>
-              <span>Monastir</span>
-            </div>
+<!-- PAGINATION -->
+<div class="pagination-wrapper" id="paginationContainer" style="display: flex; justify-content: center; gap: 10px; margin: 30px 0; flex-wrap: wrap;">
+    <!-- Les boutons seront générés par JS -->
+</div>
+  <!-- ===== FILTER BAR ===== -->
+  <div class="filter-bar">
+    <div class="search-wrap">
+      <input type="text" id="searchInput" placeholder="Rechercher un commerce, une adresse…" />
+      <span class="search-icon">🔍</span>
+    </div>
+    <div class="filter-chips" id="filterChips">
+      <button class="chip active" data-cat="all">Tous</button>
+      <button class="chip" data-cat="restaurant"> Restaurants</button>
+      <button class="chip" data-cat="cafe"> Cafés</button>
+      <button class="chip" data-cat="boutique"> Boutiques</button>
+      <button class="chip" data-cat="artisan"> Artisans</button>
+      <button class="chip" data-cat="sante"> Santé</button>
+      <button class="chip" data-cat="service"> Services</button>
+    </div>
+  </div>
 
-            <h1>Café Marina – Monastir</h1>
+  <!-- ===== STATS BAR ===== -->
+  <div class="stats-bar">
+    <p class="stats-count"><strong id="countDisplay">8</strong> commerces trouvés</p>
+    <select class="sort-select" id="sortSelect">
+      <option value="note">Mieux notés</option>
+      <option value="nom">Nom A–Z</option>
+      <option value="prix">Prix croissant</option>
+    </select>
+  </div>
 
-            <div class="badges">
-              <span class="badge">Café</span>
-              <span class="badge"> Monastir</span>
-              <span class="badge">4.6 (128 avis)</span>
-            </div>
+  <!-- ===== GRID ===== -->
+  <div class="grid" id="commerceGrid">
+    <!-- Les cartes sont injectées par JS -->
+  </div>
 
-            <div class="meta">
-              <div class="pill">
-                <span class="dot"></span>
-                Ouvert maintenant
-              </div>
-              <div class="pill">Corniche, Monastir</div>
-              <div class="pill">08:00 – 23:30</div>
-            </div>
-          </div>
+  <!-- ===== FOOTER ===== -->
+  <footer>
+    © 2025 LocalGuide — Tous droits réservés
+  </footer>
 
-          <div class="actions">
-            <button class="btn">Appeler</button>
-            <button class="btn">Itinéraire</button>
-            <button class="btn btn-primary">⭐ Ajouter un avis</button>
-          </div>
-        </div>
-
-        <div class="cover"></div>
-      </section>
-      <!-- GRID -->
-      <section class="grid">
-        <!-- LEFT -->
-        <div style="display: grid; gap: 18px">
-          <div class="card">
-            <div class="card-header">
-              <h2>À propos</h2>
-            </div>
-            <div class="card-body">
-              <p class="muted">
-                Café Marina est un café moderne situé à la corniche de Monastir.
-                Il propose des boissons chaudes, cafés premium, desserts et
-                snacks. L’endroit est apprécié pour sa vue sur la mer, son calme
-                et son ambiance idéale pour étudier ou travailler.
-              </p>
-            </div>
-          </div>
-
-          <div class="card">
-            <div class="card-header">
-              <h2>Photos</h2>
-            </div>
-            <div class="card-body">
-              <div class="gallery">
-                <div class="g-main"></div>
-                <div class="g-side">
-                  <div class="g-img g1"></div>
-                  <div class="g-img g2"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="card">
-            <div class="card-header">
-              <h2>Avis des visiteurs</h2>
-            </div>
-            <div class="card-body">
-              <div class="reviews">
-                <div class="review">
-                  <div class="review-head">
-                    <div class="user">
-                      <div class="avatar">S</div>
-                      <div>
-                        <strong>Sarra</strong><br />
-                        <span class="muted" style="font-size: 12px"
-                          >Il y a 2 jours</span
-                        >
-                      </div>
-                    </div>
-                    <div class="stars">⭐⭐⭐⭐⭐</div>
-                  </div>
-                  <div class="muted">
-                    Très bon café, service rapide et ambiance calme. Parfait
-                    pour réviser !
-                  </div>
-                </div>
-
-                <div class="review">
-                  <div class="review-head">
-                    <div class="user">
-                      <div class="avatar">M</div>
-                      <div>
-                        <strong>Mehdi</strong><br />
-                        <span class="muted" style="font-size: 12px"
-                          >Il y a 1 semaine</span
-                        >
-                      </div>
-                    </div>
-                    <div class="stars">⭐⭐⭐⭐</div>
-                  </div>
-                  <div class="muted">
-                    Très belle vue, prix corrects. Un peu plein le weekend mais
-                    sinon top.
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- RIGHT -->
-        <aside style="display: grid; gap: 18px">
-          <div class="card" style="padding: 16px">
-            <h2>Informations</h2>
-
-            <div class="info-list">
-              <div class="info-row">
-                <strong> Téléphone</strong>
-                <a href="#">+216 55 000 000</a>
-              </div>
-
-              <div class="info-row">
-                <strong> Adresse</strong>
-                <span class="muted">Corniche, Monastir</span>
-              </div>
-
-              <div class="info-row">
-                <strong> Site</strong>
-                <a href="#">localguide.tn</a>
-              </div>
-
-              <div class="info-row">
-                <strong>WhatsApp</strong>
-                <a href="#">Envoyer</a>
-              </div>
-            </div>
-          </div>
-
-          <div class="card" style="padding: 16px">
-            <h2>Localisation</h2>
-
-            <div
-              style="
-                height: 220px;
-                margin-top: 12px;
-                border-radius: 18px;
-                border: 1px solid rgba(0, 0, 0, 0.1);
-                background: rgba(96, 52, 105, 0.1);
-                display: grid;
-                place-items: center;
-                font-weight: 800;
-                color: rgba(0, 0, 0, 0.75);
-              "
-            >
-              🗺️ Carte ici (Leaflet)
-            </div>
-
-            <div style="margin-top: 12px; display: flex; gap: 10px">
-              <button class="btn" style="flex: 1">Ouvrir</button>
-              <button class="btn btn-primary" style="flex: 1">
-                Itinéraire
-              </button>
-            </div>
-          </div>
-
-          <div class="card" style="padding: 16px">
-            <h2>Horaires</h2>
-
-            <div class="hours">
-              <div class="hour">
-                <span class="day">Lundi</span>
-                <span class="time">08:00 – 23:30</span>
-              </div>
-              <div class="hour">
-                <span class="day">Mardi</span>
-                <span class="time">08:00 – 23:30</span>
-              </div>
-              <div class="hour">
-                <span class="day">Mercredi</span>
-                <span class="time">08:00 – 23:30</span>
-              </div>
-              <div class="hour">
-                <span class="day">Jeudi</span>
-                <span class="time">08:00 – 23:30</span>
-              </div>
-              <div class="hour">
-                <span class="day">Vendredi</span>
-                <span class="time">09:00 – 00:00</span>
-              </div>
-              <div class="hour">
-                <span class="day">Samedi</span>
-                <span class="time">09:00 – 00:00</span>
-              </div>
-              <div class="hour">
-                <span class="day">Dimanche</span>
-                <span class="time">08:30 – 23:00</span>
-              </div>
-            </div>
-          </div>
-        </aside>
-      </section>
-      <!-- HERO -->
-      <section class="hero">
-        <div class="hero-top">
-          <div>
-            <div class="crumbs">
-              <a href="index.html">Accueil</a>
-              <span>›</span>
-              <a href="shops.html">Commerces</a>
-              <span>›</span>
-              <span>Monastir</span>
-            </div>
-
-            <h1>Restaurant El Medina – Monastir</h1>
-
-            <div class="badges">
-              <span class="badge"> Restaurant</span>
-              <span class="badge"> Monastir</span>
-              <span class="badge"> 4.4 (210 avis)</span>
-            </div>
-
-            <div class="meta">
-              <div class="pill">
-                <span class="dot"></span>
-                Ouvert maintenant
-              </div>
-              <div class="pill">Centre-ville, Monastir</div>
-              <div class="pill">12:00 – 00:00</div>
-            </div>
-          </div>
-
-          <div class="actions">
-            <button class="btn">Appeler</button>
-            <button class="btn">Itinéraire</button>
-            <button class="btn btn-primary">⭐ Ajouter un avis</button>
-          </div>
-        </div>
-
-        <div class="cover"></div>
-      </section>
-      <!-- GRID -->
-      <section class="grid">
-        <!-- LEFT -->
-        <div style="display: grid; gap: 18px">
-          <div class="card">
-            <div class="card-header">
-              <h2>À propos</h2>
-            </div>
-            <div class="card-body">
-              <p class="muted">
-                Restaurant El Medina est un restaurant familial situé au
-                centre-ville de Monastir. Il propose une cuisine tunisienne et
-                méditerranéenne, avec une ambiance calme et un service
-                chaleureux. Très apprécié pour les repas en famille et les
-                soirées.
-              </p>
-            </div>
-          </div>
-
-          <div class="card">
-            <div class="card-header">
-              <h2>Photos</h2>
-            </div>
-            <div class="card-body">
-              <div class="gallery">
-                <div class="g-main"></div>
-                <div class="g-side">
-                  <div class="g-img g1"></div>
-                  <div class="g-img g2"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="card">
-            <div class="card-header">
-              <h2>Avis des visiteurs</h2>
-            </div>
-            <div class="card-body">
-              <div class="reviews">
-                <div class="review">
-                  <div class="review-head">
-                    <div class="user">
-                      <div class="avatar">A</div>
-                      <div>
-                        <strong>Amira</strong><br />
-                        <span class="muted" style="font-size: 12px"
-                          >Il y a 3 jours</span
-                        >
-                      </div>
-                    </div>
-                    <div class="stars">⭐⭐⭐⭐⭐</div>
-                  </div>
-                  <div class="muted">
-                    Très bon restaurant ! Les plats sont délicieux et le service
-                    est rapide.
-                  </div>
-                </div>
-
-                <div class="review">
-                  <div class="review-head">
-                    <div class="user">
-                      <div class="avatar">Y</div>
-                      <div>
-                        <strong>Youssef</strong><br />
-                        <span class="muted" style="font-size: 12px"
-                          >Il y a 1 semaine</span
-                        >
-                      </div>
-                    </div>
-                    <div class="stars">⭐⭐⭐⭐</div>
-                  </div>
-                  <div class="muted">
-                    Très bonne ambiance, prix raisonnables. Je recommande.
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- RIGHT -->
-        <aside style="display: grid; gap: 18px">
-          <div class="card" style="padding: 16px">
-            <h2>Informations</h2>
-
-            <div class="info-list">
-              <div class="info-row">
-                <strong>Téléphone</strong>
-                <a href="#">+216 55 111 222</a>
-              </div>
-
-              <div class="info-row">
-                <strong> Adresse</strong>
-                <span class="muted">Centre-ville, Monastir</span>
-              </div>
-
-              <div class="info-row">
-                <strong> Site</strong>
-                <a href="#">localguide.tn</a>
-              </div>
-
-              <div class="info-row">
-                <strong> WhatsApp</strong>
-                <a href="#">Envoyer</a>
-              </div>
-            </div>
-          </div>
-
-          <div class="card" style="padding: 16px">
-            <h2>Commerces similaires</h2>
-
-            <div class="similar">
-              <a class="shop-mini" href="#">
-                <div class="shop-thumb t1"></div>
-                <div>
-                  <strong>Pâtisserie Le Délice</strong>
-                  <div class="mini">Pâtisserie • ⭐ 4.7 • Monastir</div>
-                </div>
-              </a>
-
-              <a class="shop-mini" href="#">
-                <div class="shop-thumb t2"></div>
-                <div>
-                  <strong>Dar El Medina Grill</strong>
-                  <div class="mini">Grillades • ⭐ 4.3 • Monastir</div>
-                </div>
-              </a>
-            </div>
-          </div>
-
-          <div class="card" style="padding: 16px">
-            <h2>Horaires</h2>
-
-            <div class="hours">
-              <div class="hour">
-                <span class="day">Lundi</span>
-                <span class="time">12:00 – 00:00</span>
-              </div>
-              <div class="hour">
-                <span class="day">Mardi</span>
-                <span class="time">12:00 – 00:00</span>
-              </div>
-              <div class="hour">
-                <span class="day">Mercredi</span>
-                <span class="time">12:00 – 00:00</span>
-              </div>
-              <div class="hour">
-                <span class="day">Jeudi</span>
-                <span class="time">12:00 – 00:00</span>
-              </div>
-              <div class="hour">
-                <span class="day">Vendredi</span>
-                <span class="time">12:30 – 01:00</span>
-              </div>
-              <div class="hour">
-                <span class="day">Samedi</span>
-                <span class="time">12:30 – 01:00</span>
-              </div>
-              <div class="hour">
-                <span class="day">Dimanche</span>
-                <span class="time">12:00 – 00:00</span>
-              </div>
-            </div>
-          </div>
-        </aside>
-      </section>
-    </main>
-    <footer>
-      <p>
-        © 2025 LocalGuide — Tous droits réservés — Votre guide local de
-        confiance
-      </p>
-    </footer>
- <script type="module" src="../js/fichecomm.js"></script>
-
-<script src="../js/JS_nav_bar.js"></script>
+    <script type="module" src="../js/common.js"></script>
+<script type="module" src="../js/fichecomm.js"></script>
 </body>
 </html>
+

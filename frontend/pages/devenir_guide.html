@@ -1,425 +1,318 @@
 <!DOCTYPE html>
 <html lang="fr">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Devenir Guide — LocalGuide</title>
-     <link rel="icon" type="image/png" href="../images/logo-pour-navigateur.png">
+    <link rel="icon" type="image/png" href="../images/logo-pour-navigateur.png">
     <link rel="stylesheet" href="../css/style_devenir_guide.css" />
     <link rel="stylesheet" href="../css/style_nav_barre.css" />
-  </head>
-  <body>
-    <!-- NAVBAR - IDENTIQUE POUR TOUTES LES PAGES -->
-<header class="nav">
-  <div class="nav-inner">
-    <nav class="nav-left">
-      <a href="aceuil.html">Accueil</a>
-      <a href="add.html">Ajouter commerce</a>
-      <a href="fichecomm.html">Commerces</a>
-    </nav>
-    <a href="aceuil.html" class="nav-logo">
-      <img src="../images/logo.png" alt="LocalGuide Logo" />
-    </a>
-    <nav class="nav-right">
-      <a href="news.html">Nouveautés</a>
-      <a href="guide.html">Nos guides</a>
-      <a href="admin.html">Admin</a>
-    </nav>
-  </div>
-</header>
+    <style>
+        .container {
+            margin-top: 100px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- NAVBAR -->
+    <header class="nav">
+        <div class="nav-inner">
+            <nav class="nav-left">
+                <a href="aceuil.html">Accueil</a>
+                <a href="add.html">Ajouter commerce</a>
+                <a href="fichecomm.html">Commerces</a>
+            </nav>
+            <a href="aceuil.html" class="nav-logo">
+                <img src="../images/logo.png" alt="LocalGuide Logo" />
+            </a>
+            <nav class="nav-right">
+                <a href="news.html">Nouveautés</a>
+                <a href="guide.html">Nos guides</a>
+                <a href="admin.html" id="adminNavLink" style="display: none;">Admin</a>
+            </nav>
+        </div>
+    </header>
+
     <div class="container">
-     
-
-      <!-- HERO -->
-      <div class="header1">
-        <h1>Devenir Guide</h1>
-        <p class="title">Partagez votre passion pour votre ville !</p>
-      </div>
-
-      <!-- Avantages -->
-      <section class="avantages-section">
-        <div class="avantages-grid">
-          <div class="avantage-card">
-            <div class="avantage-icon">🗺️</div>
-            <h3>Explorez</h3>
-            <p>Découvrez et mettez en avant les pépites de votre quartier</p>
-          </div>
-          <div class="avantage-card">
-            <div class="avantage-icon">🤝</div>
-            <h3>Connectez</h3>
-            <p>Aidez commerçants et visiteurs à se rencontrer</p>
-          </div>
-          <div class="avantage-card">
-            <div class="avantage-icon">⭐</div>
-            <h3>Valorisez</h3>
-            <p>Gagnez des badges et une visibilité sur la plateforme</p>
-          </div>
+        <!-- HERO -->
+        <div class="header1">
+            <h1>Devenir Guide</h1>
+            <p class="title">Partagez votre passion pour votre ville !</p>
         </div>
-      </section>
 
-      <!-- Barre de progression -->
-      <div class="progress-bar" id="progressBar">
-        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
-      </div>
-
-      <!-- Formulaire -->
-      <form class="form1" id="guideForm" action="#" method="post" novalidate>
-        <!-- SECTION 1: Infos perso -->
-        <section class="form-part">
-          <h2 class="section-title">Informations personnelles</h2>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label for="prenom">Prénom <span class="required">*</span></label>
-              <input
-                type="text"
-                id="prenom"
-                name="prenom"
-                placeholder="Ex: Salma"
-                required
-              />
-              <div class="error-message" id="prenomError">
-                Le prénom est requis
-              </div>
+        <!-- Avantages -->
+        <section class="avantages-section">
+            <div class="avantages-grid">
+                <div class="avantage-card">
+                    <div class="avantage-icon">🗺️</div>
+                    <h3>Explorez</h3>
+                    <p>Découvrez et mettez en avant les pépites de votre quartier</p>
+                </div>
+                <div class="avantage-card">
+                    <div class="avantage-icon">🤝</div>
+                    <h3>Connectez</h3>
+                    <p>Aidez commerçants et visiteurs à se rencontrer</p>
+                </div>
+                <div class="avantage-card">
+                    <div class="avantage-icon">⭐</div>
+                    <h3>Valorisez</h3>
+                    <p>Gagnez des badges et une visibilité sur la plateforme</p>
+                </div>
             </div>
-            <div class="form-group">
-              <label for="nom">Nom <span class="required">*</span></label>
-              <input
-                type="text"
-                id="nom"
-                name="nom"
-                placeholder="Ex: Ben Ali"
-                required
-              />
-              <div class="error-message" id="nomError">Le nom est requis</div>
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label for="email">Email <span class="required">*</span></label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                placeholder="Ex: salma@email.com"
-                required
-              />
-              <div class="error-message" id="emailError">Email invalide</div>
-            </div>
-            <div class="form-group">
-              <label for="phone"
-                >Téléphone <span class="required">*</span></label
-              >
-              <input
-                type="tel"
-                id="phone"
-                name="phone"
-                placeholder="Ex: +216 12 345 678"
-                required
-              />
-              <div class="error-message" id="phoneError">Numéro invalide</div>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="ville"
-              >Ville couverte <span class="required">*</span></label
-            >
-            <input
-              type="text"
-              id="ville"
-              name="ville"
-              placeholder="Ex: Monastir, Sousse..."
-              required
-            />
-            <div class="error-message" id="villeError">
-              La ville est requise
-            </div>
-          </div>
         </section>
 
-        <!-- SECTION 2: Profil guide -->
-        <section class="form-part">
-          <h2 class="section-title">Votre profil de guide</h2>
-
-          <div class="form-group">
-            <label for="specialite"
-              >Spécialité <span class="required">*</span></label
-            >
-            <select id="specialite" name="specialite" required>
-              <option value="">Choisissez votre domaine</option>
-              <option value="gastronomie">🍽️ Gastronomie & Restaurants</option>
-              <option value="culture">🎭 Culture & Art</option>
-              <option value="shopping">🛍️ Shopping & Boutiques</option>
-              <option value="nature">🌿 Nature & Plein air</option>
-              <option value="histoire">🏛️ Histoire & Patrimoine</option>
-              <option value="nightlife">🌙 Vie nocturne</option>
-              <option value="autre">✨ Autre</option>
-            </select>
-            <div class="error-message" id="specialiteError">
-              Veuillez choisir une spécialité
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="experience"
-              >Expérience <span class="required">*</span></label
-            >
-            <select id="experience" name="experience" required>
-              <option value="">Votre niveau d'expérience</option>
-              <option value="debutant">Débutant — je découvre ma ville</option>
-              <option value="intermediaire">
-                Intermédiaire — je connais bien mon quartier
-              </option>
-              <option value="expert">
-                Expert — je suis une vraie référence locale
-              </option>
-            </select>
-            <div class="error-message" id="experienceError">
-              Veuillez choisir votre niveau
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label>Langues parlées <span class="required">*</span></label>
-            <div class="checkbox-group" id="languesGroup">
-              <label class="checkbox-label">
-                <input type="checkbox" name="langues" value="arabe" /> Arabe
-              </label>
-              <label class="checkbox-label">
-                <input type="checkbox" name="langues" value="francais" />
-                Français
-              </label>
-              <label class="checkbox-label">
-                <input type="checkbox" name="langues" value="anglais" /> Anglais
-              </label>
-              <label class="checkbox-label">
-                <input type="checkbox" name="langues" value="allemand" />
-                Allemand
-              </label>
-              <label class="checkbox-label">
-                <input type="checkbox" name="langues" value="espagnol" />
-                Espagnol
-              </label>
-              <label class="checkbox-label">
-                <input type="checkbox" name="langues" value="autre" /> Autre
-              </label>
-            </div>
-            <div class="error-message" id="languesError">
-              Sélectionnez au moins une langue
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="motivation"
-              >Motivation <span class="required">*</span></label
-            >
-            <textarea
-              id="motivation"
-              name="motivation"
-              placeholder="Pourquoi souhaitez-vous devenir guide LocalGuide ? Parlez-nous de votre passion..."
-              maxlength="600"
-              required
-            ></textarea>
-            <div class="char-counter" id="charCounter">0/600 caractères</div>
-            <div class="error-message" id="motivationError">
-              La motivation est requise (min 50 caractères)
-            </div>
-          </div>
-        </section>
-
-        <!-- SECTION 3: Médias -->
-        <section class="form-part">
-          <h2 class="section-title">Photo & Réseaux</h2>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label>Photo de profil</label>
-              <div class="upload-section" id="uploadSection">
-                <input
-                  type="file"
-                  id="picture"
-                  name="picture"
-                  accept="image/*"
-                  hidden
-                />
-                <div class="upload-icon">📸</div>
-                <p class="upload-text" id="uploadText">
-                  Déposez votre photo ici
-                </p>
-                <p class="upload-note">
-                  ou cliquez pour sélectionner (max 5MB, JPG/PNG)
-                </p>
-              </div>
-              <div class="error-message" id="pictureError"></div>
-            </div>
-
-            <div class="form-group">
-              <label for="instagram">Instagram</label>
-              <input
-                type="text"
-                id="instagram"
-                name="instagram"
-                placeholder="@votre_compte"
-              />
-              <label for="facebook" style="margin-top: 16px">Facebook</label>
-              <input
-                type="text"
-                id="facebook"
-                name="facebook"
-                placeholder="URL de votre page"
-              />
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="checkbox-label conditions-label">
-              <input
-                type="checkbox"
-                id="conditions"
-                name="conditions"
-                required
-              />
-              J'accepte les
-              <a href="#" class="link">conditions d'utilisation</a> et la
-              <a href="#" class="link">charte des guides LocalGuide</a>
-              <span class="required">*</span>
-            </label>
-            <div class="error-message" id="conditionsError">
-              Vous devez accepter les conditions
-            </div>
-          </div>
-        </section>
-
-        <div class="button-group">
-          <button type="button" class="btn-secondary" id="cancelBtn">
-            Annuler
-          </button>
-          <button type="submit" class="btn-primary" id="submitBtn">
-            <span id="submitText">Envoyer ma candidature</span>
-            <span
-              id="submitSpinner"
-              class="spinner"
-              style="display: none"
-            ></span>
-          </button>
+        <!-- Barre de progression -->
+        <div class="progress-bar" id="progressBar">
+            <div class="progress-fill" id="progressFill" style="width: 0%"></div>
         </div>
-      </form>
+
+        <!-- Formulaire -->
+        <form class="form1" id="guideForm" action="#" method="post" novalidate>
+            
+            <!-- SECTION 1: Infos perso -->
+            <section class="form-part">
+                <h2 class="section-title">Informations personnelles</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="prenom">Prénom <span class="required">*</span></label>
+                        <input type="text" id="prenom" name="prenom" placeholder="Ex: Salma" required />
+                        <div class="error-message" id="prenomError">Le prénom est requis</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="nom">Nom <span class="required">*</span></label>
+                        <input type="text" id="nom" name="nom" placeholder="Ex: Ben Ali" required />
+                        <div class="error-message" id="nomError">Le nom est requis</div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email">Email <span class="required">*</span></label>
+                        <input type="email" id="email" name="email" placeholder="Ex: salma@email.com" required />
+                        <div class="error-message" id="emailError">Email invalide</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Téléphone <span class="required">*</span></label>
+                        <input type="tel" id="phone" name="phone" placeholder="Ex: +216 12 345 678" required />
+                        <div class="error-message" id="phoneError">Numéro invalide</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="ville">Ville couverte <span class="required">*</span></label>
+                    <input type="text" id="ville" name="ville" placeholder="Ex: Monastir, Sousse..." required />
+                    <div class="error-message" id="villeError">La ville est requise</div>
+                </div>
+            </section>
+
+            <!-- SECTION 2: Profil guide -->
+            <section class="form-part">
+                <h2 class="section-title">Votre profil de guide</h2>
+
+                <div class="form-group">
+                    <label for="specialite">Spécialité <span class="required">*</span></label>
+                    <select id="specialite" name="specialite" required>
+                        <option value="">Choisissez votre domaine</option>
+                        <option value="gastronomie">🍽️ Gastronomie & Restaurants</option>
+                        <option value="culture">🎨 Culture & Art</option>
+                        <option value="shopping">🛍️ Shopping & Boutiques</option>
+                        <option value="nature">🌿 Nature & Plein air</option>
+                        <option value="histoire">🏛️ Histoire & Patrimoine</option>
+                        <option value="nightlife">🌙 Vie nocturne</option>
+                        <option value="autre">✨ Autre</option>
+                    </select>
+                    <div class="error-message" id="specialiteError">Veuillez choisir une spécialité</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="experience">Expérience <span class="required">*</span></label>
+                    <select id="experience" name="experience" required>
+                        <option value="">Votre niveau d'expérience</option>
+                        <option value="debutant">🌱 Débutant — je découvre ma ville</option>
+                        <option value="intermediaire">📚 Intermédiaire — je connais bien mon quartier</option>
+                        <option value="expert">🏆 Expert — je suis une vraie référence locale</option>
+                    </select>
+                    <div class="error-message" id="experienceError">Veuillez choisir votre niveau</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Langues parlées <span class="required">*</span></label>
+                    <div class="checkbox-group" id="languesGroup">
+                        <label class="checkbox-label"><input type="checkbox" name="langues" value="arabe" /> Arabe</label>
+                        <label class="checkbox-label"><input type="checkbox" name="langues" value="francais" /> Français</label>
+                        <label class="checkbox-label"><input type="checkbox" name="langues" value="anglais" /> Anglais</label>
+                        <label class="checkbox-label"><input type="checkbox" name="langues" value="allemand" /> Allemand</label>
+                        <label class="checkbox-label"><input type="checkbox" name="langues" value="espagnol" /> Espagnol</label>
+                        <label class="checkbox-label"><input type="checkbox" name="langues" value="autre" /> Autre</label>
+                    </div>
+                    <div class="error-message" id="languesError">Sélectionnez au moins une langue</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="motivation">Motivation <span class="required">*</span></label>
+                    <textarea id="motivation" name="motivation" placeholder="Pourquoi souhaitez-vous devenir guide LocalGuide ? Parlez-nous de votre passion..." maxlength="600" required></textarea>
+                    <div class="char-counter" id="charCounter">0/600 caractères</div>
+                    <div class="error-message" id="motivationError">La motivation est requise (min 50 caractères)</div>
+                </div>
+            </section>
+
+            <!-- SECTION 3: Médias -->
+            <section class="form-part">
+                <h2 class="section-title">Photo & Réseaux</h2>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Photo de profil</label>
+                        <div class="upload-section" id="uploadSection">
+                            <input type="file" id="picture" name="picture" accept="image/*" hidden />
+                            <div class="upload-icon">📸</div>
+                            <p class="upload-text" id="uploadText">Déposez votre photo ici</p>
+                            <p class="upload-note">ou cliquez pour sélectionner (max 5MB, JPG/PNG)</p>
+                        </div>
+                        <div class="error-message" id="pictureError"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="instagram">Instagram</label>
+                        <input type="text" id="instagram" name="instagram" placeholder="@votre_compte" />
+                        <label for="facebook" style="margin-top: 16px">Facebook</label>
+                        <input type="text" id="facebook" name="facebook" placeholder="URL de votre page" />
+                    </div>
+                </div>
+            </section>
+<!-- SECTION ABONNEMENT -->
+<section class="form-part">
+    <h2 class="section-title">Choisissez votre abonnement <span class="required">*</span></h2>
+    <p class="section-subtitle">Devenez guide local et bénéficiez de nos services</p>
+
+    <div class="abonnement-grid" id="abonnementGrid">
+        <!-- Mensuel -->
+        <div class="abonnement-card" data-duree="1" data-prix="29">
+            <div class="abonnement-header">
+                <h3>Mensuel</h3>
+                <div class="abonnement-prix">29 DT</div>
+                <div class="abonnement-periode">/mois</div>
+            </div>
+            <div class="abonnement-body">
+                <ul>
+                    <li>✓ Visibilité sur la plateforme</li>
+                    <li>✓ Accès au tableau de bord</li>
+                    <li>✓ Support prioritaire</li>
+                </ul>
+            </div>
+            <div class="abonnement-footer">
+                <button type="button" class="btn-abonnement">Choisir</button>
+            </div>
+        </div>
+
+        <!-- Trimestriel -->
+        <div class="abonnement-card" data-duree="3" data-prix="79">
+            <div class="abonnement-header">
+                <h3>Trimestriel</h3>
+                <div class="abonnement-prix">79 DT</div>
+                <div class="abonnement-periode">/3 mois</div>
+                <div class="abonnement-economie">Économisez 8 DT</div>
+            </div>
+            <div class="abonnement-body">
+                <ul>
+                    <li>✓ Tout du forfait Mensuel</li>
+                    <li>✓ Statistiques avancées</li>
+                    <li>✓ Mise en avant 1 semaine</li>
+                </ul>
+            </div>
+            <div class="abonnement-footer">
+                <button type="button" class="btn-abonnement">Choisir</button>
+            </div>
+        </div>
+
+        <!-- Semestriel -->
+        <div class="abonnement-card" data-duree="6" data-prix="149">
+            <div class="abonnement-header">
+                <h3>Semestriel</h3>
+                <div class="abonnement-prix">149 DT</div>
+                <div class="abonnement-periode">/6 mois</div>
+                <div class="abonnement-economie">Économisez 25 DT</div>
+            </div>
+            <div class="abonnement-body">
+                <ul>
+                    <li>✓ Tout du forfait Trimestriel</li>
+                    <li>✓ Badge "Guide Certifié"</li>
+                    <li>✓ Mise en avant 1 mois</li>
+                </ul>
+            </div>
+            <div class="abonnement-footer">
+                <button type="button" class="btn-abonnement">Choisir</button>
+            </div>
+        </div>
+
+        <!-- Annuel -->
+        <div class="abonnement-card" data-duree="12" data-prix="279">
+            <div class="abonnement-header">
+                <h3>Annuel</h3>
+                <div class="abonnement-prix">279 DT</div>
+                <div class="abonnement-periode">/an</div>
+                <div class="abonnement-economie">Économisez 69 DT</div>
+            </div>
+            <div class="abonnement-body">
+                <ul>
+                    <li>✓ Tout du forfait Semestriel</li>
+                    <li>✓ Accès aux événements exclusifs</li>
+                    <li>✓ Mise en avant permanente</li>
+                    <li>✓ Formation gratuite</li>
+                </ul>
+            </div>
+            <div class="abonnement-footer">
+                <button type="button" class="btn-abonnement">Choisir</button>
+            </div>
+        </div>
+    </div>
+
+    <input type="hidden" id="abonnementDuree" name="abonnementDuree" />
+    <input type="hidden" id="abonnementPrix" name="abonnementPrix" />
+    <div class="error-message" id="abonnementError">Veuillez choisir un abonnement</div>
+</section>
+
+            <!-- SECTION 4: Conditions -->
+            <section class="form-part">
+                <div class="form-group">
+                    <label class="checkbox-label conditions-label">
+                        <input type="checkbox" id="conditions" name="conditions" required />
+                        J'accepte les <a href="#" class="link">conditions d'utilisation</a> et la
+                        <a href="#" class="link">charte des guides LocalGuide</a>
+                        <span class="required">*</span>
+                    </label>
+                    <div class="error-message" id="conditionsError">Vous devez accepter les conditions</div>
+                </div>
+            </section>
+
+            <!-- Boutons -->
+            <div class="button-group">
+                <button type="button" class="btn-secondary" id="cancelBtn">Annuler</button>
+                <button type="submit" class="btn-primary" id="submitBtn">
+                    <span id="submitText">Envoyer ma candidature</span>
+                    <span id="submitSpinner" class="spinner" style="display: none"></span>
+                </button>
+            </div>
+        </form>
     </div>
 
     <!-- Succès -->
     <div class="success-overlay" id="successOverlay"></div>
     <div class="success-message" id="successMessage">
-      <div class="success-content">
-        <div class="success-icon">🎉</div>
-        <h3>Candidature envoyée !</h3>
-        <p>Nous examinerons votre profil et vous recontacterons sous 48h</p>
-        <button
-          class="btn-primary"
-          style="margin-top: 20px; padding: 10px 30px"
-          onclick="closeSuccessMessage()"
-        >
-          Fermer
-        </button>
-      </div>
+        <div class="success-content">
+            <div class="success-icon"></div>
+            <h3>Candidature envoyée !</h3>
+            <p>Nous examinerons votre profil et vous recontacterons sous 48h</p>
+            <button class="btn-primary" style="margin-top: 20px; padding: 10px 30px" onclick="closeSuccessMessage()">Fermer</button>
+        </div>
     </div>
-    <!-- SECTION ABONNEMENT -->
-<section class="form-part">
-  <h2 class="section-title">Choisissez votre abonnement</h2>
-  <p class="section-subtitle">Devenez guide local et bénéficiez de nos services</p>
-
-  <div class="abonnement-grid" id="abonnementGrid">
-    <div class="abonnement-card" data-duree="1" data-prix="29">
-      <div class="abonnement-header">
-        <h3>Mensuel</h3>
-        <span class="abonnement-prix">29 DT</span>
-        <span class="abonnement-periode">/mois</span>
-      </div>
-      <div class="abonnement-body">
-        <ul>
-          <li>✅ Visibilité sur la plateforme</li>
-          <li>✅ Accès au tableau de bord</li>
-          <li>✅ Support prioritaire</li>
-        </ul>
-      </div>
-      <div class="abonnement-footer">
-        <button type="button" class="btn-abonnement" data-duree="1" data-prix="29">Choisir</button>
-      </div>
-    </div>
-
-    <div class="abonnement-card" data-duree="3" data-prix="79">
-      <div class="abonnement-header">
-        <h3>Trimestriel</h3>
-        <span class="abonnement-prix">79 DT</span>
-        <span class="abonnement-periode">/3 mois</span>
-        <span class="abonnement-economie">Économisez 8 DT</span>
-      </div>
-      <div class="abonnement-body">
-        <ul>
-          <li>✅ Tout du forfait Mensuel</li>
-          <li>✅ Statistiques avancées</li>
-          <li>✅ Mise en avant 1 semaine</li>
-        </ul>
-      </div>
-      <div class="abonnement-footer">
-        <button type="button" class="btn-abonnement" data-duree="3" data-prix="79">Choisir</button>
-      </div>
-    </div>
-
-    <div class="abonnement-card" data-duree="6" data-prix="149">
-      <div class="abonnement-header">
-        <h3>Semestriel</h3>
-        <span class="abonnement-prix">149 DT</span>
-        <span class="abonnement-periode">/6 mois</span>
-        <span class="abonnement-economie">Économisez 25 DT</span>
-      </div>
-      <div class="abonnement-body">
-        <ul>
-          <li>✅ Tout du forfait Trimestriel</li>
-          <li>✅ Badge "Guide Certifié"</li>
-          <li>✅ Mise en avant 1 mois</li>
-        </ul>
-      </div>
-      <div class="abonnement-footer">
-        <button type="button" class="btn-abonnement" data-duree="6" data-prix="149">Choisir</button>
-      </div>
-    </div>
-
-    <div class="abonnement-card" data-duree="12" data-prix="279">
-      <div class="abonnement-header">
-        <h3>Annuel</h3>
-        <span class="abonnement-prix">279 DT</span>
-        <span class="abonnement-periode">/an</span>
-        <span class="abonnement-economie">Économisez 69 DT</span>
-      </div>
-      <div class="abonnement-body">
-        <ul>
-          <li>✅ Tout du forfait Semestriel</li>
-          <li>✅ Accès aux événements exclusifs</li>
-          <li>✅ Mise en avant permanente</li>
-          <li>✅ Formation gratuite</li>
-        </ul>
-      </div>
-      <div class="abonnement-footer">
-        <button type="button" class="btn-abonnement" data-duree="12" data-prix="279">Choisir</button>
-      </div>
-    </div>
-  </div>
-
-  <input type="hidden" id="abonnementDuree" name="abonnementDuree" />
-  <input type="hidden" id="abonnementPrix" name="abonnementPrix" />
-  <div class="error-message" id="abonnementError">Veuillez choisir un abonnement</div>
-</section>
 
     <footer>
-      <p>
-        © 2025 LocalGuide — Tous droits réservés — Votre guide local de
-        confiance
-      </p>
+        <p>© 2025 LocalGuide — Tous droits réservés — Votre guide local de confiance</p>
     </footer>
 
-<script type="module" src="../js/devenir_guide.js"></script>
-<script src="../js/JS_nav_bar.js"></script>
+    <script type="module" src="../js/common.js"></script>
+    <script type="module" src="../js/devenir_guide.js"></script>
 </body>
 </html>
