@@ -1,0 +1,22 @@
+# Va dans ton dossier projet
+cd C:\Users\dell\Desktop\WEB
+
+# Installe Vite (si pas déjà fait)
+npm install -D vite
+
+# Lance le serveur Vite
+npm run dev
+Vous avez envoyé
+Puis ouvre http://localhost:5173/frontend/pages/login.html 
+ 
+ admin
+email:admin@localguide.com
+pass:Admin123456
+
+Guide1
+email:guide1@localguide.com
+pass:Guide123456
+
+utilisateur1
+email:utilisateur1@localguide.com
+pass:utilisateur123456
