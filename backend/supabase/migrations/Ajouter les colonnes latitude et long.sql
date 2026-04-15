@@ -1,0 +1,10 @@
+-- Ajouter les colonnes latitude et longitude aux tables
+ALTER TABLE public.commerces 
+ADD COLUMN IF NOT EXISTS latitude DOUBLE PRECISION,
+ADD COLUMN IF NOT EXISTS longitude DOUBLE PRECISION,
+ADD COLUMN IF NOT EXISTS location GEOMETRY(Point, 4326);
+
+ALTER TABLE public.guides 
+ADD COLUMN IF NOT EXISTS latitude DOUBLE PRECISION,
+ADD COLUMN IF NOT EXISTS longitude DOUBLE PRECISION,
+ADD COLUMN IF NOT EXISTS location GEOMETRY(Point, 4326);
