@@ -1,0 +1,818 @@
+\documentclass[12pt,a4paper]{report}
+\usepackage[french]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{times}
+\usepackage{geometry}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{longtable}
+\usepackage{float}
+
+% ===== AJOUT POUR PIED DE PAGE =====
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+
+\geometry{left=2.5cm, right=2.5cm, top=2.5cm, bottom=2.5cm}
+
+% Style des titres (sobres, sans couleur)
+\usepackage{titlesec}
+\titleformat{\chapter}{\normalfont\fontsize{16}{20}\bfseries}{\thechapter}{1em}{}
+\titleformat{\section}{\normalfont\fontsize{14}{18}\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalfont\fontsize{13}{16}\bfseries}{\thesubsection}{1em}{}
+
+% ===== CONFIGURATION DU PIED DE PAGE =====
+\pagestyle{fancy}
+\fancyhf{}  % Efface tous les en-têtes et pieds existants
+
+% Pied de page
+\fancyfoot[L]{\small \textit{LocaleGuide - Projet WEB}}  % Gauche
+\fancyfoot[C]{\thepage}  % Centre (numéro de page)
+ % Droite (date)
+
+% Épaisseur du trait au-dessus du pied de page
+\renewcommand{\footrulewidth}{0.4pt}
+
+% Style pour les premières pages de chapitre (sans en-tête mais avec pied)
+\fancypagestyle{plain}{
+    \fancyhf{}
+    \fancyfoot[C]{\thepage}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0.4pt}
+}
+
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{black}\bfseries,
+  stringstyle=\color{black},
+  commentstyle=\color{gray}\itshape,
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  stepnumber=1,
+  numbersep=5pt,
+  breaklines=true,
+  frame=single,
+  rulecolor=\color{black!30},
+  backgroundcolor=\color{gray!5},
+  tabsize=2,
+  showstringspaces=false,
+  language=SQL
+}
+
+
+\begin{document}
+
+% ========== PAGE DE GARDE ==========
+\begin{titlepage}
+    \noindent
+    \begin{minipage}{0.3\textwidth}
+        \includegraphics[width=2.5cm]{isimmlogo.jpg}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.3\textwidth}
+        \raggedleft
+        \includegraphics[width=2.5cm]{iso.png}
+    \end{minipage}
+    
+    \vspace{1cm}
+    
+    \centering
+    {\color{black}\fontsize{20}{24}\bfseries LocaleGuide\par}
+    \vspace{0.5cm}
+    
+    {\color{gray}\fontsize{14}{18}\bfseries Plateforme de Local Guide \\ pour Monastir Centre\par}
+    \vspace{2.5cm}
+    
+    {\color{darkgray}\fontsize{14}{16}\textbf{Présenté par :}\par}
+    \vspace{0.3cm}
+    {\color{black}\fontsize{12}{14} Mejri Maram\par}
+    {\color{black}\fontsize{12}{14} Werghemmi Isra\par}
+    {\color{black}\fontsize{12}{14} Mejbri Tasnim\par}
+    {\color{black}\fontsize{12}{14} Louati Souha\par}
+    \vspace{2cm}
+    
+    {\color{darkgray}\fontsize{14}{16}\textbf{Enseignante :}\par}
+    \vspace{0.3cm}
+    {\color{black}\fontsize{12}{14}Senda Laatawi\par}
+    \vspace{1.5cm}
+    
+    {\color{darkgray}\fontsize{14}{16}\textbf{Établissement :}\par}
+    \vspace{0.3cm}
+    {\color{black}\fontsize{12}{14}Institut Supérieur d'Informatique et de Mathématiques\\ Monastir\par}
+    \vspace{1.5cm}
+    
+    {\color{darkgray}\fontsize{14}{16}\textbf{Année universitaire :}\par}
+    \vspace{0.3cm}
+    {\color{black}\fontsize{12}{14}2025--2026\par}
+    
+    \vfill
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+% ========== CHAPITRE 1 : INTRODUCTION ==========
+\chapter{Introduction et présentation de l’idée}
+
+\section{Contexte et objectifs}
+
+Dans un contexte de digitalisation du secteur touristique, les utilisateurs recherchent des solutions numériques fiables leur permettant de découvrir facilement des commerces locaux, des guides touristiques ainsi que des événements.
+
+Le projet \textbf{LocalGuide Monastir} s’inscrit dans cette perspective en proposant une application web moderne permettant de centraliser ces services sur une seule plateforme.
+
+Les objectifs principaux du projet sont :
+\begin{itemize}
+    \item Faciliter la découverte des commerces locaux
+    \item Mettre en relation les utilisateurs avec des guides touristiques
+    \item Permettre la consultation et la publication d’avis
+    \item Offrir un système de réservation simple et efficace
+\end{itemize}
+
+
+\section{L’idée originale}
+
+L’idée principale du projet consiste à développer une plateforme interactive qui connecte différents acteurs du domaine touristique : les utilisateurs, les commerces locaux et les guides.
+
+L’application permet :
+\begin{itemize}
+    \item La recherche intelligente de commerces et services
+    \item L’ajout de nouveaux commerces par les utilisateurs
+    \item La candidature pour devenir guide touristique
+    \item La gestion dynamique des contenus via une base de données
+\end{itemize}
+
+Cette solution apporte une valeur ajoutée en centralisant les informations et en améliorant l’expérience utilisateur.
+
+\begin{itemize}
+  \item \textbf{Découvrir} les commerces locaux (restaurants, cafés, boutiques, artisans)
+        avec leurs horaires, prix et avis clients.
+  \item \textbf{Réserver} des guides touristiques certifiés, spécialisés dans différents
+        thèmes (gastronomie, histoire, mer, artisanat, nocturne).
+  \item \textbf{Suivre} les actualités locales : événements, promotions, nouvelles ouvertures.
+  \item \textbf{Contribuer} à la communauté en laissant des avis ou en proposant ses
+        services de guide.
+\end{itemize}
+
+\section{Défense de l’idée (justification)}
+
+Le choix de ce projet repose sur plusieurs raisons :
+
+\begin{itemize}
+    \item \textbf{Utilité réelle} : répondre aux besoins des touristes et des habitants
+    \item \textbf{Innovation} : intégration de fonctionnalités modernes (recherche avancée, avis, réservation)
+    \item \textbf{Accessibilité} : interface simple et intuitive
+    \item \textbf{Impact local} : valorisation des commerces et guides locaux
+\end{itemize}
+
+Ce projet constitue ainsi une solution pertinente, à la fois utile et évolutive, dans le domaine du tourisme numérique.
+
+% ========== CHAPITRE 2 : CONCEPTION ==========
+\chapter{Conception}
+\section{Diagramme des cas d'utilisation}
+\subsection*{ Diagramme des cas d'utilisation principal}
+
+Le système \textbf{LocalGuide} implique quatre acteurs principaux :
+
+\begin{itemize}
+    \item \textbf{Visiteur} (non connecté) : peut consulter les commerces, les guides et les actualités.
+    \item \textbf{Utilisateur} (connecté) : peut laisser des avis, réserver des guides et des commerces.
+    \item \textbf{Candidat Guide} : peut soumettre une demande pour devenir guide.
+    \item \textbf{Administrateur} : modère les avis, valide les guides et les commerces, et gère toutes les actualités.
+\end{itemize}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{usecase.png}
+    \caption{le diagramme des cas d'utilisation du système LocalGuide.}
+    \label{fig:monimage}
+\end{figure}
+
+La figure~\ref{fig:usecase} présente le diagramme des cas d'utilisation du système LocalGuide.
+
+\section {Détail des cas d'utilisation}
+\subsection {Détail des cas d’utilisation (UC détaillés)}
+
+\subsubsection{UC1 : Ajouter un commerce}
+
+\textbf{Acteur principal :} Utilisateur
+
+\textbf{Préconditions :}
+\begin{itemize}
+    \item L’utilisateur est authentifié
+\end{itemize}
+
+\textbf{Postconditions :}
+\begin{itemize}
+    \item Le commerce est enregistré dans la base avec statut \textit{pending} (en attente de validation admin)
+\end{itemize}
+
+\textbf{Scénario nominal :}
+\begin{enumerate}
+    \item L’utilisateur accède à la page ``Ajouter un commerce''
+    \item Il remplit les informations (nom, catégorie, description, adresse, image, etc.)
+    \item Il soumet le formulaire
+    \item Le système envoie les données au backend (Supabase)
+    \item Le commerce est enregistré dans la table \texttt{commerces}
+    \item Un message de confirmation s’affiche
+\end{enumerate}
+
+\textbf{Scénarios alternatifs :}
+\begin{itemize}
+    \item Si un champ obligatoire est vide $\rightarrow$ message d’erreur
+    \item Si erreur serveur $\rightarrow$ message ``échec d’ajout''
+\end{itemize}
+
+\vspace{0.5cm}
+
+\subsubsection{UC2 : Devenir guide}
+
+\textbf{Acteur principal :} Utilisateur
+
+\textbf{Préconditions :}
+\begin{itemize}
+    \item L’utilisateur est authentifié
+\end{itemize}
+
+\textbf{Postconditions :}
+\begin{itemize}
+    \item Une demande de guide est enregistrée avec statut \textit{pending}
+\end{itemize}
+
+\textbf{Scénario nominal :}
+\begin{enumerate}
+    \item L’utilisateur accède à la page ``Devenir guide''
+    \item Il remplit le formulaire (nom, spécialité, langues, expérience, etc.)
+    \item Il télécharge sa photo
+    \item Il valide la demande
+    \item Le système envoie les données au backend
+    \item Les données sont insérées dans la table \texttt{guides}
+    \item Un message de confirmation s’affiche
+\end{enumerate}
+
+\textbf{Scénarios alternatifs :}
+\begin{itemize}
+    \item Si les données sont invalides $\rightarrow$ message d’erreur
+    \item Si l’upload de l’image échoue $\rightarrow$ demande de réessayer
+\end{itemize}
+
+
+\section{Diagrammes de séquence}
+
+\subsection{Séquence : Réserver un guide}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{guide_sequence.png}
+    \caption{Diagramme de séquence - Réservation d'un guide}
+    \label{fig:sequence_reservation}
+\end{figure}
+
+\subsection{Séquence : Authentification et création de profil}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{sequence.png}
+    \caption{Diagramme de séquence - Authentification et création de profil}
+    \label{fig:sequence_auth}
+\end{figure}
+
+\section{Diagramme entité-association (modèle de données)}
+
+Le schéma relationnel de LocalGuide s'articule autour de six tables principales :
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{diagramme_classe.png}
+    \caption{diagramme de classe}
+    \label{fig:monimage}
+\end{figure}
+\section{Architecture technique}
+
+L’architecture du système repose sur une architecture en trois couches :
+
+\begin{itemize}
+    \item \textbf{Frontend :} HTML / CSS / JavaScript
+    \item \textbf{Backend :} Supabase (API + Auth + logique)
+    \item \textbf{Base de données :} PostgreSQL (via Supabase)
+\end{itemize}
+
+\textbf{Flux de données :}
+
+\begin{center}
+Frontend $\rightarrow$ API Supabase $\rightarrow$ Base de données
+\end{center}
+
+\section{Maquettes / wireframes}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{accueil.png}
+    \caption{aceuil}
+    \label{fig:monimage}
+\end{figure}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{commerce.png}
+    \caption{commerce }
+    \label{fig:monimage}
+\end{figure}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{nouveauté.png}
+    \caption{nouveauté}
+    \label{fig:monimage}
+\end{figure}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{guides.png}
+    \caption{guides}
+    \label{fig:monimage}
+\end{figure}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{admin.png}
+    \caption{Admin}
+    \label{fig:monimage}
+\end{figure}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{ajout commerce.png}
+    \caption{ajout commerce}
+    \label{fig:monimage}
+\end{figure}
+
+% ========== CHAPITRE 3 : DÉVELOPPEMENT ==========
+\chapter{Développement}
+
+\section{Technologies choisies et justifications}
+% Votre texte ici
+\begin{itemize}
+  \item \textbf{Front-end} : HTML5 / CSS3 / JS ES6
+    \begin{itemize}
+      \item Légèreté, pas de build tool nécessaire, déploiement immédiat
+    \end{itemize}
+  
+  \item \textbf{BaaS} : Supabase
+    \begin{itemize}
+      \item PostgreSQL managé + Auth + RLS + Realtime + SDK JS intégré
+    \end{itemize}
+  
+  \item \textbf{Base de données} : PostgreSQL 15
+    \begin{itemize}
+      \item Robustesse, extensions PostGIS et pg\_trgm, fonctions RPC
+    \end{itemize}
+  
+  \item \textbf{Recherche} : pg\_trgm + tsvector
+    \begin{itemize}
+      \item Recherche full-text en français avec tolérance aux fautes
+    \end{itemize}
+  
+  \item \textbf{Géolocalisation} : PostGIS
+    \begin{itemize}
+      \item Requêtes de proximité spatiale (\texttt{ST\_DWithin})
+    \end{itemize}
+  
+  \item \textbf{Sécurité} : Row Level Security
+    \begin{itemize}
+      \item Contrôle d'accès granulaire directement dans la base de données
+    \end{itemize}
+\end{itemize}
+
+\section{Organisation du code}
+
+
+\begin{lstlisting}[basicstyle=\ttfamily\fontsize{12}{14}\selectfont, numbers=none, frame=none, xleftmargin=0pt]
+LocalGuide/
+│
+├── .github/workflows/ci.yml
+│
+├── backend/supabase/
+│   ├── migrations/          (Scripts de migration DB)
+│   ├── seeds/               (Donnees initiales)
+│   └── functions/           (Fonctions PostgreSQL)
+│
+├── docs/
+│   ├── rapport/             (Rapport du projet)
+│   └── specifications/      (Cahier des charges)
+│
+├── frontend/
+│   ├── css/                 (Styles CSS)
+│   ├── images/              (Images et logos)
+│   └── assets/              (Autres ressources)
+│
+├── js/
+│   ├── supabaseClient.js    (Connexion Supabase)
+│   ├── common.js            (Fonctions partagees)
+│   ├── aceuil.js            (Page d'accueil)
+│   ├── fichecomm.js         (Gestion commerces)
+│   ├── guide.js             (Reservation guides)
+│   ├── news.js              (Actualites)
+│   ├── admin.js             (Dashboard admin)
+│   └── add_news.js          (Ajout actualites)
+│
+├── pages/
+│   ├── aceuil.html          (Accueil)
+│   ├── fichecomm.html       (Annuaire commerces)
+│   ├── guide.html           (Liste guides)
+│   ├── news.html            (Actualites)
+│   ├── add.html             (Ajout commerce)
+│   ├── add_news.html        (Ajout actualite)
+│   ├── avis.html            (Deposer avis)
+│   ├── devenir_guide.html   (Candidature)
+│   ├── login.html           (Connexion)
+│   ├── Register.html        (Inscription)
+│   └── admin.html           (Administration)
+│
+├── public/
+│   ├── css/                 (Styles publics)
+│   └── images/              (Images publiques)
+│
+├── scripts/
+│   ├── deploy.sh            (Script deploiement)
+│   └── backup.sh            (Script sauvegarde)
+│
+├── src/                     (Sources additionnelles)
+│
+├── supabase/
+│   ├── config.toml          (Configuration)
+│   └── seed.sql             (Donnees de test)
+│
+├── tests/
+│   ├── unit/                (Tests unitaires)
+│   └── integration/         (Tests integration)
+│
+├── .env.example             (Variables d'environnement)
+├── .gitignore               (Fichiers ignores Git)
+├── arborescence.txt         (Arborescence generee)
+├── index.html               (Page principale)
+├── package-lock.json        (Verrouillage versions)
+└── package.json             (Dependances Node.js)
+\end{lstlisting}
+
+\section{Implémentation des fonctionnalités clés}
+\subsection{Authentification et gestion des rôles}
+
+La connexion utilise le SDK Supabase Auth. Après authentification, le rôle de l'utilisateur
+est lu depuis la table \texttt{users\_profiles} pour adapter la navigation (affichage
+conditionnel du lien Admin).
+\begin{lstlisting}[caption=Connexion et détection du rôle (login.html)]
+
+const { data, error } = await supabase.auth.signInWithPassword({
+            email: email,
+            password: password
+        })
+        
+        if (error) {
+            messageDiv.innerHTML = 'erreur ' + error.message
+            messageDiv.className = 'message error'
+            return
+        }
+        
+        // Déterminer le rôle
+        let role = 'client'
+        const userEmail = data.user.email
+        
+        //  FORCER ADMIN POUR CET EMAIL
+        if (userEmail === 'admin@localguide.com') {
+            role = 'admin'
+            console.log(' Admin détecté !')
+        } else {
+            // Vérifier dans users_profiles
+            const { data: profile } = await supabase
+                .from('users_profiles')
+                .select('role')
+                .eq('id', data.user.id)
+                .single()
+            
+            if (profile && profile.role) {
+                role = profile.role
+            }
+        }
+        
+        messageDiv.innerHTML = ` Connecté en tant que ${role} ! Redirection...`
+        messageDiv.className = 'message success'
+        
+        // Rediriger
+        setTimeout(() => {
+            if (role === 'admin') {
+                window.location.href = 'admin.html'
+            } else {
+                window.location.href = 'aceuil.html'
+            }
+        }, 1000)
+\end{lstlisting}
+
+\subsection{Recherche de commerces}
+% Votre code ici
+\begin{lstlisting}[caption=Rechercher des commerces (fichecomm.html)]
+
+let liste = [..allCommerces]
+    
+    // Filtre par catégorie
+    if (activeFilter !== "all") {
+        liste = liste.filter(c => c.categorie === activeFilter)
+    }
+    
+    //  FILTRE DE RECHERCHE TEXTE
+    if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase()
+        liste = liste.filter(c =>
+            c.nom.toLowerCase().includes(q) ||
+            c.description?.toLowerCase().includes(q)
+        )
+    }
+    // Tri
+    if (sortBy === "note") liste.sort((a, b) => b.note - a.note)
+    if (sortBy === "nom") liste.sort((a, b) => a.nom.localeCompare(b.nom))
+    
+    displayedCommerces = liste
+    currentPage = 1
+    hasMore = displayedCommerces.length > itemsPerPage
+    
+    const countDisplay = document.getElementById("countDisplay")
+    if (countDisplay) countDisplay.textContent = displayedCommerces.length
+    
+    renderCurrentPage()
+    renderPaginationButtons()
+}
+\end{lstlisting}
+
+\subsection{Gestion des guides}
+\begin{lstlisting}[ caption=exemlpe de code de gestion guides(guide.js)]
+async function loadGuidesEnAttente() {
+    const { data, error } = await supabase
+        .from('guides')
+        .select('*')
+        .eq('statut', 'inactif')
+        .order('created_at', { ascending: false })
+    
+    if (error) {
+        console.error('Erreur chargement guides:', error)
+        return []
+    }
+    return data
+}
+
+async function approveGuide(id) {
+    if (!confirm(' Approuver ce guide ? Il sera visible sur la page des guides.')) return
+    
+    const { error } = await supabase
+        .from('guides')
+        .update({ 
+            statut: 'disponible',
+            updated_at: new Date()
+        })
+        .eq('id', id)
+    
+    if (error) {
+        alert(' Erreur: ' + error.message)
+    } else {
+        alert('Guide approuvé ! Il est maintenant visible sur le site.')
+        await renderGuidesEnAttente()
+    }
+}
+
+
+\end{lstlisting}
+\subsection{Upload de la photo du guide}
+\begin{lstlisting}
+async function handleFile(file) {
+    const error = document.getElementById("pictureError");
+    const maxSize = 5 * 1024 * 1024;
+    const allowed = ["image/jpeg", "image/png", "image/webp"];
+
+    if (!allowed.includes(file.type)) {
+      showError(error, "Format non supporté. Utilisez JPG, PNG ou WEBP.");
+      return;
+    }
+    
+    if (file.size > maxSize) {
+      showError(error, `Fichier trop lourd (max 5MB).`);
+      return;
+    }
+
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `guide_${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+      
+      // Upload vers bucket 'guides-photos'
+      const { error: uploadError } = await supabase.storage
+        .from('guides-photos')
+        .upload(fileName, file)
+      
+      if (uploadError) throw uploadError
+      
+      // Récupérer l'URL publique
+      const { data: { publicUrl } } = supabase.storage
+        .from('guides-photos')
+        .getPublicUrl(fileName)
+      
+      uploadedImageUrl = publicUrl
+      
+    } catch (err) {
+      console.error('Erreur:', err);
+      showError(error, "Erreur inattendue lors de l'upload");
+    }
+}
+\end{lstlisting}
+\subsection{Sécurité Row Level Security}
+Toutes les tables sont protégées par des politiques RLS strictes :
+
+\begin{lstlisting}[language=SQL, captionpos=b, caption=Exemple de politiques RLS sur la table guides]
+-- Tout le monde peut lire les guides
+CREATE POLICY "public_view_guides"
+  ON public.guides FOR SELECT TO public USING (true);
+
+-- Seul le proprietaire ou un admin peut modifier
+CREATE POLICY "owner_or_admin_update_guides"
+  ON public.guides FOR UPDATE TO authenticated
+  USING (auth.uid() = user_id OR auth.uid() IN (
+      SELECT user_id FROM public.user_roles WHERE role = 'admin'
+  ));
+\end{lstlisting}
+
+
+% ========== CHAPITRE 4 : TESTS ==========
+\chapter{Tests et validation}
+
+\section{Environnement et outils de test}
+
+Les tests ont été effectués dans l'environnement suivant :
+
+\begin{itemize}
+  \item \textbf{Navigateurs testés} : Google Chrome (v124), Brave et le navigateur intégré d'Android.
+  \item \textbf{Base de données} : Console Supabase (éditeur SQL intégré) pour la vérification des requêtes et des politiques RLS (\textit{Row Level Security}).
+  \item \textbf{Tests d'interface} : Tests manuels des formulaires de connexion, d'inscription, d'ajout de commerce et de réservation.
+  \item \textbf{Validation des données} : Vérification des contraintes \texttt{NOT NULL}, des types et des clés étrangères directement via Supabase.
+  \item \textbf{Tests géographiques} : Vérification de la localisation des commerces et des guides sur carte (coordonnées \texttt{latitude}/\texttt{longitude}).
+\end{itemize}
+
+\section{Scénarios de test}
+
+\begin{table}[H]
+\centering
+
+\begin{tabular}{|p{5.5cm}|c|p{5.5cm}|}
+\hline
+\textbf{Fonctionnalité} & \textbf{Statut} & \textbf{Observations} \\
+\hline
+Inscription utilisateur & OK & Création du profil dans \texttt{users\_profiles} \\
+\hline
+Connexion utilisateur & OK & Authentification via Supabase Auth \\
+\hline
+Navigation sans connexion (visiteur) & OK & Accès en lecture seule aux commerces \\
+\hline
+Ajout d'un commerce (guide) & OK & Statut initial \texttt{en\_attente} \\
+\hline
+Validation d'un commerce (admin) & OK & Passage du statut à \texttt{approuvé} \\
+\hline
+Refus d'un commerce avec motif (admin) & OK & Champ \texttt{raison\_refus} renseigné \\
+\hline
+Recherche de commerces par nom & OK & Recherche insensible à la casse \\
+\hline
+Affichage des commerces sur carte & OK & Coordonnées GPS correctement récupérées \\
+\hline
+Dépôt d'un avis sur un commerce & OK & Note globale et notes détaillées enregistrées \\
+\hline
+Réservation auprès d'un guide & OK & Statut initial \texttt{en\_attente} \\
+\hline
+Confirmation de réservation (guide) & OK & Statut mis à jour en \texttt{confirmée} \\
+\hline
+Annulation de réservation & OK & Statut mis à jour en \texttt{annulée} \\
+\hline
+Publication d'une actualité & OK & Statut \texttt{publié} après validation \\
+\hline
+Affichage du profil guide & OK & Informations et spécialités affichées \\
+\hline
+Gestion des rôles (admin) & OK & Attribution correcte via \texttt{user\_roles} \\
+\hline
+\end{tabular}
+
+\end{table}
+
+
+% ========== CHAPITRE 5 : CONCLUSION ==========
+\chapter{Conclusion et perspectives}
+
+\section{Bilan du projet}
+
+Le projet a permis de développer une application complète intégrant frontend et backend réel, de manipuler une base de données dynamique.
+
+\section{Difficultés rencontrées et apprentissages}
+
+\begin{itemize}
+  \item \textbf{Row Level Security} : La mise en place des politiques RLS a demandé
+        une compréhension fine des rôles Supabase et de la différence entre
+        \texttt{TO public} et \texttt{TO authenticated}.
+  \item \textbf{Trigger de création de profil} : La synchronisation entre
+        \texttt{auth.users} et \texttt{users\_profiles} via trigger PostgreSQL a
+        nécessité plusieurs itérations pour gérer les cas d'erreur.
+  \item \textbf{PostGIS} : L'activation de l'extension et la compréhension des
+        types \texttt{GEOMETRY(Point, 4326)} ont représenté une courbe d'apprentissage
+        non négligeable.
+  \item \textbf{Modules ES6} : La gestion des imports JavaScript entre fichiers
+        partagés (\texttt{common.js}, \texttt{supabaseClient.js}) en mode module
+        a requis une organisation rigoureuse.
+\end{itemize}
+
+\section{Évolutions possibles}
+
+\begin{itemize}
+  \item \textbf{Application mobile} : portage en Progressive Web App (PWA) ou
+        application React Native.
+  \item \textbf{Système de notifications} : push notifications via Supabase Realtime
+        pour les nouvelles réservations et validations.
+  \item \textbf{Paiement en ligne} : intégration d'une passerelle de paiement
+        (Stripe ou solution locale tunisienne) pour les réservations guides.
+  \item \textbf{Carte interactive} : affichage cartographique des commerces et guides
+        via Leaflet.js en exploitant les données PostGIS.
+  \item \textbf{Extension géographique} : déploiement de la plateforme à d'autres
+        villes tunisiennes (Sousse, Sfax, Tunis).
+  \item \textbf{Tableau de bord analytique} : statistiques de fréquentation,
+        notes moyennes, tendances de réservation pour les commerçants et guides.
+\end{itemize}
+
+% ========== ANNEXES ==========
+\chapter{Annexes}
+
+\section{Lien vers le dépôt Git}
+\url{https://github.com/Souha-05/local}
+
+\section*{Captures d'écran}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{accueil.png}
+    \caption{Page d'accueil LocalGuide — hero Monastir}
+    \label{fig:accueil}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{admin.png}
+    \caption{Tableau de bord administrateur — modération commerces}
+    \label{fig:admin}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{guide.png}
+    \caption{Page guides — cartes avec filtres par spécialité}
+    \label{fig:guides}
+\end{figure}
+
+\subsection{Fichiers de configuration}
+
+\subsubsection{Configuration du client Supabase}
+
+Le fichier de configuration principal pour la connexion à Supabase est présenté ci-dessous. Il utilise les variables d'environnement pour sécuriser les identifiants.
+
+\begin{lstlisting}[language=JavaScript,  captionpos=b,caption={supabase.js - Connexion à Supabase}]
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+
+console.log(' Supabase connecté')
+\end{lstlisting}
+
+\subsubsection{Fichier package.json}
+
+Le fichier \texttt{package.json} définit les dépendances et les scripts nécessaires au lancement de l'application front-end.
+
+\begin{lstlisting}[language=JSON, captionpos=b,caption={package.json - Configuration Vite}]
+{
+  "name": "web",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^8.0.8"
+  }
+}
+\end{lstlisting}
+
+\subsection{Fichier d'environnement (.env)}
+
+Les identifiants de connexion à Supabase sont stockés dans un fichier \texttt{.env} à la racine du projet (non versionné pour des raisons de sécurité) :
+
+\begin{lstlisting}[language=bash, captionpos=b, caption={.env - Variables d'environnement}]
+VITE_SUPABASE_URL=https://auumbkcfwjpvdifnxzly.supabase.co
+VITE_SUPABASE_ANON_KEY=sb_publishable_WXvPDV94YwVHQGAuVK0Nqg_Z3rIk1it
+\end{lstlisting}
+
+\end{document}
