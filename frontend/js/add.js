@@ -4,6 +4,7 @@ import { supabase } from './supabaseClient.js'
 // ============================================
 // 1. VÉRIFICATION ADMIN OU COMMERÇANT
 // ============================================
+// frontend/js/add.js - Modifier la vérification
 async function checkCommerceAccess() {
     const { data: { user } } = await supabase.auth.getUser()
     
@@ -13,14 +14,29 @@ async function checkCommerceAccess() {
         return false
     }
     
+    console.log('👤 Utilisateur connecté:', user.email)
+    
+    // Vérifier si c'est l'admin (avec le bon email)
+    if (user.email === 'admin@localguid.com') {  // ← Correction ici
+        console.log('✅ Admin reconnu, accès autorisé')
+        return true
+    }
+    
+    // Pour les autres utilisateurs, vérifier dans la base
     const { data: profile } = await supabase
         .from('users_profiles')
         .select('role')
         .eq('id', user.id)
         .single()
     
+    if (profileError) {
+        console.error(' Erreur lecture profil:', profileError)
+        alert('Erreur de vérification des droits')
+        return false
+    }
+    
     if (!profile || (profile.role !== 'admin' && profile.role !== 'commerçant')) {
-        alert('⛔ Seuls les commerçants ou administrateurs peuvent ajouter un commerce.')
+        alert(`⛔ Accès refusé. Rôle: "${profile?.role || 'non défini'}"\nSeuls les commerçants ou administrateurs peuvent ajouter un commerce.`)
         window.location.href = 'aceuil.html'
         return false
     }
@@ -54,7 +70,7 @@ function initPublicite() {
                 totalMontantSpan.textContent = prix + ' DT'
             }
             
-            console.log(`📢 Forfait: ${prix} DT pour ${duree} jours`)
+            console.log(`Forfait: ${prix} DT pour ${duree} jours`)
         })
     })
     
@@ -115,7 +131,7 @@ function initUploadPhoto() {
             }
         }
         reader.onerror = function() {
-            console.error('❌ Erreur lecture fichier')
+            console.error(' Erreur lecture fichier')
             alert('Erreur lors de la lecture du fichier')
         }
         reader.readAsDataURL(file)
@@ -164,7 +180,7 @@ function initUploadPhoto() {
 // 4. INITIALISATION
 // ============================================
 document.addEventListener('DOMContentLoaded', async () => {
-    console.log('🟢 add.js chargé et DOM prêt')
+    console.log('add.js chargé et DOM prêt')
     
     // Vérifier accès
     const hasAccess = await checkCommerceAccess()
@@ -172,11 +188,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     // Initialiser les composants
     initPublicite()
-    initUploadPhoto()  // ← Maintenant la fonction existe !
+    initUploadPhoto()  
     
     // Récupérer l'utilisateur connecté
     const { data: { user } } = await supabase.auth.getUser()
-    console.log('🟢 Utilisateur connecté:', user?.email)
+    console.log(' Utilisateur connecté:', user?.email)
     
     // ============================================
     // 5. COMPTEUR DE CARACTÈRES
@@ -219,7 +235,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         })
         
-        console.log(`🔍 Validation: ${valid ? '✅ OK' : '❌ ÉCHEC'}`)
+        console.log(`🔍 Validation: ${valid ? ' OK' : ' ÉCHEC'}`)
         return valid
     }
     

@@ -224,8 +224,8 @@ async function modifierGuide(id) {
             .from('guides')
             .update({ prix_guide: parseInt(nouveauPrix) })
             .eq('id', id)
-        
         if (error) {
+        
             alert(' Erreur: ' + error.message)
         } else {
             guide.price = parseInt(nouveauPrix)

@@ -148,7 +148,7 @@
         })
         
         if (error) {
-            messageDiv.innerHTML = '❌ ' + error.message
+            messageDiv.innerHTML = 'erreur ' + error.message
             messageDiv.className = 'message error'
             return
         }
@@ -157,10 +157,10 @@
         let role = 'client'
         const userEmail = data.user.email
         
-        // 🔥 FORCER ADMIN POUR CET EMAIL
+        //  FORCER ADMIN POUR CET EMAIL
         if (userEmail === 'admin@localguide.com') {
             role = 'admin'
-            console.log('✅ Admin détecté !')
+            console.log(' Admin détecté !')
         } else {
             // Vérifier dans users_profiles
             const { data: profile } = await supabase
@@ -174,7 +174,7 @@
             }
         }
         
-        messageDiv.innerHTML = `✅ Connecté en tant que ${role} ! Redirection...`
+        messageDiv.innerHTML = ` Connecté en tant que ${role} ! Redirection...`
         messageDiv.className = 'message success'
         
         // Rediriger
