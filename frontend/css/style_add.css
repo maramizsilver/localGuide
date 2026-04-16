@@ -761,3 +761,21 @@ footer {
     grid-template-columns: 1fr;
   }
 }
+/* Bouton suppression image */
+.remove-image-btn {
+    margin-top: 10px;
+    padding: 8px 16px;
+    background: #fee2e2;
+    color: #d42b2b;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.remove-image-btn:hover {
+    background: #fecaca;
+    transform: scale(0.98);
+}

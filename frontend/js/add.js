@@ -2,9 +2,8 @@
 import { supabase } from './supabaseClient.js'
 
 // ============================================
-// 1. VÉRIFICATION ADMIN OU COMMERÇANT
+// 1. VÉRIFICATION ACCÈS
 // ============================================
-// frontend/js/add.js - Modifier la vérification
 async function checkCommerceAccess() {
     const { data: { user } } = await supabase.auth.getUser()
     
@@ -16,27 +15,27 @@ async function checkCommerceAccess() {
     
     console.log('👤 Utilisateur connecté:', user.email)
     
-    // Vérifier si c'est l'admin (avec le bon email)
-    if (user.email === 'admin@localguid.com') {  // ← Correction ici
-        console.log('✅ Admin reconnu, accès autorisé')
+    // Admin par email
+    if (user.email === 'admin@localguide.com') {
+        console.log('✅ Admin reconnu')
         return true
     }
     
-    // Pour les autres utilisateurs, vérifier dans la base
-    const { data: profile } = await supabase
+    // Vérifier rôle dans la base
+    const { data: profile, error: profileError } = await supabase
         .from('users_profiles')
         .select('role')
         .eq('id', user.id)
-        .single()
+        .maybeSingle()
     
     if (profileError) {
-        console.error(' Erreur lecture profil:', profileError)
+        console.error('❌ Erreur lecture profil:', profileError)
         alert('Erreur de vérification des droits')
         return false
     }
     
     if (!profile || (profile.role !== 'admin' && profile.role !== 'commerçant')) {
-        alert(`⛔ Accès refusé. Rôle: "${profile?.role || 'non défini'}"\nSeuls les commerçants ou administrateurs peuvent ajouter un commerce.`)
+        alert(' Accès refusé. Seuls les commerçants ou administrateurs peuvent ajouter un commerce.')
         window.location.href = 'accueil.html'
         return false
     }
@@ -45,7 +44,7 @@ async function checkCommerceAccess() {
 }
 
 // ============================================
-// 2. GESTION DES FRAIS PUBLICITAIRES
+// 2. GESTION PUBLICITÉ
 // ============================================
 function initPublicite() {
     const cards = document.querySelectorAll('.publicite-card')
@@ -53,7 +52,10 @@ function initPublicite() {
     const publiciteDureeInput = document.getElementById('publiciteDuree')
     const totalMontantSpan = document.getElementById('totalMontant')
     
-    if (!cards.length) return
+    if (!cards.length) {
+        console.log('Aucune carte publicité trouvée')
+        return
+    }
     
     cards.forEach(card => {
         card.addEventListener('click', () => {
@@ -65,24 +67,19 @@ function initPublicite() {
             
             if (publicitePrixInput) publicitePrixInput.value = prix
             if (publiciteDureeInput) publiciteDureeInput.value = duree
+            if (totalMontantSpan) totalMontantSpan.textContent = prix + ' DT'
             
-            if (totalMontantSpan) {
-                totalMontantSpan.textContent = prix + ' DT'
-            }
-            
-            console.log(`Forfait: ${prix} DT pour ${duree} jours`)
+            console.log(`Forfait sélectionné: ${prix} DT pour ${duree} jours`)
         })
     })
     
-    // Sélectionner la carte Standard par défaut
+    // Sélection par défaut
     const defaultCard = document.querySelector('.publicite-card[data-prix="0"]')
-    if (defaultCard) {
-        defaultCard.click()
-    }
+    if (defaultCard) defaultCard.click()
 }
 
 // ============================================
-// 3. GESTION DE L'UPLOAD PHOTO (CORRIGÉE)
+// 3. UPLOAD PHOTO AVEC APERÇU
 // ============================================
 function initUploadPhoto() {
     const pictureInput = document.getElementById('picture')
@@ -90,31 +87,37 @@ function initUploadPhoto() {
     const previewImg = document.getElementById('previewImg')
     const uploadZone = document.getElementById('uploadZone')
     
-    console.log('🔍 Upload elements:', { 
-        picture: !!pictureInput, 
-        preview: !!previewDiv, 
-        previewImg: !!previewImg 
-    })
-    
     if (!pictureInput) {
         console.error('❌ Input picture non trouvé')
         return
     }
     
-    // Fonction pour afficher l'aperçu
+    // Rendre la zone cliquable
+    if (uploadZone) {
+        uploadZone.addEventListener('click', (e) => {
+            if (e.target === uploadZone || 
+                e.target.classList.contains('upload-icon') ||
+                e.target.classList.contains('upload-label') || 
+                e.target.classList.contains('upload-hint')) {
+                pictureInput.click()
+            }
+        })
+    }
+    
+    // Afficher l'aperçu
     function displayPreview(file) {
         if (!file) return false
         
-        // Vérifier taille (max 5MB)
+        console.log('📷 Fichier:', file.name, 'Taille:', file.size)
+        
         if (file.size > 5 * 1024 * 1024) {
             alert('❌ Fichier trop lourd (max 5 MB)')
             pictureInput.value = ''
             return false
         }
         
-        // Vérifier type
         if (!file.type.match(/image\/(jpeg|png|webp)/)) {
-            alert('❌ Format non supporté. Utilisez JPG, PNG ou WEBP')
+            alert('❌ Format non supporté. JPG, PNG ou WEBP uniquement')
             pictureInput.value = ''
             return false
         }
@@ -123,45 +126,47 @@ function initUploadPhoto() {
         reader.onload = function(e) {
             if (previewImg) {
                 previewImg.src = e.target.result
-                console.log('✅ Image chargée dans le preview')
-            }
-            if (previewDiv) {
-                previewDiv.style.display = 'block'
-                console.log('✅ Preview affiché')
+                if (previewDiv) previewDiv.style.display = 'block'
+                console.log('✅ Aperçu affiché')
             }
         }
         reader.onerror = function() {
-            console.error(' Erreur lecture fichier')
+            console.error('❌ Erreur lecture fichier')
             alert('Erreur lors de la lecture du fichier')
         }
         reader.readAsDataURL(file)
         return true
     }
     
-    // Écouter le changement de fichier
-    pictureInput.addEventListener('change', function(e) {
+    // Supprimer l'image (fonction globale)
+    window.removeImage = function() {
+        pictureInput.value = ''
+        if (previewImg) previewImg.src = ''
+        if (previewDiv) previewDiv.style.display = 'none'
+        console.log('🗑️ Image supprimée')
+    }
+    
+    // Changement de fichier
+    pictureInput.addEventListener('change', (e) => {
         const file = e.target.files[0]
-        console.log('📷 Fichier sélectionné:', file?.name)
-        if (file) {
-            displayPreview(file)
-        }
+        if (file) displayPreview(file)
     })
     
     // Drag & drop
     if (uploadZone) {
-        uploadZone.addEventListener('dragover', function(e) {
+        uploadZone.addEventListener('dragover', (e) => {
             e.preventDefault()
             uploadZone.style.borderColor = '#d42b2b'
             uploadZone.style.background = 'rgba(212, 43, 43, 0.05)'
         })
         
-        uploadZone.addEventListener('dragleave', function(e) {
+        uploadZone.addEventListener('dragleave', (e) => {
             e.preventDefault()
             uploadZone.style.borderColor = 'rgba(212, 43, 43, 0.25)'
             uploadZone.style.background = 'rgba(212, 43, 43, 0.02)'
         })
         
-        uploadZone.addEventListener('drop', function(e) {
+        uploadZone.addEventListener('drop', (e) => {
             e.preventDefault()
             uploadZone.style.borderColor = 'rgba(212, 43, 43, 0.25)'
             uploadZone.style.background = 'rgba(212, 43, 43, 0.02)'
@@ -180,7 +185,7 @@ function initUploadPhoto() {
 // 4. INITIALISATION
 // ============================================
 document.addEventListener('DOMContentLoaded', async () => {
-    console.log('add.js chargé et DOM prêt')
+    console.log('add.js chargé')
     
     // Vérifier accès
     const hasAccess = await checkCommerceAccess()
@@ -188,59 +193,56 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     // Initialiser les composants
     initPublicite()
-    initUploadPhoto()  
+    initUploadPhoto()
     
-    // Récupérer l'utilisateur connecté
+    // Récupérer l'utilisateur
     const { data: { user } } = await supabase.auth.getUser()
-    console.log(' Utilisateur connecté:', user?.email)
+    console.log('👤 Utilisateur:', user?.email)
     
-    // ============================================
-    // 5. COMPTEUR DE CARACTÈRES
-    // ============================================
+    // Compteur caractères
     const desc = document.getElementById('description')
     const count = document.getElementById('descCount')
     if (desc && count) {
         desc.addEventListener('input', () => count.textContent = desc.value.length)
+        count.textContent = desc.value.length
     }
     
     // ============================================
-    // 6. VALIDATION
+    // 5. VALIDATION
     // ============================================
     function validate() {
-        console.log('🔍 Validation en cours...')
         let valid = true
         const fields = [
-            { id:'name',       err:'nameError',       check: v => v.length > 0 },
-            { id:'categorie',  err:'categorieError',  check: v => v !== '' },
-            { id:'adresse',    err:'adresseError',    check: v => v.length > 0 },
-            { id:'ville',      err:'villeError',      check: v => v.length > 0 },
-            { id:'codepostal', err:'codepostalError', check: v => /^\d{4}$/.test(v) },
-            { id:'phone',      err:'phoneError',      check: v => v.length >= 8 },
-            { id:'email',      err:'emailError',      check: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) },
-            { id:'hOpen',      err:'hOpenError',      check: v => v.length > 0 },
-            { id:'hClose',     err:'hCloseError',     check: v => v.length > 0 },
+            { id: 'name', err: 'nameError', check: v => v.trim().length > 0 },
+            { id: 'categorie', err: 'categorieError', check: v => v !== '' },
+            { id: 'adresse', err: 'adresseError', check: v => v.trim().length > 0 },
+            { id: 'ville', err: 'villeError', check: v => v.trim().length > 0 },
+            { id: 'codepostal', err: 'codepostalError', check: v => /^\d{4}$/.test(v) },
+            { id: 'phone', err: 'phoneError', check: v => v.trim().length >= 8 },
+            { id: 'email', err: 'emailError', check: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) },
+            { id: 'hOpen', err: 'hOpenError', check: v => v.trim().length > 0 },
+            { id: 'hClose', err: 'hCloseError', check: v => v.trim().length > 0 }
         ]
         
         fields.forEach(({ id, err, check }) => {
             const el = document.getElementById(id)
             const errEl = document.getElementById(err)
-            const value = el ? el.value.trim() : ''
-            if (!check(value)) { 
+            const value = el ? el.value : ''
+            if (!check(value)) {
                 if (el) el.classList.add('invalid')
                 if (errEl) errEl.classList.add('show')
                 valid = false
-            } else { 
+            } else {
                 if (el) el.classList.remove('invalid')
                 if (errEl) errEl.classList.remove('show')
             }
         })
         
-        console.log(`🔍 Validation: ${valid ? ' OK' : ' ÉCHEC'}`)
         return valid
     }
     
     // ============================================
-    // 7. SOUMISSION À SUPABASE
+    // 6. SOUMISSION À SUPABASE
     // ============================================
     const form = document.getElementById('businessForm')
     const overlay = document.getElementById('overlay')
@@ -251,10 +253,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         form.addEventListener('submit', async (e) => {
             e.preventDefault()
             
-            console.log('Formulaire soumis')
-            
             if (!validate()) {
-                console.log('Validation échouée')
+                alert('Veuillez remplir tous les champs obligatoires')
                 return
             }
             
@@ -273,8 +273,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const nom = document.getElementById('name').value
                 const categorie = document.getElementById('categorie').value
                 let fourchette = document.querySelector('input[name="fourchette"]:checked')?.value || '€€'
-                fourchette = fourchette.trim()
-                
                 const description = document.getElementById('description').value || null
                 const adresse = document.getElementById('adresse').value
                 const ville = document.getElementById('ville').value
@@ -286,36 +284,33 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const publicite_prix = parseInt(document.getElementById('publicitePrix')?.value || '0')
                 const publicite_duree = parseInt(document.getElementById('publiciteDuree')?.value || '0')
                 
-                console.log(' Envoi:', { nom, categorie, ville, publicite_prix, statut: 'suspendu' })
-                
-                // Upload image
+                // Upload image vers Supabase Storage
                 let image_url = null
                 if (pictureInput && pictureInput.files && pictureInput.files[0]) {
                     const file = pictureInput.files[0]
-                    const fileName = `commerce-images/${Date.now()}_${file.name}`
+                    const ext = file.name.split('.').pop()
+                    const fileName = `commerce-images/${Date.now()}_${Math.random().toString(36).substring(7)}.${ext}`
                     
-                    console.log(' Upload de l\'image...', fileName)
+                    console.log('📤 Upload image...', fileName)
                     
                     const { error: uploadError } = await supabase.storage
-                        .from('commerce-images')  
+                        .from('commerce-images')
                         .upload(fileName, file)
                     
                     if (uploadError) {
-                        console.error(' Upload erreur:', uploadError)
+                        console.error('❌ Upload erreur:', uploadError)
                         alert('Erreur upload image: ' + uploadError.message)
                     } else {
                         const { data: { publicUrl } } = supabase.storage
                             .from('commerce-images')
                             .getPublicUrl(fileName)
                         image_url = publicUrl
-                        console.log('image uploadée:', image_url)
+                        console.log('✅ Image uploadée:', image_url)
                     }
-                } else {
-                    console.log(' Aucune image sélectionnée')
                 }
                 
                 // Insérer dans Supabase avec statut 'suspendu'
-                const { data, error } = await supabase
+                const { error } = await supabase
                     .from('commerces')
                     .insert({
                         owner_id: user.id,
@@ -333,23 +328,20 @@ document.addEventListener('DOMContentLoaded', async () => {
                         image_url: image_url,
                         publicite_prix: publicite_prix,
                         publicite_duree: publicite_duree,
-                        statut: 'suspendu'
+                        statut: 'suspendu',
+                        created_at: new Date().toISOString()
                     })
-                    .select()
                 
                 if (error) {
                     console.error(' Erreur Supabase:', error)
                     alert('Erreur: ' + error.message)
                 } else {
-                    console.log('Commerce ajouté avec succès!', data)
-                    alert('✅ Commerce soumis avec succès ! En attente de validation par l\'administrateur.')
-                    
-                    // Afficher le succès
+                    console.log('✅ Commerce ajouté avec succès!')
                     if (overlay) overlay.classList.add('show')
                     if (successBox) successBox.classList.add('show')
                 }
             } catch (err) {
-                console.error('Erreur inattendue:', err)
+                console.error(' Erreur inattendue:', err)
                 alert('Une erreur est survenue: ' + err.message)
             } finally {
                 btn.disabled = false
@@ -358,12 +350,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (spin) spin.style.display = 'none'
             }
         })
-    } else {
-        console.error(' Formulaire non trouvé !')
     }
     
     // ============================================
-    // 8. FERMETURE SUCCÈS
+    // 7. FERMETURE SUCCÈS
     // ============================================
     window.closeSuccess = function() {
         const overlay = document.getElementById('overlay')
@@ -373,7 +363,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.location.href = 'accueil.html'
     }
     
-    // Annuler
+    // ============================================
+    // 8. ANNULER
+    // ============================================
     const cancelBtn = document.getElementById('cancelBtn')
     if (cancelBtn) {
         cancelBtn.addEventListener('click', () => {

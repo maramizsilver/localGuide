@@ -8,41 +8,41 @@ let allEvents = []
 let currentFilter = 'tout'
 
 // ============================================
-// 📦 ACTUALITÉS PAR DÉFAUT (si BD vide)
+//  ACTUALITÉS PAR DÉFAUT (si BD vide)
 // ============================================
 const DEFAULT_ARTICLES = [
     {
         id: 'default-1',
-        titre: "🌊 Découvrez la Corniche de Monastir",
+        titre: " Découvrez la Corniche de Monastir",
         type: "actu",
         description: "La corniche de Monastir vient d'être rénovée avec une piste cyclable et des espaces de détente. Parfait pour une balade en famille !",
         date_debut: new Date().toISOString(),
         created_at: new Date().toISOString(),
-        image_url: null,
+        image_url: '../images/corniche.jpg',
         commerce_nom: "Mairie de Monastir",
         email_contact: "contact@localguide.tn",
         statut: "publié"
     },
     {
         id: 'default-2',
-        titre: "🍽️ Nouveau restaurant : Le Pirate",
+        titre: " Nouveau restaurant : Le Pirate",
         type: "ouverture",
         description: "Un nouveau restaurant de fruits de mer ouvre ses portes au port de plaisance. Spécialité : poisson grillé et couscous aux fruits de mer.",
         date_debut: new Date().toISOString(),
         created_at: new Date().toISOString(),
-        image_url: null,
+        image_url: '../images/pirate.jpg',
         commerce_nom: "Le Pirate Restaurant",
         email_contact: "contact@localguide.tn",
         statut: "publié"
     },
     {
         id: 'default-3',
-        titre: "🎉 Festival international de Monastir",
+        titre: " Festival international de Monastir",
         type: "evenement",
         description: "3 jours de fête et de musique au pied du Ribat ! Artistes tunisiens et internationaux au programme.",
         date_debut: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
         created_at: new Date().toISOString(),
-        image_url: null,
+        image_url: '../images/festivalmusic.jpg',
         commerce_nom: "Office du Tourisme",
         email_contact: "contact@localguide.tn",
         statut: "publié",
@@ -51,36 +51,36 @@ const DEFAULT_ARTICLES = [
     },
     {
         id: 'default-4',
-        titre: "🏷️ -20% sur les visites guidées",
+        titre: " -20% sur les visites guidées",
         type: "promotion",
         description: "Profitez de -20% sur toutes les visites guidées du Ribat et de la Médina pendant tout le mois d'avril.",
         date_debut: new Date().toISOString(),
         created_at: new Date().toISOString(),
-        image_url: null,
+        image_url: '../images/reduction tour ribat.avif',
         commerce_nom: "Guides de Monastir",
         email_contact: "contact@localguide.tn",
         statut: "publié"
     },
     {
         id: 'default-5',
-        titre: "🛍️ Nouvelle boutique artisanale",
+        titre: " Nouvelle boutique artisanale",
         type: "ouverture",
         description: "Artisanat local : poterie, tapis et produits traditionnels. Idéal pour vos souvenirs de voyage !",
         date_debut: new Date().toISOString(),
         created_at: new Date().toISOString(),
-        image_url: null,
+        image_url: '../images/artisanal.jpg',
         commerce_nom: "Souk El Artisan",
         email_contact: "contact@localguide.tn",
         statut: "publié"
     },
     {
         id: 'default-6',
-        titre: "📸 Concours photo 'Monastir en beauté'",
+        titre: " Concours photo 'Monastir en beauté'",
         type: "actu",
         description: "Participez à notre concours photo et gagnez des lots. Thème : les plus beaux endroits de Monastir.",
         date_debut: new Date().toISOString(),
         created_at: new Date().toISOString(),
-        image_url: null,
+        image_url: '../images/photo_monastir.jpg',
         commerce_nom: "LocalGuide",
         email_contact: "contact@localguide.tn",
         statut: "publié"
@@ -90,12 +90,12 @@ const DEFAULT_ARTICLES = [
 const DEFAULT_EVENTS = [
     {
         id: 'default-event-1',
-        titre: "🎵 Concert au Ribat",
+        titre: " Concert au Ribat",
         type: "evenement",
         description: "Concert de musique classique dans l'enceinte historique du Ribat de Monastir.",
         date_debut: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
         created_at: new Date().toISOString(),
-        image_url: null,
+        image_url: '../images/ribat.jpg',
         commerce_nom: "Ministère de la Culture",
         email_contact: "contact@localguide.tn",
         statut: "publié",
@@ -104,12 +104,12 @@ const DEFAULT_EVENTS = [
     },
     {
         id: 'default-event-2',
-        titre: "🏃 Course de la solidarité",
+        titre: " Course de la solidarité",
         type: "evenement",
         description: "Course annuelle au profit des enfants défavorisés. Parcours de 5km et 10km.",
         date_debut: new Date(Date.now() + 21 * 24 * 60 * 60 * 1000).toISOString(),
         created_at: new Date().toISOString(),
-        image_url: null,
+        image_url: '../images/course.jpg',
         commerce_nom: "Association Espoir",
         email_contact: "contact@localguide.tn",
         statut: "publié",
@@ -118,12 +118,12 @@ const DEFAULT_EVENTS = [
     },
     {
         id: 'default-event-3',
-        titre: "🍳 Festival de la gastronomie",
+        titre: " Festival de la gastronomie",
         type: "evenement",
         description: "Dégustation de plats traditionnels, ateliers cuisine et concours du meilleur chef.",
         date_debut: new Date(Date.now() + 28 * 24 * 60 * 60 * 1000).toISOString(),
         created_at: new Date().toISOString(),
-        image_url: null,
+        image_url: '../images/festival_degustation.jpg',
         commerce_nom: "Association Culinaire",
         email_contact: "contact@localguide.tn",
         statut: "publié",
@@ -160,7 +160,7 @@ async function loadActualitesFromSupabase() {
         return DEFAULT_ARTICLES
     }
     
-    console.log('🌐 Actualités depuis Supabase:', data.length)
+    console.log(' Actualités depuis Supabase:', data.length)
     
     // Sauvegarder en cache
     setCache('actualites', data)
@@ -196,7 +196,7 @@ async function loadEventsFromSupabase() {
         return DEFAULT_EVENTS
     }
     
-    console.log('🌐 Événements depuis Supabase:', data.length)
+    console.log(' Événements depuis Supabase:', data.length)
     
     // Sauvegarder en cache
     setCache('evenements', data)
@@ -225,16 +225,16 @@ function adaptArticle(actu) {
     }
     
     // Déterminer l'icône/catégorie
-    let categoryIcon = '📰'
+    let categoryIcon = 'actualités'
     let categoryText = 'Actualité'
     if (actu.type === 'evenement') {
-        categoryIcon = '🎉'
+        categoryIcon = 'Événement'
         categoryText = 'Événement'
     } else if (actu.type === 'promotion') {
-        categoryIcon = '🏷️'
+        categoryIcon = 'Promotion'
         categoryText = 'Promotion'
     } else if (actu.type === 'ouverture') {
-        categoryIcon = '🔑'
+        categoryIcon = 'Nouveau Commerce'
         categoryText = 'Nouveau Commerce'
     }
     
@@ -251,7 +251,7 @@ function adaptArticle(actu) {
         img: imageUrl,
         author: {
             name: actu.commerce_nom || 'LocalGuide',
-            avatar: 'https://randomuser.me/api/portraits/lego/1.jpg'
+            avatar: 'https://randomuser.me/api/portraits/lego/7.jpg'
         },
         isNew: new Date(actu.created_at) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
         adresse: actu.adresse,
@@ -273,9 +273,7 @@ function adaptEvent(actu) {
     }
 }
 
-// ============================================
-// 4. AJOUTER BOUTONS SUPPRIMER (uniquement pour les articles BD, pas les défauts)
-// ============================================
+
 // ============================================
 // 4. AJOUTER BOUTONS SUPPRIMER (admin OU créateur connecté)
 // ============================================
@@ -352,7 +350,7 @@ async function addDeleteButtons() {
                 if (error) {
                     alert(' Erreur: ' + error.message)
                 } else {
-                    alert('✅ Actualité supprimée')
+                    alert(' Actualité supprimée')
                     card.remove()
                     
                     // Recharger les listes
@@ -398,7 +396,7 @@ async function renderArticles(filter = 'tout') {
     const adaptedList = list.map(adaptArticle)
     
     if (adaptedList.length === 0) {
-        grid.innerHTML = `<p style="color:var(--muted);padding:20px 0; text-align:center;">📭 Aucun article dans cette catégorie.</p>`
+        grid.innerHTML = `<p style="color:var(--muted);padding:20px 0; text-align:center;">Aucun article dans cette catégorie.</p>`
         return
     }
     
@@ -439,7 +437,7 @@ async function renderEvents(filter = 'tout') {
     }
     
     if (allEvents.length === 0) {
-        listContainer.innerHTML = `<p style="color:var(--muted); text-align:center;">📅 Aucun événement pour le moment.</p>`
+        listContainer.innerHTML = `<p style="color:var(--muted); text-align:center;"> Aucun événement pour le moment.</p>`
         return
     }
     
@@ -488,14 +486,14 @@ window.switchTab = function(tab, el) {
 window.openArticle = function(id) {
     const article = allArticles.find(a => a.id === id)
     if (article) {
-        alert(`📰 ${article.titre}\n\n${article.description}\n\n— ${article.commerce_nom || 'LocalGuide'}`)
+        alert(` ${article.titre}\n\n${article.description}\n\n— ${article.commerce_nom || 'LocalGuide'}`)
     }
 }
 
 window.registerEvent = function(id) {
     const event = allEvents.find(e => e.id === id)
     if (event) {
-        alert(`✅ Inscription confirmée !\n\n📅 ${event.titre}\n📍 ${event.adresse || 'Monastir'}\n\nMerci de votre participation !`)
+        alert(`✅ Inscription confirmée !\n\n ${event.titre}\n📍 ${event.adresse || 'Monastir'}\n\nMerci de votre participation !`)
     }
 }
 
@@ -505,7 +503,7 @@ window.subscribeNewsletter = function() {
         alert('📧 Veuillez saisir une adresse email valide.')
         return
     }
-    alert(`🎉 Merci ! Vous êtes abonné(e) aux actualités de Monastir.\nConfirmation envoyée à : ${email}`)
+    alert(` Merci ! Vous êtes abonné(e) aux actualités de Monastir.\nConfirmation envoyée à : ${email}`)
     if (document.getElementById('emailNewsletter')) {
         document.getElementById('emailNewsletter').value = ''
     }
