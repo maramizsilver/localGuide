@@ -37,7 +37,7 @@ async function checkCommerceAccess() {
     
     if (!profile || (profile.role !== 'admin' && profile.role !== 'commerçant')) {
         alert(`⛔ Accès refusé. Rôle: "${profile?.role || 'non défini'}"\nSeuls les commerçants ou administrateurs peuvent ajouter un commerce.`)
-        window.location.href = 'aceuil.html'
+        window.location.href = 'accueil.html'
         return false
     }
     
@@ -370,14 +370,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         const successBox = document.getElementById('successBox')
         if (overlay) overlay.classList.remove('show')
         if (successBox) successBox.classList.remove('show')
-        window.location.href = 'aceuil.html'
+        window.location.href = 'accueil.html'
     }
     
     // Annuler
     const cancelBtn = document.getElementById('cancelBtn')
     if (cancelBtn) {
         cancelBtn.addEventListener('click', () => {
-            if (confirm('Annuler la saisie ?')) window.location.href = 'aceuil.html'
+            if (confirm('Annuler la saisie ?')) window.location.href = 'accueil.html'
         })
     }
 })

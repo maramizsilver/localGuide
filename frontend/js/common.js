@@ -42,7 +42,7 @@ async function updateNavbar() {
             authBtn.onclick = async (e) => {
                 e.preventDefault()
                 await supabase.auth.signOut()
-                window.location.href = 'aceuil.html'
+                window.location.href = 'accueil.html'
             }
         }
     } else {
@@ -86,7 +86,7 @@ async function updateHomeButtons() {
             logoutHomeBtn.onclick = async (e) => {
                 e.preventDefault()
                 await supabase.auth.signOut()
-                window.location.href = 'aceuil.html'
+                window.location.href = 'accueil.html'
             }
         }
     } else {
@@ -138,7 +138,7 @@ async function checkAdminAccess() {
     
     if (!profile || profile.role !== 'admin') {
         alert(' Accès interdit. Page réservée aux administrateurs.')
-        window.location.href = 'aceuil.html'
+        window.location.href = 'accueil.html'
         return false
     }
     

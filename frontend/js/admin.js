@@ -27,7 +27,7 @@ async function checkAdminAccess() {
     
     if (!profile || profile.role !== 'admin') {
         alert(' Accès interdit. Cette page est réservée aux administrateurs.')
-        window.location.href = 'aceuil.html'
+        window.location.href = 'accueil.html'
         return false
     }
     

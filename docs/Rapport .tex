@@ -314,7 +314,7 @@ Frontend $\rightarrow$ API Supabase $\rightarrow$ Base de données
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.8\textwidth]{accueil.png}
-    \caption{aceuil}
+    \caption{accueil}
     \label{fig:monimage}
 \end{figure}
 \begin{figure}[h]
@@ -410,7 +410,7 @@ LocalGuide/
 ├── js/
 │   ├── supabaseClient.js    (Connexion Supabase)
 │   ├── common.js            (Fonctions partagees)
-│   ├── aceuil.js            (Page d'accueil)
+│   ├── accueil.js            (Page d'accueil)
 │   ├── fichecomm.js         (Gestion commerces)
 │   ├── guide.js             (Reservation guides)
 │   ├── news.js              (Actualites)
@@ -418,7 +418,7 @@ LocalGuide/
 │   └── add_news.js          (Ajout actualites)
 │
 ├── pages/
-│   ├── aceuil.html          (Accueil)
+│   ├── accueil.html          (Accueil)
 │   ├── fichecomm.html       (Annuaire commerces)
 │   ├── guide.html           (Liste guides)
 │   ├── news.html            (Actualites)
@@ -504,7 +504,7 @@ const { data, error } = await supabase.auth.signInWithPassword({
             if (role === 'admin') {
                 window.location.href = 'admin.html'
             } else {
-                window.location.href = 'aceuil.html'
+                window.location.href = 'accueil.html'
             }
         }, 1000)
 \end{lstlisting}

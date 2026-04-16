@@ -279,7 +279,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!profile || profile.role !== 'admin') {
       alert('❌ Accès réservé aux administrateurs')
-      window.location.href = 'aceuil.html'
+      window.location.href = 'accueil.html'
       return
     }
 
