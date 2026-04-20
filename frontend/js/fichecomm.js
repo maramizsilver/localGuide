@@ -393,11 +393,9 @@ function getGradientColor(categorie) {
     return colorMap[categorie?.toLowerCase()] || colorMap.default
 }
 
+
 // ============================================
 // 8. RENDU D'UNE CARTE
-// ============================================
-// ============================================
-// 8. RENDU D'UNE CARTE (Version avec boutons texte)
 // ============================================
 function renderCard(c) {
     const canDelete = currentUser && (currentUser.isAdmin || (c.ownerId && currentUser.id === c.ownerId)) && !c.isDefault
@@ -514,9 +512,8 @@ function renderCurrentPage() {
     checkInfiniteScroll()
 }
 
-// ============================================
 // 11. AFFICHER LES BOUTONS DE PAGINATION
-// ============================================
+
 function renderPaginationButtons() {
     const totalPages = Math.ceil(displayedCommerces.length / itemsPerPage)
     const paginationContainer = document.getElementById("paginationContainer")
@@ -703,3 +700,90 @@ async function init() {
 }
 
 document.addEventListener('DOMContentLoaded', init)
+// ============================================
+// DÉFILER VERS UN COMMERCE SPÉCIFIQUE (si ID dans l'URL)
+// ============================================
+
+// Fonction pour défiler vers un commerce et le mettre en évidence
+function scrollToCommerce(commerceId) {
+    console.log(` Recherche du commerce avec ID: ${commerceId}`);
+    
+    // Attendre que les cartes soient chargées
+    setTimeout(() => {
+        // Chercher la carte avec l'ID correspondant
+        const commerceCard = document.querySelector(`.card[data-id="${commerceId}"]`);
+        
+        if (commerceCard) {
+            console.log(` Commerce trouvé, défilement en cours...`);
+            
+            // Défiler jusqu'au commerce
+            commerceCard.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center' 
+            });
+            
+            // Ajouter une classe pour mettre en évidence
+            commerceCard.classList.add('highlight-commerce');
+            
+            // Enlever la classe après 3 secondes
+            setTimeout(() => {
+                commerceCard.classList.remove('highlight-commerce');
+            }, 3000);
+        } else {
+            console.log(` Commerce ${commerceId} non trouvé dans la liste`);
+        }
+    }, 800); // Attendre 800ms que les cartes soient chargées
+}
+
+// Vérifier s'il y a un ID dans l'URL APRÈS le chargement
+function checkUrlForCommerce() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const commerceId = urlParams.get('id');
+    
+    if (commerceId) {
+        console.log(`🔍 ID détecté dans l'URL: ${commerceId}`);
+        // Attendre que la liste des commerces soit chargée
+        const waitForCards = setInterval(() => {
+            const cards = document.querySelectorAll('.card');
+            if (cards.length > 0) {
+                clearInterval(waitForCards);
+                scrollToCommerce(commerceId);
+                // Nettoyer l'URL pour éviter de re-défiler si l'utilisateur rafraîchit
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+        }, 100);
+    }
+}
+
+// Lancer la vérification après le chargement de la page
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', checkUrlForCommerce);
+} else {
+    checkUrlForCommerce();
+}
+// ============================================
+// TEST POUR VOIR SI L'ID EST DÉTECTÉ
+// ============================================
+
+console.log('🔍 URL actuelle:', window.location.href);
+console.log('🔍 Paramètres:', new URLSearchParams(window.location.search).toString());
+
+const testId = new URLSearchParams(window.location.search).get('id');
+console.log('🔍 ID trouvé:', testId);
+
+if (testId) {
+    console.log('✅ ID détecté! Recherche de la carte...');
+    
+    setTimeout(() => {
+        const card = document.querySelector(`.card[data-id="${testId}"]`);
+        if (card) {
+            console.log(' CARTE TROUVÉE! Défilement...');
+            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            card.style.border = '3px solid red';
+            card.style.backgroundColor = '#fff0e6';
+        } else {
+            console.log(' Carte NON trouvée pour ID:', testId);
+            console.log('IDs disponibles:', [...document.querySelectorAll('.card')].map(c => c.getAttribute('data-id')));
+        }
+    }, 2000);
+}
