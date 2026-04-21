@@ -1,9 +1,7 @@
 // frontend/js/admin.js
 import { supabase } from './supabaseClient.js'
 
-// ============================================
 // 1. VÉRIFICATION ADMIN
-// ============================================
 async function checkAdminAccess() {
     const { data: { user } } = await supabase.auth.getUser()
     
@@ -34,9 +32,8 @@ async function checkAdminAccess() {
     return true
 }
 
-// ============================================
 // 2. FONCTIONS UTILITAIRES
-// ============================================
+
 function escapeHtml(str) {
     if (!str) return ''
     return String(str)
@@ -47,9 +44,7 @@ function escapeHtml(str) {
         .replace(/'/g, '&#39;')
 }
 
-// ============================================
 // 3. GESTION DES COMMERCES
-// ============================================
 async function loadCommerces() {
     const { data, error } = await supabase
         .from('commerces')
@@ -177,11 +172,11 @@ async function renderCommerces() {
                         <span class="badge" style="background: #e9ecef; padding: 4px 12px; border-radius: 20px;">🏷️ ${escapeHtml(commerce.categorie)}</span>
                         <span class="badge" style="background: ${badgeColor}; padding: 4px 12px; border-radius: 20px;">${statutBadge}</span>
                     </div>
-                    ${commerce.raison_refus ? `<p style="color: #dc3545; font-size: 12px; margin-top: 10px;">❌ Raison: ${escapeHtml(commerce.raison_refus)}</p>` : ''}
+                    ${commerce.raison_refus ? `<p style="color: #dc3545; font-size: 12px; margin-top: 10px;"> Raison: ${escapeHtml(commerce.raison_refus)}</p>` : ''}
                 </div>
                 <div class="commerce-actions" style="display: flex; gap: 10px;">
                     ${commerce.statut === 'suspendu' ? `
-                        <button class="btn btn-approve" data-id="${commerce.id}" style="background: #10b981; color: white; padding: 8px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">✅ Approuver</button>
+                        <button class="btn btn-approve" data-id="${commerce.id}" style="background: #10b981; color: white; padding: 8px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;"> Approuver</button>
                         <button class="btn btn-reject" data-id="${commerce.id}" style="background: #ef4444; color: white; padding: 8px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;"> Refuser</button>
                     ` : ''}
                     ${commerce.statut === 'actif' ? `
@@ -216,10 +211,7 @@ function initFilters() {
         })
     })
 }
-
-// ============================================
 // 4. GESTION DES GUIDES EN ATTENTE
-// ============================================
 async function loadGuidesEnAttente() {
     const { data, error } = await supabase
         .from('guides')
@@ -316,7 +308,7 @@ async function renderGuidesEnAttente() {
                     <div style="flex: 1;">
                         <h3 style="margin: 0 0 10px 0; color: #333;">${escapeHtml(guide.prenom)} ${escapeHtml(guide.nom)}</h3>
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 10px; margin-top: 10px;">
-                            <div>📧 <strong>Email:</strong> ${escapeHtml(guide.email)}</div>
+                            <div> <strong>Email:</strong> ${escapeHtml(guide.email)}</div>
                             <div>📞 <strong>Téléphone:</strong> ${escapeHtml(guide.telephone || guide.phone)}</div>
                             <div> <strong>Ville:</strong> ${escapeHtml(guide.ville)}</div>
                             <div> <strong>Spécialité:</strong> ${escapeHtml(guide.specialite)}</div>
@@ -324,10 +316,10 @@ async function renderGuidesEnAttente() {
                             <div> <strong>Langues:</strong> ${escapeHtml(languesDisplay)}</div>
                         </div>
                         <div style="margin-top: 10px;">
-                            <strong>💬 Motivation:</strong>
+                            <strong> Motivation:</strong>
                             <p style="background: #f8f9fa; padding: 10px; border-radius: 8px; margin-top: 5px;">${escapeHtml(guide.motivation || 'Non renseignée')}</p>
                         </div>
-                        ${guide.abonnement_duree ? `<div style="margin-top: 10px;"><strong>💰 Abonnement:</strong> ${guide.abonnement_duree} mois (${guide.abonnement_prix} DT)</div>` : ''}
+                        ${guide.abonnement_duree ? `<div style="margin-top: 10px;"><strong> Abonnement:</strong> ${guide.abonnement_duree} mois (${guide.abonnement_prix} DT)</div>` : ''}
                         ${guide.image_url ? `<div style="margin-top: 10px;"><strong>🖼️ Photo:</strong> <a href="${guide.image_url}" target="_blank" style="color: #4f46e5;">Voir la photo</a></div>` : ''}
                     </div>
                     <div style="display: flex; gap: 10px;">
@@ -352,9 +344,8 @@ async function renderGuidesEnAttente() {
     })
 }
 
-// ============================================
+
 // 5. INITIALISATION
-// ============================================
 document.addEventListener('DOMContentLoaded', async () => {
     const isAdmin = await checkAdminAccess()
     if (!isAdmin) return
