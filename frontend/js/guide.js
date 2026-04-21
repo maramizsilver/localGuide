@@ -1,6 +1,5 @@
 // frontend/js/guide.js
 import { supabase } from './supabaseClient.js'
-
 let allGuides = []
 let activeFilter = "Tous"
 let currentSort = "rating"
@@ -39,7 +38,6 @@ const CATEGORY_PRICES = {
     'Art': 55,
     'default': 55
 }
-
 //  GUIDES PAR DÉFAUT
 const DEFAULT_GUIDES = [
     {
@@ -74,6 +72,7 @@ const DEFAULT_GUIDES = [
         featured: true,
         isDefault: true
     },
+
     {
         id: 'default-histoire',
         name: 'Mohamed Ali',
@@ -140,9 +139,7 @@ const DEFAULT_GUIDES = [
     }
 ]
 
-// ============================================
 // 1. RÉCUPÉRER L'UTILISATEUR CONNECTÉ
-// ============================================
 async function getCurrentUser() {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return null
@@ -166,9 +163,7 @@ async function getCurrentUser() {
     }
 }
 
-// ============================================
 // 2. MODIFIER UN GUIDE
-// ============================================
 async function modifierGuide(id) {
     const guide = allGuides.find(g => g.id === id)
     if (!guide) return
@@ -269,10 +264,8 @@ async function supprimerGuide(id) {
         await renderGrid()
     }
 }
-
-// ============================================
 // 4. CHARGER LES GUIDES
-// ============================================
+
 async function loadGuidesFromSupabase() {
     console.log('Chargement des guides depuis Supabase...')
     
