@@ -602,16 +602,16 @@ async function handleFile(file) {
       const fileExt = file.name.split('.').pop();
       const fileName = `guide_${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
       
-      // Upload vers bucket 'guides-photos'
+      // Upload vers bucket 'guide-photoss'
       const { error: uploadError } = await supabase.storage
-        .from('guides-photos')
+        .from('guide-photoss')
         .upload(fileName, file)
       
       if (uploadError) throw uploadError
       
       // Récupérer l'URL publique
       const { data: { publicUrl } } = supabase.storage
-        .from('guides-photos')
+        .from('guide-photoss')
         .getPublicUrl(fileName)
       
       uploadedImageUrl = publicUrl

@@ -118,7 +118,7 @@ document.addEventListener("DOMContentLoaded", () => {
     })
   }
 
-  // ✅ Upload photo vers 'guides-photos' (AVEC 's')
+  //  Upload photo vers 'guide-photos' 
   async function handleFile(file) {
     const error = document.getElementById("pictureError");
     const maxSize = 5 * 1024 * 1024;
@@ -143,24 +143,24 @@ document.addEventListener("DOMContentLoaded", () => {
       const fileExt = file.name.split('.').pop();
       const fileName = `guide_${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
       
-      console.log('Upload vers bucket:', 'guides-photos');
+      console.log('Upload vers bucket:', 'guide-photos');
       console.log('Nom du fichier:', fileName);
       
-      // ✅ Bucket 'guides-photos' (avec 's')
+      //  Bucket 'guide-photos' (avec 's')
       const { error: uploadError } = await supabase.storage
-        .from('guides-photos')  // ← CORRECTION: guides-photos (avec 's')
+        .from('guide-photos')  
         .upload(fileName, file)
       
       if (uploadError) {
         console.error('Erreur upload:', uploadError);
         showError(error, "Erreur d'upload: " + uploadError.message);
-        if (uploadText) uploadText.innerHTML = "❌ Échec de l'upload";
+        if (uploadText) uploadText.innerHTML = " Échec de l'upload";
         return;
       }
       
       // ✅ Récupérer l'URL publique
       const { data: { publicUrl } } = supabase.storage
-        .from('guides-photos')  // ← CORRECTION: guides-photos (avec 's')
+        .from('guide-photoss')  // ← CORRECTION: guide-photos (avec 's')
         .getPublicUrl(fileName)
       
       uploadedImageUrl = publicUrl
@@ -331,7 +331,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const dateDebut = now.toISOString()
     const dateFin = new Date(now.setMonth(now.getMonth() + selectedAbonnement)).toISOString()
 
-    // ✅ Insertion dans la table 'guides'
+    //  Insertion dans la table 'guides'
     const { error } = await supabase
       .from('guides')
       .insert({
@@ -339,7 +339,7 @@ document.addEventListener("DOMContentLoaded", () => {
         prenom: prenom,
         nom: nom,
         email: email,
-        telephone: phone,
+        phone: phone,
         ville: ville,
         specialite: specialite,
         experience: experienceYears,

@@ -1,51 +1,76 @@
 // frontend/js/add.js
 import { supabase } from './supabaseClient.js'
 
-// ============================================
-// 1. VÉRIFICATION ACCÈS
-// ============================================
+
 async function checkCommerceAccess() {
     const { data: { user } } = await supabase.auth.getUser()
     
     if (!user) {
-        alert('🔐 Veuillez vous connecter pour ajouter un commerce.')
+        alert('Veuillez vous connecter pour ajouter un commerce.')
         window.location.href = 'login.html'
         return false
     }
-    
-    console.log('👤 Utilisateur connecté:', user.email)
-    
+    console.log('Utilisateur connecté:', user.email)
+
     // Admin par email
     if (user.email === 'admin@localguide.com') {
-        console.log('✅ Admin reconnu')
+        console.log('Admin reconnu')
         return true
     }
-    
-    // Vérifier rôle dans la base
-    const { data: profile, error: profileError } = await supabase
-        .from('users_profiles')
+
+    // Vérifier si le profil existe
+    let { data: profile, error: profileError } = await supabase
+        .from('users_profiles')  
         .select('role')
-        .eq('id', user.id)
+        .eq('user_id', user.id)  
         .maybeSingle()
     
     if (profileError) {
-        console.error('❌ Erreur lecture profil:', profileError)
+        console.error('Erreur lecture profil:', profileError)
         alert('Erreur de vérification des droits')
         return false
     }
     
-    if (!profile || (profile.role !== 'admin' && profile.role !== 'commerçant')) {
-        alert(' Accès refusé. Seuls les commerçants ou administrateurs peuvent ajouter un commerce.')
+    // Si le profil n'existe pas, le créer automatiquement
+    if (!profile) {
+        console.log(' Profil non trouvé, création automatique...')
+        
+        const { data: newProfile, error: insertError } = await supabase
+            .from('users_profiles')
+            .insert({
+                user_id: user.id,
+                email: user.email,
+                role: 'commercant',
+                created_at: new Date().toISOString()
+            })
+            .select()
+            .single()
+        
+        if (insertError) {
+            console.error('Erreur création profil:', insertError)
+            alert('Erreur lors de la création de votre profil. Veuillez contacter l\'administrateur.')
+            return false
+        }
+        
+        console.log(' Profil créé avec succès:', newProfile)
+        profile = newProfile
+    }
+    
+    console.log('Profil trouvé:', profile) 
+    console.log('Rôle:', profile.role)
+    
+    // Vérifier le rôle (insensible à la casse)
+    const roleLower = profile.role?.toLowerCase()
+    if (roleLower !== 'admin' && roleLower !== 'commercant') {
+        alert('Accès refusé. Seuls les commerçants ou administrateurs peuvent ajouter un commerce.')
         window.location.href = 'accueil.html'
         return false
     }
     
+    console.log('✅ Accès autorisé pour rôle:', profile.role)
     return true
 }
-
-// ============================================
 // 2. GESTION PUBLICITÉ
-// ============================================
 function initPublicite() {
     const cards = document.querySelectorAll('.publicite-card')
     const publicitePrixInput = document.getElementById('publicitePrix')
@@ -78,9 +103,7 @@ function initPublicite() {
     if (defaultCard) defaultCard.click()
 }
 
-// ============================================
 // 3. UPLOAD PHOTO AVEC APERÇU
-// ============================================
 function initUploadPhoto() {
     const pictureInput = document.getElementById('picture')
     const previewDiv = document.getElementById('uploadPreview')
@@ -88,7 +111,7 @@ function initUploadPhoto() {
     const uploadZone = document.getElementById('uploadZone')
     
     if (!pictureInput) {
-        console.error('❌ Input picture non trouvé')
+        console.error(' Input picture non trouvé')
         return
     }
     
@@ -111,13 +134,13 @@ function initUploadPhoto() {
         console.log('📷 Fichier:', file.name, 'Taille:', file.size)
         
         if (file.size > 5 * 1024 * 1024) {
-            alert('❌ Fichier trop lourd (max 5 MB)')
+            alert(' Fichier trop lourd (max 5 MB)')
             pictureInput.value = ''
             return false
         }
         
         if (!file.type.match(/image\/(jpeg|png|webp)/)) {
-            alert('❌ Format non supporté. JPG, PNG ou WEBP uniquement')
+            alert(' Format non supporté. JPG, PNG ou WEBP uniquement')
             pictureInput.value = ''
             return false
         }
@@ -127,11 +150,11 @@ function initUploadPhoto() {
             if (previewImg) {
                 previewImg.src = e.target.result
                 if (previewDiv) previewDiv.style.display = 'block'
-                console.log('✅ Aperçu affiché')
+                console.log(' Aperçu affiché')
             }
         }
         reader.onerror = function() {
-            console.error('❌ Erreur lecture fichier')
+            console.error(' Erreur lecture fichier')
             alert('Erreur lors de la lecture du fichier')
         }
         reader.readAsDataURL(file)
@@ -143,7 +166,7 @@ function initUploadPhoto() {
         pictureInput.value = ''
         if (previewImg) previewImg.src = ''
         if (previewDiv) previewDiv.style.display = 'none'
-        console.log('🗑️ Image supprimée')
+        console.log(' Image supprimée')
     }
     
     // Changement de fichier
@@ -181,9 +204,9 @@ function initUploadPhoto() {
     }
 }
 
-// ============================================
+
 // 4. INITIALISATION
-// ============================================
+
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('add.js chargé')
     
@@ -207,9 +230,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         count.textContent = desc.value.length
     }
     
-    // ============================================
     // 5. VALIDATION
-    // ============================================
+ 
     function validate() {
         let valid = true
         const fields = [
@@ -241,9 +263,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         return valid
     }
     
-    // ============================================
     // 6. SOUMISSION À SUPABASE
-    // ============================================
+   
     const form = document.getElementById('businessForm')
     const overlay = document.getElementById('overlay')
     const successBox = document.getElementById('successBox')
@@ -291,21 +312,21 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const ext = file.name.split('.').pop()
                     const fileName = `commerce-images/${Date.now()}_${Math.random().toString(36).substring(7)}.${ext}`
                     
-                    console.log('📤 Upload image...', fileName)
+                    console.log(' Upload image...', fileName)
                     
                     const { error: uploadError } = await supabase.storage
                         .from('commerce-images')
                         .upload(fileName, file)
                     
                     if (uploadError) {
-                        console.error('❌ Upload erreur:', uploadError)
+                        console.error(' Upload erreur:', uploadError)
                         alert('Erreur upload image: ' + uploadError.message)
                     } else {
                         const { data: { publicUrl } } = supabase.storage
                             .from('commerce-images')
                             .getPublicUrl(fileName)
                         image_url = publicUrl
-                        console.log('✅ Image uploadée:', image_url)
+                        console.log('Image uploadée:', image_url)
                     }
                 }
                 
@@ -363,9 +384,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.location.href = 'accueil.html'
     }
     
-    // ============================================
+  
     // 8. ANNULER
-    // ============================================
+    
     const cancelBtn = document.getElementById('cancelBtn')
     if (cancelBtn) {
         cancelBtn.addEventListener('click', () => {

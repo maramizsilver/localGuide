@@ -227,7 +227,7 @@ CREATE TABLE actualites (
     ville VARCHAR(100) NOT NULL,
     lien_externe TEXT,
     email_contact VARCHAR(255) NOT NULL,
-    telephone VARCHAR(50),
+    phone VARCHAR(50),
     image_url TEXT,
     tags TEXT[] DEFAULT '{}',
     mise_en_avant BOOLEAN DEFAULT FALSE,

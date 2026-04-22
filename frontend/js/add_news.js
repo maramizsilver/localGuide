@@ -266,7 +266,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Vérifier admin
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) {
-      alert('❌ Vous devez être connecté en tant qu\'administrateur')
+      alert(' Vous devez être connecté en tant qu\'administrateur')
       window.location.href = 'login.html'
       return
     }
@@ -278,7 +278,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .single()
 
     if (!profile || profile.role !== 'admin') {
-      alert('❌ Accès réservé aux administrateurs')
+      alert(' Accès réservé aux administrateurs')
       window.location.href = 'accueil.html'
       return
     }
@@ -294,7 +294,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const ville = document.getElementById("ville").value
     const lien_externe = document.getElementById("lien").value || null
     const email_contact = document.getElementById("email").value
-    const telephone = document.getElementById("phone").value || null
+    const phone = document.getElementById("phone").value || null
     const mise_en_avant = document.getElementById("featured")?.checked || false
     const tagsArray = tags
 
@@ -325,7 +325,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .insert({
         titre, type, commerce_nom, description,
         date_debut, date_fin, adresse, ville,
-        lien_externe, email_contact, telephone,
+        lien_externe, email_contact, phone,
         image_url, tags: tagsArray, mise_en_avant,
         user_id: user.id, statut: 'publié'
       })
@@ -335,7 +335,7 @@ document.addEventListener("DOMContentLoaded", () => {
     submitBtn.disabled = false;
 
     if (error) {
-      alert('❌ Erreur: ' + error.message)
+      alert(' Erreur: ' + error.message)
     } else {
       openSuccessMessage()
     }

@@ -309,7 +309,7 @@ async function renderGuidesEnAttente() {
                         <h3 style="margin: 0 0 10px 0; color: #333;">${escapeHtml(guide.prenom)} ${escapeHtml(guide.nom)}</h3>
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 10px; margin-top: 10px;">
                             <div> <strong>Email:</strong> ${escapeHtml(guide.email)}</div>
-                            <div>📞 <strong>Téléphone:</strong> ${escapeHtml(guide.telephone || guide.phone)}</div>
+                            <div>📞 <strong>Téléphone:</strong> ${escapeHtml(guide.phone || guide.phone)}</div>
                             <div> <strong>Ville:</strong> ${escapeHtml(guide.ville)}</div>
                             <div> <strong>Spécialité:</strong> ${escapeHtml(guide.specialite)}</div>
                             <div> <strong>Expérience:</strong> ${guide.experience || 0} ans</div>

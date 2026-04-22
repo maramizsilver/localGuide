@@ -230,9 +230,9 @@ async function modifierGuide(id) {
     }
 }
 
-// ============================================
+
 // 3. SUPPRIMER UN GUIDE
-// ============================================
+
 async function supprimerGuide(id) {
     const guide = allGuides.find(g => g.id === id)
     if (!guide) return
@@ -347,7 +347,7 @@ function adaptGuideData(supabaseGuide) {
         cover: coverImage,
         avatar: avatarImage,
         featured: supabaseGuide.mise_en_avant || false,
-        phone: supabaseGuide.telephone,
+        phone: supabaseGuide.phone,
         email: supabaseGuide.email,
         user_id: supabaseGuide.user_id,
         created_at: supabaseGuide.created_at,
@@ -424,7 +424,7 @@ async function bookGuide(id) {
             guide_nom: guide.name,
             guide_specialite: guide.specialty,
             client_nom: clientName,
-            client_telephone: clientPhone,
+            client_phone: clientPhone,
             date: formattedDate,
             prix_total: guide.price,
             statut: 'confirmee'

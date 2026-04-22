@@ -47,7 +47,7 @@ async function loadCommerces() {
     commerceSelect.innerHTML = '<option value="">⏳ Chargement...</option>'
     
     try {
-        console.log('🔍 Chargement des commerces actifs...')
+        console.log(' Chargement des commerces actifs...')
         
         const { data, error } = await supabase
             .from('commerces')
@@ -56,16 +56,16 @@ async function loadCommerces() {
             .order('nom')
         
         if (error) {
-            console.error('❌ Erreur Supabase:', error)
+            console.error(' Erreur Supabase:', error)
             commerceSelect.innerHTML = '<option value="">❌ Erreur: ' + error.message + '</option>'
             return
         }
         
-        console.log('📊 Données reçues:', data)
+        console.log(' Données reçues:', data)
         
         if (!data || data.length === 0) {
-            console.log('⚠️ Aucun commerce actif trouvé')
-            commerceSelect.innerHTML = '<option value="">⚠️ Aucun commerce disponible</option>'
+            console.log(' Aucun commerce actif trouvé')
+            commerceSelect.innerHTML = '<option value=""> Aucun commerce disponible</option>'
             return
         }
         
@@ -88,8 +88,8 @@ async function loadCommerces() {
         }
         
     } catch (err) {
-        console.error('❌ Erreur complète:', err)
-        commerceSelect.innerHTML = '<option value="">❌ Erreur de connexion</option>'
+        console.error(' Erreur complète:', err)
+        commerceSelect.innerHTML = '<option value="">Erreur de connexion</option>'
     }
 }
 
@@ -156,9 +156,9 @@ async function loadCommerces() {
     });
   }
 
-  /* ══════════════════════════════
+  /* 
      ÉTOILES GLOBALES
-  ══════════════════════════════ */
+  */
   const noteLabels = ["", "Très mauvais 😞", "Mauvais 😕", "Correct 😐", "Bien 😊", "Excellent ! 🤩"];
   const starsGlobal = document.querySelectorAll("#starsGlobal .star");
   const noteLabel   = document.getElementById("noteLabel");
@@ -306,7 +306,7 @@ async function loadCommerces() {
     if (error) error.classList.remove("visible");
     uploadedFiles.push(file);
     renderPreviews();
-    if (uploadText) uploadText.textContent = `✅ ${uploadedFiles.length} photo(s) sélectionnée(s)`;
+    if (uploadText) uploadText.textContent = ` ${uploadedFiles.length} photo(s) sélectionnée(s)`;
   }
 
   function renderPreviews() {
@@ -323,7 +323,7 @@ async function loadCommerces() {
           uploadedFiles.splice(i, 1);
           renderPreviews();
           if (uploadText) uploadText.textContent = uploadedFiles.length
-            ? `✅ ${uploadedFiles.length} photo(s) sélectionnée(s)`
+            ? ` ${uploadedFiles.length} photo(s) sélectionnée(s)`
             : "Déposez vos photos ici";
         });
         uploadPreviews.appendChild(thumb);
@@ -394,9 +394,9 @@ async function loadCommerces() {
     return valid;
   }
 
-  /* ══════════════════════════════
+  /* 
      SOUMISSION À SUPABASE
-  ══════════════════════════════ */
+ */
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     if (!validateForm()) {
@@ -412,7 +412,7 @@ async function loadCommerces() {
     const { data: { user } } = await supabase.auth.getUser()
     
     if (!user) {
-      alert('❌ Veuillez vous connecter pour laisser un avis')
+      alert(' Veuillez vous connecter pour laisser un avis')
       window.location.href = 'login.html'
       return
     }
@@ -430,7 +430,7 @@ async function loadCommerces() {
     const recommande = document.querySelector('input[name="recommande"]:checked')?.value || null
     
     if (!finalCommerceId) {
-      alert('❌ Veuillez sélectionner un commerce')
+      alert(' Veuillez sélectionner un commerce')
       submitText.style.display = "inline";
       submitSpinner.style.display = "none";
       submitBtn.disabled = false;
@@ -479,7 +479,7 @@ async function loadCommerces() {
     submitBtn.disabled = false;
     
     if (error) {
-      alert('❌ Erreur: ' + error.message)
+      alert(' Erreur: ' + error.message)
     } else {
       openSuccess()
     }
@@ -512,7 +512,7 @@ async function loadCommerces() {
       if (previewCommerce) previewCommerce.textContent = `${commerceName} — ${ville}`;
       if (previewCat) previewCat.textContent = catText;
       if (previewDesc) previewDesc.textContent = texte;
-      if (previewAuteur) previewAuteur.textContent = `Par ${prenom} · 📅 ${dateVal ? new Date(dateVal).toLocaleDateString("fr-FR", { day:"2-digit", month:"long", year:"numeric" }) : "—"}`;
+      if (previewAuteur) previewAuteur.textContent = `Par ${prenom} ·  ${dateVal ? new Date(dateVal).toLocaleDateString("fr-FR", { day:"2-digit", month:"long", year:"numeric" }) : "—"}`;
       if (previewStars) previewStars.textContent = "★".repeat(noteGlobale) + "☆".repeat(5 - noteGlobale);
 
       if (previewForts) {

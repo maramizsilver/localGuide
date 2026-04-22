@@ -1,6 +1,6 @@
-// ============================================
+
 // HERO BACKGROUND (Slideshow)
-// ============================================
+
 (function () {
     const bgElements = document.querySelectorAll(".hero-bg");
     if (bgElements.length > 0) {
@@ -14,9 +14,7 @@
     }
 })();
 
-// ============================================
 // TICKER DYNAMIQUE (T4-6)
-// ============================================
 
 import { supabase } from './supabaseClient.js'
 
@@ -88,8 +86,6 @@ if (document.readyState === 'loading') {
 setInterval(loadTickerNews, 300000)
 
 // REDIRECTION VERS PAGE COMMERCES
-
-
 function initTopCommerceCards() {
     // Sélectionner toutes les cartes commerces dans la section Top Commerces
     const topCommerceCards = document.querySelectorAll('.grid3 .card');
@@ -112,7 +108,7 @@ function initTopCommerceCards() {
                     return;
                 }
                 
-                console.log(`🔄Redirection vers: ${card.querySelector('.card-name')?.innerText} (ID: ${commerceId})`);
+                console.log(`Redirection vers: ${card.querySelector('.card-name')?.innerText} (ID: ${commerceId})`);
                 // Rediriger vers fichecomm.html avec l'ID du commerce
                 window.location.href = `fichecomm.html?id=${commerceId}`;
             });
@@ -129,10 +125,9 @@ function initTopCommerceCards() {
         }
     });
     
-    console.log('✅ Cartes Top commerces initialisées avec succès');
+    console.log('Cartes Top commerces initialisées avec succès');
 }
 
-// Exécuter après le chargement complet de la page
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initTopCommerceCards);
 } else {
